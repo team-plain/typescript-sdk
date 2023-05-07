@@ -1,0 +1,5 @@
+fragment IssuePriorityParts on IssuePriority {
+  __typename
+  label
+  value
+}

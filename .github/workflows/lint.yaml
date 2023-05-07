@@ -1,0 +1,38 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint:ci
+      - name: GraphQL Mutation Filenames
+        uses: batista/lint-filenames@v1.0.1
+        with:
+          path: './src/graphql/mutations'
+          pattern: '[a-z]+((\\d)|([A-Z0-9][a-z0-9]+))*([A-Z])?'
+      - name: GraphQL Query Filenames
+        uses: batista/lint-filenames@v1.0.1
+        with:
+          path: './src/graphql/queries'
+          pattern: '[a-z]+((\\d)|([A-Z0-9][a-z0-9]+))*([A-Z])?'
+      - name: Fragment Filenames
+        uses: batista/lint-filenames@v1.0.1
+        with:
+          path: './src/graphql/fragments'
+          pattern: '[a-z]+((\\d)|([A-Z0-9][a-z0-9]+))*([A-Z])?Parts.gql$'

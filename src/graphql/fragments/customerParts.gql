@@ -1,0 +1,39 @@
+fragment CustomerParts on Customer {
+  __typename
+  id
+  fullName
+  shortName
+  externalId
+  email {
+    email
+    isVerified
+    verifiedAt {
+      ...DateTimeParts
+    }
+  }
+  status
+  statusChangedAt {
+    ...DateTimeParts
+  }
+  assignedToUser {
+    ...UserActorParts
+  }
+  assignedAt {
+    ...DateTimeParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+  lastIdleAt {
+    ...DateTimeParts
+  }
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...InternalActorParts
+  }
+  markedAsSpamAt {
+    ...DateTimeParts
+  }
+}

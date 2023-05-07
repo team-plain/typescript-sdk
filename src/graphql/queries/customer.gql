@@ -1,0 +1,5 @@
+query customerById($customerId: ID!) {
+  customer(customerId: $customerId) {
+    ...CustomerParts
+  }
+}

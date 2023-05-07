@@ -1,0 +1,4 @@
+fragment CustomerActorParts on CustomerActor {
+  __typename
+  customerId
+}

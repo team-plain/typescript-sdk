@@ -1,0 +1,11 @@
+fragment InternalActorParts on Actor {
+	... on UserActor {
+		...UserActorParts
+	}
+	... on SystemActor {
+		...SystemActorParts
+	}
+	... on MachineUserActor {
+		...MachineUserActorParts
+	}
+}

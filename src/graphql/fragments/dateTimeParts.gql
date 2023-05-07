@@ -1,0 +1,4 @@
+fragment DateTimeParts on DateTime {
+  __typename
+  iso8601
+}
