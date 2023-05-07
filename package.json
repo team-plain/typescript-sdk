@@ -2,9 +2,12 @@
   "name": "@team-plain/typescript-sdk",
   "version": "0.0.1",
   "description": "Typescript SDK for Plain's Core GraphQL API",
+  "type": "module",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && rollup -c",
     "codegen": "graphql-codegen",
     "typecheck": "tsc --noEmit",
     "lint": "eslint 'src/**/*.ts'",
@@ -19,8 +22,12 @@
     "@graphql-codegen/typescript-document-nodes": "^3.0.4",
     "@graphql-codegen/typescript-operations": "^3.0.4",
     "@typescript-eslint/parser": "^5.59.2",
+    "esbuild": "^0.17.18",
     "eslint": "^8.40.0",
     "nock": "^13.3.1",
+    "rollup": "^3.21.5",
+    "rollup-plugin-dts": "^5.3.0",
+    "rollup-plugin-esbuild": "^5.0.0",
     "vitest": "^0.31.0"
   },
   "dependencies": {
