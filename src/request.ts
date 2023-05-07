@@ -24,7 +24,7 @@ export async function request<Query, Variables, UnwrappedQuery>(
       Authorization: `Bearer ${ctx.apiKey}`,
     };
 
-    const url = ctx.apiUrl || 'https://core-api.uk.plain.com/graphql/v1';
+    const url = 'https://core-api.uk.plain.com/graphql/v1';
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { data: res } = await axios.post(
