@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Lint
-        run: npm run lint:ci
+        run: npm run lint
       - name: GraphQL Mutation Filenames
         uses: batista/lint-filenames@v1.0.1
         with:
