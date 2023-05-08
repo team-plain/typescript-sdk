@@ -2,7 +2,9 @@ import { Context } from './context';
 import { PlainSDKError } from './error';
 import {
   CreateIssueDocument,
+  CreateIssueInput,
   CustomerByIdDocument,
+  CustomerByIdQueryVariables,
   CustomerPartsFragment,
   IssuePartsFragment,
 } from './graphql/types';
@@ -19,6 +21,21 @@ function nonNullable<T>(x: T | null): T {
   return x;
 }
 
+function unwrapData<T, X>(
+  result: Result<T, PlainSDKError>,
+  unwrapFn: (data: T) => X
+): Result<X, PlainSDKError> {
+  if (result.error) {
+    return {
+      error: result.error,
+    };
+  } else {
+    return {
+      data: unwrapFn(result.data),
+    };
+  }
+}
+
 export class PlainSDKClient {
   #ctx: Context;
 
@@ -28,27 +45,35 @@ export class PlainSDKClient {
     };
   }
 
-  async getCustomerById(args: { customerId: string }): SDKResult<CustomerPartsFragment | null> {
+  async rawRequest(args: {
+    query: string;
+    variables: Record<string, unknown>;
+  }): SDKResult<unknown> {
     return request(this.#ctx, {
+      query: args.query,
+      variables: args.variables,
+    });
+  }
+
+  async getCustomerById(args: CustomerByIdQueryVariables): SDKResult<CustomerPartsFragment | null> {
+    const res = await request(this.#ctx, {
       query: CustomerByIdDocument,
       variables: {
         customerId: args.customerId,
       },
-      unwrapFn: (q) => q.customer,
     });
+
+    return unwrapData(res, (q) => q.customer);
   }
 
-  async createIssue(args: {
-    issueTypeId: string;
-    customerId: string;
-    priorityValue: 0 | 1 | 2 | 3;
-  }): SDKResult<IssuePartsFragment> {
-    return request(this.#ctx, {
+  async createIssue(input: CreateIssueInput): SDKResult<IssuePartsFragment> {
+    const res = await request(this.#ctx, {
       query: CreateIssueDocument,
       variables: {
-        input: args,
+        input,
       },
-      unwrapFn: (q) => nonNullable(q.createIssue.issue),
     });
+
+    return unwrapData(res, (q) => nonNullable(q.createIssue.issue));
   }
 }
