@@ -10,10 +10,13 @@
     "codegen": "graphql-codegen",
     "typecheck": "tsc --noEmit",
     "lint": "eslint 'src/**/*.ts'",
-    "test": "vitest"
+    "test": "vitest",
+    "changeset": "changeset",
+    "release": "npm run build && changeset publish"
   },
   "license": "MIT",
   "devDependencies": {
+    "@changesets/cli": "^2.26.1",
     "@graphql-codegen/add": "^4.0.1",
     "@graphql-codegen/cli": "^3.3.1",
     "@graphql-codegen/typed-document-node": "^4.0.1",
