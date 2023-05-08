@@ -6,18 +6,14 @@ import { Context } from './context';
 import { PlainSDKError } from './error';
 import { getMutationErrorFromResponse, isPlainGraphQLResponse } from './graphql-utlities';
 
-export async function request<Query, Variables, UnwrappedQuery>(
+export async function request<Query, Variables>(
   ctx: Context,
   args: {
-    query: TypedDocumentNode<Query, Variables>;
+    query: TypedDocumentNode<Query, Variables> | string;
     variables?: Variables;
-
-    // This function can 'unwrap' the graphql request and basically
-    // flatten the response.
-    unwrapFn: (query: Query) => UnwrappedQuery;
   }
-): Promise<Result<UnwrappedQuery, PlainSDKError>> {
-  const query = print(args.query);
+): Promise<Result<Query, PlainSDKError>> {
+  const query = typeof args.query === 'string' ? args.query : print(args.query);
 
   try {
     const headers = {
@@ -54,8 +50,7 @@ export async function request<Query, Variables, UnwrappedQuery>(
     }
 
     return {
-      // TODO: Find a better way to do this.
-      data: args.unwrapFn(res.data as Query),
+      data: res.data as Query,
     };
   } catch (err) {
     if (axios.isAxiosError(err)) {
@@ -70,21 +65,21 @@ export async function request<Query, Variables, UnwrappedQuery>(
           };
         }
 
-        if (err.response.status === 400 && isPlainGraphQLResponse(err.response.data)) {
-          return {
-            error: {
-              code: 'bad_request',
-              message: 'Missing or invalid arguments provided.',
-              graphqlErrors: err.response.data.errors || [],
-            },
-          };
-        }
-
         if (err.response.status === 500) {
           return {
             error: {
               code: 'internal_server_error',
               message: 'Internal server error.',
+            },
+          };
+        }
+
+        if (isPlainGraphQLResponse(err.response.data)) {
+          return {
+            error: {
+              code: 'bad_request',
+              message: 'Missing or invalid arguments provided.',
+              graphqlErrors: err.response.data.errors || [],
             },
           };
         }
