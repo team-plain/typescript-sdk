@@ -65,21 +65,21 @@ export async function request<Query, Variables>(
           };
         }
 
-        if (err.response.status === 500) {
-          return {
-            error: {
-              code: 'internal_server_error',
-              message: 'Internal server error.',
-            },
-          };
-        }
-
-        if (isPlainGraphQLResponse(err.response.data)) {
+        if (err.response.status === 400 && isPlainGraphQLResponse(err.response.data)) {
           return {
             error: {
               code: 'bad_request',
               message: 'Missing or invalid arguments provided.',
               graphqlErrors: err.response.data.errors || [],
+            },
+          };
+        }
+
+        if (err.response.status === 500) {
+          return {
+            error: {
+              code: 'internal_server_error',
+              message: 'Internal server error.',
             },
           };
         }
