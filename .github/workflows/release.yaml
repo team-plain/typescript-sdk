@@ -15,6 +15,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "16"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - uses: actions/checkout@v2
       - uses: tibdex/github-app-token@v1
         id: generate-token
@@ -31,3 +33,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
