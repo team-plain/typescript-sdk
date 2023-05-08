@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 0.0.6
+
+### Patch Changes
+
+- 989ede5: Make package public
+
 ## 0.0.5
 
 ### Patch Changes
