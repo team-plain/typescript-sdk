@@ -1,0 +1,10 @@
+mutation upsertCustomer($input: UpsertCustomerInput!) {
+  upsertCustomer(input: $input) {
+    customer {
+      ...CustomerParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

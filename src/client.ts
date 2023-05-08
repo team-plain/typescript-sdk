@@ -7,6 +7,8 @@ import {
   CustomerByIdQueryVariables,
   CustomerPartsFragment,
   IssuePartsFragment,
+  UpsertCustomerDocument,
+  UpsertCustomerInput,
 } from './graphql/types';
 import { request } from './request';
 import { Result } from './result';
@@ -64,6 +66,17 @@ export class PlainSDKClient {
     });
 
     return unwrapData(res, (q) => q.customer);
+  }
+
+  async upsertCustomer(input: UpsertCustomerInput): SDKResult<CustomerPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: UpsertCustomerDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.upsertCustomer.customer));
   }
 
   async createIssue(input: CreateIssueInput): SDKResult<IssuePartsFragment> {
