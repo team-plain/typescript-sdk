@@ -30,12 +30,15 @@ You can find out how to make an API key in our documentation: https://docs.plain
 
 This SDK is a thin wrapper on on-top of our GraphQL API. As such a lot of these documentation will link to our GraphQL documentation. If your requirements are more complex you should consider using our API directly for which you can find docs at https://docs.plain.com/. 
 
-### getCustomerById(variables)
+#### getCustomerById
 Allows you to fetch a customer by their id.
 
 Arguments:
   - `variables`
     - `variables.customerId`: The id of the customer you want to fetch
+
+Returns:
+  - [CustomerPartsFragment](./src/graphql/fragments/customerParts.gql) or `null` if not found.
 
 Required permissions:
 - `customer:read`
