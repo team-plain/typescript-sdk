@@ -42,7 +42,7 @@ export async function request<Query, Variables>(
     if (mutationError) {
       return {
         error: {
-          code: 'mutation_error',
+          type: 'mutation_error',
           message: mutationError.message,
           errorDetails: mutationError,
         },
@@ -59,7 +59,7 @@ export async function request<Query, Variables>(
         if (err.response.status === 401) {
           return {
             error: {
-              code: 'forbidden',
+              type: 'forbidden',
               message: 'Authentication failed. Please check the provided API key.',
             },
           };
@@ -68,7 +68,7 @@ export async function request<Query, Variables>(
         if (err.response.status === 400 && isPlainGraphQLResponse(err.response.data)) {
           return {
             error: {
-              code: 'bad_request',
+              type: 'bad_request',
               message: 'Missing or invalid arguments provided.',
               graphqlErrors: err.response.data.errors || [],
             },
@@ -78,7 +78,7 @@ export async function request<Query, Variables>(
         if (err.response.status === 500) {
           return {
             error: {
-              code: 'internal_server_error',
+              type: 'internal_server_error',
               message: 'Internal server error.',
             },
           };
@@ -88,7 +88,7 @@ export async function request<Query, Variables>(
       if (err.request) {
         return {
           error: {
-            code: 'unknown',
+            type: 'unknown',
             message: err.message,
           },
         };
@@ -98,7 +98,7 @@ export async function request<Query, Variables>(
     // Case 3: Something completely unhandled happened
     return {
       error: {
-        code: 'unknown',
+        type: 'unknown',
         message: 'Unknown error',
         err,
       },

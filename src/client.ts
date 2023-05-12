@@ -57,6 +57,9 @@ export class PlainSDKClient {
     });
   }
 
+  /**
+   * Get a customer by id
+   */
   async getCustomerById(args: CustomerByIdQueryVariables): SDKResult<CustomerPartsFragment | null> {
     const res = await request(this.#ctx, {
       query: CustomerByIdDocument,

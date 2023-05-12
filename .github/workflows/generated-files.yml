@@ -1,0 +1,33 @@
+name: Generated files up-to-date
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  generated-files:
+    name: Generated files up-to-date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Install dependencies
+        run: npm install
+      - name: Run codegen
+        run: npm run codegen
+      - name: Check if there are any changes
+        id: changes
+        run: echo "changed=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
+      - name: "Failure: generated file changes detected"
+        if: steps.changes.outputs.changed > 0
+        run: |
+          echo "Changes detected:"
+          git status --porcelain
+          for file in $(git status -s | cut -c4-)
+          do
+            echo "::error file=$file::$file not up to date"
+          done
+          exit 1

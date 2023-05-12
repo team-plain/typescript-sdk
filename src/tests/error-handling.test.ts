@@ -17,7 +17,7 @@ describe('error handling', () => {
     const result = await client.getCustomerById({ customerId: 'c_123' });
 
     expect(result.error).toEqual({
-      code: 'internal_server_error',
+      type: 'internal_server_error',
       message: 'Internal server error.',
     });
 
@@ -32,7 +32,7 @@ describe('error handling', () => {
     const result = await client.getCustomerById({ customerId: 'c_123' });
 
     expect(result.error).toEqual({
-      code: 'forbidden',
+      type: 'forbidden',
       message: expect.stringContaining('Authentication failed'),
     });
 

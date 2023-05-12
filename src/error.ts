@@ -3,33 +3,33 @@ import { MutationErrorPartsFragment } from './graphql/types';
 
 /* 400 */
 type BadRequestError = {
-  code: 'bad_request';
+  type: 'bad_request';
   message: string;
   graphqlErrors: PlainGraphQLError[];
 };
 
 /* 401 */
 type ForbiddenError = {
-  code: 'forbidden';
+  type: 'forbidden';
   message: string;
 };
 
 /* 500 */
 type InternalServerError = {
-  code: 'internal_server_error';
+  type: 'internal_server_error';
   message: string;
 };
 
 /* Unhandled/unexpected errors */
 type UnknownError = {
-  code: 'unknown';
+  type: 'unknown';
   message: string;
   err?: unknown;
 };
 
 /* Handled mutation errors */
 type MutationError = {
-  code: 'mutation_error';
+  type: 'mutation_error';
   message: string;
   errorDetails: MutationErrorPartsFragment;
 };

@@ -26,22 +26,27 @@ if (result.error) {
 You can find out how to make an API key in our documentation: https://docs.plain.com/core-api/authentication
 
 
-## Methods
 
-This SDK is a thin wrapper on on-top of our GraphQL API. As such a lot of these documentation will link to our GraphQL documentation. If your requirements are more complex you should consider using our API directly for which you can find docs at https://docs.plain.com/. 
 
-#### getCustomerById
-Allows you to fetch a customer by their id.
+## Error handling
+Calling methods on the client will not throw an error. Instead calling any client method will return an object with either data or an error.
 
-Arguments:
-  - `variables`
-    - `variables.customerId`: The id of the customer you want to fetch
+**You wil either receive an error or data, never both.**
 
-Returns:
-  - [CustomerPartsFragment](./src/graphql/fragments/customerParts.gql) or `null` if not found.
+Here is an example: 
 
-Required permissions:
-- `customer:read`
+```
 
-### createIssue
-This allows you create an issue for a customer
+function doThing() {
+  const result = await client.getCustomerById({ customerId: 'c_01GHC4A88A9D49Q30AAWR3BN7P' });
+
+  if (result.error) {
+    console.log(result.error);        
+    return;
+  } 
+
+  console.log(result.data.fullName);
+}
+```
+
+Errors are a union which 
