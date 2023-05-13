@@ -7,9 +7,8 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && rollup -c",
-    "codegen": "npm run codegen:graphql && npm run codegen:docs",
-    "codegen:graphql": "graphql-codegen",
-    "codegen:docs": "typedoc --plugin typedoc-plugin-missing-exports src/index.ts",
+    "build:docs": "typedoc --plugin typedoc-plugin-missing-exports src/index.ts",
+    "codegen": "graphql-codegen",
     "typecheck": "tsc --noEmit",
     "lint": "eslint 'src/**/*.ts'",
     "test": "vitest",
