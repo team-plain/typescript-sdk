@@ -41,12 +41,15 @@ function unwrapData<T, X>(
 export class PlainSDKClient {
   #ctx: Context;
 
-  constructor(props: { apiKey: string }) {
+  constructor(options: { apiKey: string }) {
     this.#ctx = {
-      apiKey: props.apiKey,
+      apiKey: options.apiKey,
     };
   }
 
+  /**
+   * If you need to do something custom you can use this method to do
+   */
   async rawRequest(args: {
     query: string;
     variables: Record<string, unknown>;
@@ -58,7 +61,7 @@ export class PlainSDKClient {
   }
 
   /**
-   * Get a customer by id
+   * If the customer is not found this will return null.
    */
   async getCustomerById(args: CustomerByIdQueryVariables): SDKResult<CustomerPartsFragment | null> {
     const res = await request(this.#ctx, {
@@ -71,6 +74,10 @@ export class PlainSDKClient {
     return unwrapData(res, (q) => q.customer);
   }
 
+  /**
+   * Allows you to create or update a customer. If you need to get the customer id
+   * for a customer in Plain, this is typically your first step.
+   */
   async upsertCustomer(input: UpsertCustomerInput): SDKResult<CustomerPartsFragment | null> {
     const res = await request(this.#ctx, {
       query: UpsertCustomerDocument,
@@ -82,6 +89,10 @@ export class PlainSDKClient {
     return unwrapData(res, (q) => nonNullable(q.upsertCustomer.customer));
   }
 
+  /**
+   * Create an issue for a customer. If you want you can override the default issue priority
+   * in your settings by specifying a priority manually here.
+   */
   async createIssue(input: CreateIssueInput): SDKResult<IssuePartsFragment> {
     const res = await request(this.#ctx, {
       query: CreateIssueDocument,
