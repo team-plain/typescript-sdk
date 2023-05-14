@@ -2424,10 +2424,13 @@ export type Query = {
   myLinearInstallationInfo: UserLinearInstallationInfo;
   myLinearIntegration: Maybe<UserLinearIntegration>;
   myLinearIntegrationToken: Maybe<LinearIntegrationToken>;
+  myMachineUser: Maybe<MachineUser>;
+  myPermissions: Permissions;
   mySlackInstallationInfo: UserSlackInstallationInfo;
   mySlackIntegration: Maybe<UserSlackIntegration>;
   myUser: Maybe<User>;
   myUserAccount: Maybe<UserAccount>;
+  myWorkspace: Maybe<Workspace>;
   myWorkspaceInvites: WorkspaceInviteConnection;
   myWorkspaces: WorkspaceConnection;
   permissions: Permissions;
