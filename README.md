@@ -61,7 +61,7 @@ An error can be **one of**
 
 ### MutationError
 [(view source)](./src/error.ts)
-If you only handle one error when using the SDK, handle this one. This is an error returned by a mutation within Plain's API and contains lots of information of what went wrong. It is called 'MutationError' since it every mutation 
+If you only handle one error when using the SDK, handle this one. This is an error returned by a mutation within Plain's API and contains lots of information of what went wrong. It is called `MutationError` since every mutation 
 error has a `errorDetails` field which contains the full error details.
 
 Here is an example error:
