@@ -40,6 +40,15 @@ export async function request<Query, Variables>(
 
     const mutationError = getMutationErrorFromResponse(res.data);
     if (mutationError) {
+      if (mutationError.code === 'forbidden') {
+        return {
+          error: {
+            type: 'forbidden',
+            message: mutationError.message,
+          },
+        };
+      }
+
       return {
         error: {
           type: 'mutation_error',
@@ -56,7 +65,7 @@ export async function request<Query, Variables>(
     if (axios.isAxiosError(err)) {
       // Case 1: We got a response back that was > 299 in status code
       if (err.response) {
-        if (err.response.status === 401) {
+        if (err.response.status === 401 || err.response.status === 403) {
           return {
             error: {
               type: 'forbidden',

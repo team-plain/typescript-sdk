@@ -65,11 +65,11 @@ An error can be **one of** the below:
 
 ### MutationError
 [(view source)](./src/error.ts)
-This is an error contains lots of information of what went wrong. It is called `MutationError` since it maps to the `MutationError` type in our GraphQL schema and is returned as part of every mutation in our API. 
+This is the richest error type. It is called `MutationError` since it maps to the `MutationError` type in our GraphQL schema and is returned as part of every mutation in our API. 
 
 You can view the full details of this error under `errorDetails`.
 
-A mutation error will contain:
+Every mutation error will contain:
 - **message**: an English technical description of the error. This error is usually meant to be read by a developer and not an end user.
 - **type**: one of `VALIDATION`, `FORBIDDEN`, `INTERNAL`. See [MutationErrorType](https://docs.plain.com/core-api/reference/enums/mutation-error-type) for a description of each value.
 - **code**: a unique error code for each type of error returned. This code can be used to provide a localized or user-friendly error message. You can find the list of error codes [in our docs](https://docs.plain.com/error-codes) .
@@ -84,7 +84,7 @@ Equivalent to a 400 response. If you are using typescript it's unlikely you will
 
 ### ForbiddenError
 [(view source)](./src/error.ts)
-Equivalent to a 401 response. Normally means your API key is wrong or has insufficient permissions
+Equivalent to a 401 or 403 response. Normally means your API key doesn't exist or that you are trying to query something that you do not have permissions for. 
 
 ### InternalServerError
 [(view source)](./src/error.ts)
