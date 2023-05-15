@@ -46,6 +46,10 @@ Every SDK method will return an object with either data or an error.
 Here is an example: 
 
 ```ts
+const client = new PlainSDKClient({
+  apiKey: 'plainApiKey__tmRD_xF5qiMH0667LkbLCC1maN2hLsBIbyOgjqEP4w'
+})
+
 function doThing() {
   const result = await client.getCustomerById({ customerId: 'c_01GHC4A88A9D49Q30AAWR3BN7P' });
 
@@ -57,14 +61,15 @@ function doThing() {
 }
 ```
 
-An error can be **one of**
+An error can be **one of** the below:
 
 ### MutationError
 [(view source)](./src/error.ts)
-If you only handle one error when using the SDK, handle this one. This is an error returned by a mutation within Plain's API and contains lots of information of what went wrong. It is called `MutationError` since every mutation 
-error has a `errorDetails` field which contains the full error details.
+This is an error contains lots of information of what went wrong. It is called `MutationError` since it maps to the `MutationError` type in our GraphQL schema and is returned as part of every mutation in our API. 
 
-Here is an example error:
+You can view the full details of this error under `errorDetails`.
+
+A mutation error will contain:
 - **message**: an English technical description of the error. This error is usually meant to be read by a developer and not an end user.
 - **type**: one of `VALIDATION`, `FORBIDDEN`, `INTERNAL`. See [MutationErrorType](https://docs.plain.com/core-api/reference/enums/mutation-error-type) for a description of each value.
 - **code**: a unique error code for each type of error returned. This code can be used to provide a localized or user-friendly error message. You can find the list of error codes [in our docs](https://docs.plain.com/error-codes) .
