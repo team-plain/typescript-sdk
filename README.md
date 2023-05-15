@@ -41,7 +41,7 @@ If you would like to add a query or mutation please open an issue and we can add
 ## Error handling
 Every SDK method will return an object with either data or an error.
 
-**You wil either receive an error or data, never both.**
+**You will either receive an error or data, never both.**
 
 Here is an example: 
 
