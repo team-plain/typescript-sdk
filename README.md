@@ -29,7 +29,7 @@ You can find out how to make an API key in our documentation: https://docs.plain
 
 ## Documentation
 
-Every method in the SDK corresponds to a graphql [query](./src/graphql/queries/) or [mutation](./src/graphql//mutations/).
+Every method in the SDK corresponds to a graphql [query](./src/graphql/queries/) or [mutation](./src/graphql/mutations/).
 
 You can find the generated documentation here:
 
