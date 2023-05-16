@@ -5,7 +5,9 @@ const config: CodegenConfig = {
   schema: 'https://core-api.uk.plain.com/graphql/v1/schema.graphql',
   documents: './src/graphql/*/*.gql',
   config: {
-    avoidOptionals: true,
+    avoidOptionals: {
+      field: true,
+    },
   },
   generates: {
     './src/graphql/types.ts': {

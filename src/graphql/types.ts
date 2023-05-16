@@ -79,9 +79,9 @@ export type AssignCustomerToUserInput = {
    *
    * Defaults to true.
    */
-  changeCustomerStatusToActive: InputMaybe<Scalars['Boolean']>;
+  changeCustomerStatusToActive?: InputMaybe<Scalars['Boolean']>;
   customerId: Scalars['ID'];
-  userId: InputMaybe<Scalars['ID']>;
+  userId?: InputMaybe<Scalars['ID']>;
 };
 
 export type AssignCustomerToUserOutput = {
@@ -256,7 +256,7 @@ export enum ComponentBadgeColor {
 }
 
 export type ComponentBadgeInput = {
-  badgeColor: InputMaybe<ComponentBadgeColor>;
+  badgeColor?: InputMaybe<ComponentBadgeColor>;
   badgeLabel: Scalars['String'];
 };
 
@@ -268,14 +268,14 @@ export type ComponentContainer = {
 export type ComponentContainerContent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
 
 export type ComponentContainerContentInput = {
-  componentBadge: InputMaybe<ComponentBadgeInput>;
-  componentCopyButton: InputMaybe<ComponentCopyButtonInput>;
-  componentDivider: InputMaybe<ComponentDividerInput>;
-  componentLinkButton: InputMaybe<ComponentLinkButtonInput>;
-  componentPlainText: InputMaybe<ComponentPlainTextInput>;
-  componentRow: InputMaybe<ComponentRowInput>;
-  componentSpacer: InputMaybe<ComponentSpacerInput>;
-  componentText: InputMaybe<ComponentTextInput>;
+  componentBadge?: InputMaybe<ComponentBadgeInput>;
+  componentCopyButton?: InputMaybe<ComponentCopyButtonInput>;
+  componentDivider?: InputMaybe<ComponentDividerInput>;
+  componentLinkButton?: InputMaybe<ComponentLinkButtonInput>;
+  componentPlainText?: InputMaybe<ComponentPlainTextInput>;
+  componentRow?: InputMaybe<ComponentRowInput>;
+  componentSpacer?: InputMaybe<ComponentSpacerInput>;
+  componentText?: InputMaybe<ComponentTextInput>;
 };
 
 export type ComponentContainerInput = {
@@ -289,7 +289,7 @@ export type ComponentCopyButton = {
 };
 
 export type ComponentCopyButtonInput = {
-  copyButtonTooltipLabel: InputMaybe<Scalars['String']>;
+  copyButtonTooltipLabel?: InputMaybe<Scalars['String']>;
   copyButtonValue: Scalars['String'];
 };
 
@@ -301,9 +301,9 @@ export type ComponentDivider = {
 };
 
 export type ComponentDividerInput = {
-  dividerSpacingSize: InputMaybe<ComponentDividerSpacingSize>;
+  dividerSpacingSize?: InputMaybe<ComponentDividerSpacingSize>;
   /** @deprecated use dividerSpacingSize instead */
-  spacingSize: InputMaybe<ComponentDividerSpacingSize>;
+  spacingSize?: InputMaybe<ComponentDividerSpacingSize>;
 };
 
 export enum ComponentDividerSpacingSize {
@@ -315,15 +315,15 @@ export enum ComponentDividerSpacingSize {
 }
 
 export type ComponentInput = {
-  componentBadge: InputMaybe<ComponentBadgeInput>;
-  componentContainer: InputMaybe<ComponentContainerInput>;
-  componentCopyButton: InputMaybe<ComponentCopyButtonInput>;
-  componentDivider: InputMaybe<ComponentDividerInput>;
-  componentLinkButton: InputMaybe<ComponentLinkButtonInput>;
-  componentPlainText: InputMaybe<ComponentPlainTextInput>;
-  componentRow: InputMaybe<ComponentRowInput>;
-  componentSpacer: InputMaybe<ComponentSpacerInput>;
-  componentText: InputMaybe<ComponentTextInput>;
+  componentBadge?: InputMaybe<ComponentBadgeInput>;
+  componentContainer?: InputMaybe<ComponentContainerInput>;
+  componentCopyButton?: InputMaybe<ComponentCopyButtonInput>;
+  componentDivider?: InputMaybe<ComponentDividerInput>;
+  componentLinkButton?: InputMaybe<ComponentLinkButtonInput>;
+  componentPlainText?: InputMaybe<ComponentPlainTextInput>;
+  componentRow?: InputMaybe<ComponentRowInput>;
+  componentSpacer?: InputMaybe<ComponentSpacerInput>;
+  componentText?: InputMaybe<ComponentTextInput>;
 };
 
 export type ComponentLinkButton = {
@@ -338,13 +338,13 @@ export type ComponentLinkButton = {
 
 export type ComponentLinkButtonInput = {
   /** @deprecated use linkButtonLabel instead */
-  label: InputMaybe<Scalars['String']>;
+  label?: InputMaybe<Scalars['String']>;
   /** Required input, will be made required after deprecated fields are removed. */
-  linkButtonLabel: InputMaybe<Scalars['String']>;
+  linkButtonLabel?: InputMaybe<Scalars['String']>;
   /** Required input, will be made required after deprecated fields are removed. */
-  linkButtonUrl: InputMaybe<Scalars['String']>;
+  linkButtonUrl?: InputMaybe<Scalars['String']>;
   /** @deprecated use linkButtonUrl instead */
-  url: InputMaybe<Scalars['String']>;
+  url?: InputMaybe<Scalars['String']>;
 };
 
 export type ComponentPlainText = {
@@ -364,8 +364,8 @@ export enum ComponentPlainTextColor {
 
 export type ComponentPlainTextInput = {
   plainText: Scalars['String'];
-  plainTextColor: InputMaybe<ComponentPlainTextColor>;
-  plainTextSize: InputMaybe<ComponentPlainTextSize>;
+  plainTextColor?: InputMaybe<ComponentPlainTextColor>;
+  plainTextSize?: InputMaybe<ComponentPlainTextSize>;
 };
 
 export enum ComponentPlainTextSize {
@@ -383,13 +383,13 @@ export type ComponentRow = {
 export type ComponentRowContent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentSpacer | ComponentText;
 
 export type ComponentRowContentInput = {
-  componentBadge: InputMaybe<ComponentBadgeInput>;
-  componentCopyButton: InputMaybe<ComponentCopyButtonInput>;
-  componentDivider: InputMaybe<ComponentDividerInput>;
-  componentLinkButton: InputMaybe<ComponentLinkButtonInput>;
-  componentPlainText: InputMaybe<ComponentPlainTextInput>;
-  componentSpacer: InputMaybe<ComponentSpacerInput>;
-  componentText: InputMaybe<ComponentTextInput>;
+  componentBadge?: InputMaybe<ComponentBadgeInput>;
+  componentCopyButton?: InputMaybe<ComponentCopyButtonInput>;
+  componentDivider?: InputMaybe<ComponentDividerInput>;
+  componentLinkButton?: InputMaybe<ComponentLinkButtonInput>;
+  componentPlainText?: InputMaybe<ComponentPlainTextInput>;
+  componentSpacer?: InputMaybe<ComponentSpacerInput>;
+  componentText?: InputMaybe<ComponentTextInput>;
 };
 
 export type ComponentRowInput = {
@@ -406,9 +406,9 @@ export type ComponentSpacer = {
 
 export type ComponentSpacerInput = {
   /** @deprecated user spacerSize instead */
-  size: InputMaybe<ComponentSpacerSize>;
+  size?: InputMaybe<ComponentSpacerSize>;
   /** Required input, will be made required after deprecated fields are removed. */
-  spacerSize: InputMaybe<ComponentSpacerSize>;
+  spacerSize?: InputMaybe<ComponentSpacerSize>;
 };
 
 export enum ComponentSpacerSize {
@@ -440,12 +440,12 @@ export enum ComponentTextColor {
 
 export type ComponentTextInput = {
   /** @deprecated use textColor instead */
-  color: InputMaybe<ComponentTextColor>;
+  color?: InputMaybe<ComponentTextColor>;
   /** @deprecated use textSize instead */
-  size: InputMaybe<ComponentTextSize>;
+  size?: InputMaybe<ComponentTextSize>;
   text: Scalars['String'];
-  textColor: InputMaybe<ComponentTextColor>;
-  textSize: InputMaybe<ComponentTextSize>;
+  textColor?: InputMaybe<ComponentTextColor>;
+  textSize?: InputMaybe<ComponentTextSize>;
 };
 
 export enum ComponentTextSize {
@@ -455,7 +455,7 @@ export enum ComponentTextSize {
 }
 
 export type CreateApiKeyInput = {
-  description: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
   machineUserId: Scalars['ID'];
   permissions: Array<Scalars['String']>;
 };
@@ -535,12 +535,12 @@ export type CreateIssueInput = {
    *
    * Valid values are 0, 1, 2 and 3.
    */
-  priorityValue: InputMaybe<Scalars['Int']>;
+  priorityValue?: InputMaybe<Scalars['Int']>;
 };
 
 export type CreateIssueLinkInput = {
   issueId: Scalars['ID'];
-  linearIssue: InputMaybe<LinearIssueIssueLinkInput>;
+  linearIssue?: InputMaybe<LinearIssueIssueLinkInput>;
 };
 
 export type CreateIssueLinkOutput = {
@@ -561,13 +561,13 @@ export type CreateIssueTypeInput = {
    *
    * Valid values are 0, 1, 2 and 3.
    */
-  defaultIssuePriorityValue: InputMaybe<Scalars['Int']>;
+  defaultIssuePriorityValue?: InputMaybe<Scalars['Int']>;
   /**
    * The icon to use for this issue type. The maximum length is 50 characters.
    *
    * Only lowercase alphanumeric characters, '-' and '_' are allowed.
    */
-  icon: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
   publicName: Scalars['String'];
 };
 
@@ -578,7 +578,7 @@ export type CreateIssueTypeOutput = {
 };
 
 export type CreateMachineUserInput = {
-  description: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
   fullName: Scalars['String'];
   publicName: Scalars['String'];
 };
@@ -784,10 +784,10 @@ export type Customer = {
  * 2. `email`
  */
 export type CustomerCustomerGroupMembershipsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -798,12 +798,12 @@ export type CustomerCustomerGroupMembershipsArgs = {
  * 2. `email`
  */
 export type CustomerIssuesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  filters: InputMaybe<CustomerIssuesFilter>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
-  sortBy: InputMaybe<IssuesSort>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<CustomerIssuesFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<IssuesSort>;
 };
 
 export type CustomerActor = {
@@ -1022,7 +1022,7 @@ export type CustomerChange = {
 };
 
 export type CustomerChangesFilter = {
-  assignedToUser: InputMaybe<Array<Scalars['ID']>>;
+  assignedToUser?: InputMaybe<Array<Scalars['ID']>>;
 };
 
 export type CustomerConnection = {
@@ -1069,8 +1069,8 @@ export type CustomerGroupEdge = {
 };
 
 export type CustomerGroupIdentifier = {
-  customerGroupId: InputMaybe<Scalars['ID']>;
-  customerGroupKey: InputMaybe<Scalars['String']>;
+  customerGroupId?: InputMaybe<Scalars['ID']>;
+  customerGroupKey?: InputMaybe<Scalars['String']>;
 };
 
 export type CustomerGroupMembership = {
@@ -1096,7 +1096,7 @@ export type CustomerGroupMembershipEdge = {
 };
 
 export type CustomerIssuesFilter = {
-  statuses: InputMaybe<Array<IssueStatus>>;
+  statuses?: InputMaybe<Array<IssueStatus>>;
 };
 
 /**
@@ -1105,13 +1105,13 @@ export type CustomerIssuesFilter = {
  */
 export type CustomerSearchCondition = {
   /** Search expression on the customer's email address. */
-  email: InputMaybe<StringSearchExpression>;
+  email?: InputMaybe<StringSearchExpression>;
   /** Search expression on the customer's external id. */
-  externalId: InputMaybe<StringSearchExpression>;
+  externalId?: InputMaybe<StringSearchExpression>;
   /** Search expression on the customer's full name. */
-  fullName: InputMaybe<StringSearchExpression>;
+  fullName?: InputMaybe<StringSearchExpression>;
   /** Search expression on the customer's short name. */
-  shortName: InputMaybe<StringSearchExpression>;
+  shortName?: InputMaybe<StringSearchExpression>;
 };
 
 export type CustomerSearchConnection = {
@@ -1143,45 +1143,45 @@ export type CustomerStatusTransitionedEntry = {
 };
 
 export type CustomersFilter = {
-  assignedToUser: InputMaybe<Array<Scalars['ID']>>;
+  assignedToUser?: InputMaybe<Array<Scalars['ID']>>;
   /**
    * Filters customers to those with at least one of the given customer group IDs.
    * Customers with no groups will not be included.
    * Can be combined with other group filters.
    */
-  customerGroupIds: InputMaybe<Array<Scalars['ID']>>;
+  customerGroupIds?: InputMaybe<Array<Scalars['ID']>>;
   /**
    * Filters customers to those with at least one of the given customer group keys.
    * Customers with no groups will not be included.
    * Can be combined with other group filters.
    */
-  customerGroupKeys: InputMaybe<Array<Scalars['String']>>;
-  isAssigned: InputMaybe<Scalars['Boolean']>;
+  customerGroupKeys?: InputMaybe<Array<Scalars['String']>>;
+  isAssigned?: InputMaybe<Scalars['Boolean']>;
   /**
    * When true, filters customers to those with at least one open issue. If false, only customers
    * who have not been marked as spam will be included.
    */
-  isMarkedAsSpam: InputMaybe<Scalars['Boolean']>;
+  isMarkedAsSpam?: InputMaybe<Scalars['Boolean']>;
   /**
    * Filters customers to those with at least one issue of the given issue priority values.
    * Customers with no issues will not be included.
    * Can be combined with other issue filters.
    */
-  issuePriorityValues: InputMaybe<Array<Scalars['Int']>>;
+  issuePriorityValues?: InputMaybe<Array<Scalars['Int']>>;
   /**
    * Filters customers to those with at least one issue of the given issue statuses (OPEN or RESOLVED).
    * Customers with no issues will not be included.
    * Can be combined with other issue filters.
    */
-  issueStatuses: InputMaybe<Array<IssueStatus>>;
+  issueStatuses?: InputMaybe<Array<IssueStatus>>;
   /**
    * Filters customers to those with at least one issue of the given issue type IDs.
    * Customers with no issues will not be included.
    * Can be combined with other issue filters.
    */
-  issueTypeIds: InputMaybe<Array<Scalars['ID']>>;
-  lastCommunicationChannels: InputMaybe<Array<CommunicationChannelInput>>;
-  statuses: InputMaybe<Array<CustomerStatus>>;
+  issueTypeIds?: InputMaybe<Array<Scalars['ID']>>;
+  lastCommunicationChannels?: InputMaybe<Array<CommunicationChannelInput>>;
+  statuses?: InputMaybe<Array<CustomerStatus>>;
 };
 
 /**
@@ -1190,7 +1190,7 @@ export type CustomersFilter = {
  */
 export type CustomersSearchQuery = {
   /** An array of search conditions that will be combined using a 'logical OR' to search for customers. */
-  or: InputMaybe<Array<CustomerSearchCondition>>;
+  or?: InputMaybe<Array<CustomerSearchCondition>>;
 };
 
 export type CustomersSort = {
@@ -1489,7 +1489,7 @@ export type EmailParticipant = {
 
 export type EmailParticipantInput = {
   email: Scalars['String'];
-  name: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 /** A union of all possible entries that can appear in a timeline. */
@@ -1540,10 +1540,10 @@ export type Issue = {
 
 
 export type IssueLinksArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type IssueChange = {
@@ -1691,15 +1691,15 @@ export type IssueTypeEdge = {
 };
 
 export type IssueTypeFilter = {
-  isArchived: InputMaybe<Scalars['Boolean']>;
+  isArchived?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type IssuesFilter = {
-  customerId: InputMaybe<Scalars['ID']>;
-  issueTypeIds: InputMaybe<Array<Scalars['ID']>>;
+  customerId?: InputMaybe<Scalars['ID']>;
+  issueTypeIds?: InputMaybe<Array<Scalars['ID']>>;
   /** Filters issues to those with the given issue priority values. */
-  priorityValues: InputMaybe<Array<Scalars['Int']>>;
-  statuses: InputMaybe<Array<IssueStatus>>;
+  priorityValues?: InputMaybe<Array<Scalars['Int']>>;
+  statuses?: InputMaybe<Array<IssueStatus>>;
 };
 
 export type IssuesSort = {
@@ -1770,10 +1770,10 @@ export type MachineUserApiKeyArgs = {
 
 
 export type MachineUserApiKeysArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type MachineUserActor = {
@@ -2370,7 +2370,7 @@ export type NoteEntry = {
 };
 
 export type OptionalStringInput = {
-  value: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
 };
 
 export type PageInfo = {
@@ -2509,20 +2509,20 @@ export type QueryCustomerGroupArgs = {
 
 
 export type QueryCustomerGroupsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryCustomersArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  filters: InputMaybe<CustomersFilter>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
-  sortBy: InputMaybe<CustomersSort>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<CustomersFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<CustomersSort>;
 };
 
 
@@ -2537,21 +2537,21 @@ export type QueryIssueTypeArgs = {
 
 
 export type QueryIssueTypesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  filters: InputMaybe<IssueTypeFilter>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<IssueTypeFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryIssuesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  filters: InputMaybe<IssuesFilter>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
-  sortBy: InputMaybe<IssuesSort>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<IssuesFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<IssuesSort>;
 };
 
 
@@ -2561,10 +2561,10 @@ export type QueryMachineUserArgs = {
 
 
 export type QueryMachineUsersArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2584,34 +2584,34 @@ export type QueryMySlackInstallationInfoArgs = {
 
 
 export type QueryMyWorkspaceInvitesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryMyWorkspacesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryRolesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QuerySearchCustomersArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
   searchQuery: CustomersSearchQuery;
 };
 
@@ -2628,19 +2628,19 @@ export type QuerySnippetArgs = {
 
 
 export type QuerySnippetsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryTimelineEntriesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
   customerId: Scalars['ID'];
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2661,11 +2661,11 @@ export type QueryUserByEmailArgs = {
 
 
 export type QueryUsersArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  filters: InputMaybe<UsersFilter>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<UsersFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2675,10 +2675,10 @@ export type QueryWebhookTargetArgs = {
 
 
 export type QueryWebhookTargetsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2693,19 +2693,19 @@ export type QueryWorkspaceAppArgs = {
 
 
 export type QueryWorkspaceAppPublicKeysArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
   workspaceAppId: Scalars['ID'];
 };
 
 
 export type QueryWorkspaceAppsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2715,18 +2715,18 @@ export type QueryWorkspaceDiscordIntegrationArgs = {
 
 
 export type QueryWorkspaceDiscordIntegrationsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryWorkspaceInvitesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2741,10 +2741,10 @@ export type QueryWorkspaceSlackIntegrationArgs = {
 
 
 export type QueryWorkspaceSlackIntegrationsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type ReloadCustomerCardInstanceInput = {
@@ -2792,10 +2792,10 @@ export type ReorderCustomerCardConfigsOutput = {
 };
 
 export type ReplyToEmailInput = {
-  additionalRecipients: InputMaybe<Array<EmailParticipantInput>>;
-  attachmentIds: InputMaybe<Array<Scalars['ID']>>;
+  additionalRecipients?: InputMaybe<Array<EmailParticipantInput>>;
+  attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
   customerId: Scalars['ID'];
-  hiddenRecipients: InputMaybe<Array<EmailParticipantInput>>;
+  hiddenRecipients?: InputMaybe<Array<EmailParticipantInput>>;
   inReplyToEmailId: Scalars['ID'];
   textContent: Scalars['String'];
 };
@@ -2838,9 +2838,9 @@ export type RoleEdge = {
 };
 
 export type SendChatInput = {
-  attachmentIds: InputMaybe<Array<Scalars['ID']>>;
+  attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
   customerId: Scalars['ID'];
-  text: InputMaybe<Scalars['String']>;
+  text?: InputMaybe<Scalars['String']>;
 };
 
 export type SendChatOutput = {
@@ -2850,10 +2850,10 @@ export type SendChatOutput = {
 };
 
 export type SendNewEmailInput = {
-  additionalRecipients: InputMaybe<Array<EmailParticipantInput>>;
-  attachmentIds: InputMaybe<Array<Scalars['ID']>>;
+  additionalRecipients?: InputMaybe<Array<EmailParticipantInput>>;
+  attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
   customerId: Scalars['ID'];
-  hiddenRecipients: InputMaybe<Array<EmailParticipantInput>>;
+  hiddenRecipients?: InputMaybe<Array<EmailParticipantInput>>;
   subject: Scalars['String'];
   textContent: Scalars['String'];
 };
@@ -2876,7 +2876,7 @@ export type SettingScope = {
 /** An input to specify the scope for a setting. */
 export type SettingScopeInput = {
   /** An optional ID input. Depends on the type of scope if this is required. */
-  id: InputMaybe<Scalars['ID']>;
+  id?: InputMaybe<Scalars['ID']>;
   /** Determines the type of the scope. */
   scopeType: SettingScopeType;
 };
@@ -2921,7 +2921,7 @@ export enum SettingScopeType {
  */
 export type SettingValueInput = {
   /** If the setting is a boolean value then this field should be set. */
-  boolean: InputMaybe<Scalars['Boolean']>;
+  boolean?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type Snippet = {
@@ -2965,7 +2965,7 @@ export type StringInput = {
  */
 export type StringSearchExpression = {
   /** Case-insensitive match values containing the provided string. */
-  caseInsensitiveContains: InputMaybe<Scalars['String']>;
+  caseInsensitiveContains?: InputMaybe<Scalars['String']>;
 };
 
 export type Subscription = {
@@ -2984,7 +2984,7 @@ export type SubscriptionCustomerCardInstanceChangesArgs = {
 
 
 export type SubscriptionCustomerChangesArgs = {
-  filters: InputMaybe<CustomerChangesFilter>;
+  filters?: InputMaybe<CustomerChangesFilter>;
 };
 
 
@@ -3100,21 +3100,21 @@ export type UnmarkCustomerAsSpamOutput = {
 /** For constraints and details on the fields see the `CustomerCardConfig` type. */
 export type UpdateCustomerCardConfigInput = {
   /** If provided, will replace the existing API headers. Requires the `customerCardConfigApiDetails:edit` permission. */
-  apiHeaders: InputMaybe<Array<CustomerCardConfigApiHeaderInput>>;
+  apiHeaders?: InputMaybe<Array<CustomerCardConfigApiHeaderInput>>;
   /** If provided, will update the API URL. Requires the `customerCardConfigApiDetails:edit` permission. */
-  apiUrl: InputMaybe<StringInput>;
+  apiUrl?: InputMaybe<StringInput>;
   /** The customer card config to update. */
   customerCardConfigId: Scalars['ID'];
   /** If provided, will update the default time to live seconds. */
-  defaultTimeToLiveSeconds: InputMaybe<IntInput>;
+  defaultTimeToLiveSeconds?: InputMaybe<IntInput>;
   /** If provided, will update the enabled flag. */
-  isEnabled: InputMaybe<BooleanInput>;
+  isEnabled?: InputMaybe<BooleanInput>;
   /** If provided, will update the key. Keys must be unique in a workspace. */
-  key: InputMaybe<StringInput>;
+  key?: InputMaybe<StringInput>;
   /** If provided, will update the order. */
-  order: InputMaybe<IntInput>;
+  order?: InputMaybe<IntInput>;
   /** If provided, will update the title. */
-  title: InputMaybe<StringInput>;
+  title?: InputMaybe<StringInput>;
 };
 
 export type UpdateCustomerCardConfigOutput = {
@@ -3125,10 +3125,10 @@ export type UpdateCustomerCardConfigOutput = {
 };
 
 export type UpdateCustomerGroupInput = {
-  color: InputMaybe<StringInput>;
+  color?: InputMaybe<StringInput>;
   customerGroupId: Scalars['ID'];
-  key: InputMaybe<StringInput>;
-  name: InputMaybe<StringInput>;
+  key?: InputMaybe<StringInput>;
+  name?: InputMaybe<StringInput>;
 };
 
 export type UpdateCustomerGroupOutput = {
@@ -3143,15 +3143,15 @@ export type UpdateIssueTypeInput = {
    *
    * Valid values are 0, 1, 2 and 3.
    */
-  defaultIssuePriorityValue: InputMaybe<IntInput>;
+  defaultIssuePriorityValue?: InputMaybe<IntInput>;
   /**
    * The icon to use for this issue type. The maximum length is 50 characters.
    *
    * Only lowercase alphanumeric characters, '-' and '_' are allowed.
    */
-  icon: InputMaybe<StringInput>;
+  icon?: InputMaybe<StringInput>;
   issueTypeId: Scalars['ID'];
-  publicName: InputMaybe<StringInput>;
+  publicName?: InputMaybe<StringInput>;
 };
 
 export type UpdateIssueTypeOutput = {
@@ -3161,10 +3161,10 @@ export type UpdateIssueTypeOutput = {
 };
 
 export type UpdateMachineUserInput = {
-  description: InputMaybe<StringInput>;
-  fullName: InputMaybe<StringInput>;
+  description?: InputMaybe<StringInput>;
+  fullName?: InputMaybe<StringInput>;
   machineUserId: Scalars['ID'];
-  publicName: InputMaybe<StringInput>;
+  publicName?: InputMaybe<StringInput>;
 };
 
 export type UpdateMachineUserOutput = {
@@ -3198,9 +3198,9 @@ export type UpdateSettingOutput = {
 };
 
 export type UpdateSnippetInput = {
-  name: InputMaybe<StringInput>;
+  name?: InputMaybe<StringInput>;
   snippetId: Scalars['ID'];
-  text: InputMaybe<StringInput>;
+  text?: InputMaybe<StringInput>;
 };
 
 export type UpdateSnippetOutput = {
@@ -3210,10 +3210,10 @@ export type UpdateSnippetOutput = {
 };
 
 export type UpdateWebhookTargetInput = {
-  description: InputMaybe<StringInput>;
-  eventSubscriptions: InputMaybe<Array<WebhookTargetEventSubscriptionInput>>;
-  isEnabled: InputMaybe<BooleanInput>;
-  url: InputMaybe<StringInput>;
+  description?: InputMaybe<StringInput>;
+  eventSubscriptions?: InputMaybe<Array<WebhookTargetEventSubscriptionInput>>;
+  isEnabled?: InputMaybe<BooleanInput>;
+  url?: InputMaybe<StringInput>;
   webhookTargetId: Scalars['ID'];
 };
 
@@ -3244,8 +3244,8 @@ export type UpdateWorkspaceEmailSettingsOutput = {
 };
 
 export type UpdateWorkspaceInput = {
-  name: InputMaybe<StringInput>;
-  publicName: InputMaybe<StringInput>;
+  name?: InputMaybe<StringInput>;
+  publicName?: InputMaybe<StringInput>;
 };
 
 export type UpdateWorkspaceOutput = {
@@ -3261,28 +3261,28 @@ export type UploadFormData = {
 };
 
 export type UpsertCustomTimelineEntryInput = {
-  attachmentIds: InputMaybe<Array<Scalars['ID']>>;
+  attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
   /**
    * When true, this will change the customer's status to "Active". This is useful if you are using custom timeline
    * entries for contact form submissions or other events which require some attention.
    *
    * Defaults to false.
    */
-  changeCustomerStatusToActive: InputMaybe<Scalars['Boolean']>;
+  changeCustomerStatusToActive?: InputMaybe<Scalars['Boolean']>;
   components: Array<ComponentInput>;
   customerId: Scalars['ID'];
-  expiresAt: InputMaybe<Scalars['String']>;
-  externalId: InputMaybe<Scalars['ID']>;
+  expiresAt?: InputMaybe<Scalars['String']>;
+  externalId?: InputMaybe<Scalars['ID']>;
   /**
    * When true, this will send a notification for the customer when the custom timeline entry is created. It will only
    * send the notification if the user has enabled the matching notification setting.
    *
    * Defaults to false.
    */
-  sendCustomTimelineEntryCreatedNotification: InputMaybe<Scalars['Boolean']>;
-  timestamp: InputMaybe<Scalars['String']>;
+  sendCustomTimelineEntryCreatedNotification?: InputMaybe<Scalars['Boolean']>;
+  timestamp?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
-  type: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
 };
 
 export type UpsertCustomTimelineEntryOutput = {
@@ -3293,9 +3293,9 @@ export type UpsertCustomTimelineEntryOutput = {
 };
 
 export type UpsertCustomerIdentifierInput = {
-  customerId: InputMaybe<Scalars['ID']>;
-  emailAddress: InputMaybe<Scalars['String']>;
-  externalId: InputMaybe<Scalars['ID']>;
+  customerId?: InputMaybe<Scalars['ID']>;
+  emailAddress?: InputMaybe<Scalars['String']>;
+  externalId?: InputMaybe<Scalars['ID']>;
 };
 
 export type UpsertCustomerInput = {
@@ -3305,18 +3305,18 @@ export type UpsertCustomerInput = {
 };
 
 export type UpsertCustomerOnCreateInput = {
-  customerGroupIdentifiers: InputMaybe<Array<CustomerGroupIdentifier>>;
+  customerGroupIdentifiers?: InputMaybe<Array<CustomerGroupIdentifier>>;
   email: EmailAddressInput;
-  externalId: InputMaybe<Scalars['ID']>;
+  externalId?: InputMaybe<Scalars['ID']>;
   fullName: Scalars['String'];
-  shortName: InputMaybe<Scalars['String']>;
+  shortName?: InputMaybe<Scalars['String']>;
 };
 
 export type UpsertCustomerOnUpdateInput = {
-  email: InputMaybe<EmailAddressInput>;
-  externalId: InputMaybe<OptionalStringInput>;
-  fullName: InputMaybe<StringInput>;
-  shortName: InputMaybe<OptionalStringInput>;
+  email?: InputMaybe<EmailAddressInput>;
+  externalId?: InputMaybe<OptionalStringInput>;
+  fullName?: InputMaybe<StringInput>;
+  shortName?: InputMaybe<OptionalStringInput>;
 };
 
 export type UpsertCustomerOutput = {
@@ -3434,7 +3434,7 @@ export enum UserStatus {
 }
 
 export type UsersFilter = {
-  isAssignableToCustomer: InputMaybe<Scalars['Boolean']>;
+  isAssignableToCustomer?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type VerifyWorkspaceEmailDnsSettingsOutput = {
