@@ -1,0 +1,6 @@
+fragment CustomerGroupParts on CustomerGroup {
+  id
+  name
+  key
+  color
+}

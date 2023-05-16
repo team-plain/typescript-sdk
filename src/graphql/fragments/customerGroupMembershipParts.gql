@@ -1,0 +1,18 @@
+fragment CustomerGroupMembershipParts on CustomerGroupMembership {
+  customerId
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...InternalActorParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+  updatedBy {
+    ...InternalActorParts
+  }
+  customerGroup {
+    ...CustomerGroupParts
+  }
+}
