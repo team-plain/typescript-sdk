@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import nock from 'nock';
-import { PlainSDKClient } from '..';
+import { PlainClient } from '..';
 import { print } from 'graphql';
 import {
   CreateIssueDocument,
@@ -59,7 +59,7 @@ describe('mutation test - create an issue', () => {
       .matchHeader('Authorization', `Bearer abc`)
       .reply(200, response);
 
-    const client = new PlainSDKClient({ apiKey: 'abc' });
+    const client = new PlainClient({ apiKey: 'abc' });
     const result = await client.createIssue({
       issueTypeId: issueTypeId,
       customerId: customerId,
@@ -114,7 +114,7 @@ describe('mutation test - create an issue', () => {
       .matchHeader('Authorization', `Bearer 123`)
       .reply(200, response);
 
-    const client = new PlainSDKClient({ apiKey: '123' });
+    const client = new PlainClient({ apiKey: '123' });
     const result = await client.createIssue({ customerId: '', issueTypeId: '', priorityValue: 1 });
 
     const err: PlainSDKError = {

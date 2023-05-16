@@ -3,10 +3,10 @@
  * since breaking the API would result in this file not typechecking.
  */
 
-import { PlainSDKClient } from '../client';
+import { PlainClient } from '../client';
 
 export async function upsertCustomerExample() {
-  const client = new PlainSDKClient({ apiKey: '' });
+  const client = new PlainClient({ apiKey: '' });
 
   const res = await client.upsertCustomer({
     identifier: {

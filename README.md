@@ -9,9 +9,9 @@ If you run into any issues please open an issue or get in touch with us at help@
 ## Basic example
 
 ```ts
-import { PlainSDKClient } from "@team-plain/typescript-sdk"
+import { PlainClient } from "@team-plain/typescript-sdk"
 
-const client = new PlainSDKClient({
+const client = new PlainClient({
   apiKey: 'plainApiKey__tmRD_xF5qiMH0657LkbLCC1maN4hLsBIbyOgjqEP4w'
 })
 
@@ -33,7 +33,7 @@ Every method in the SDK corresponds to a graphql [query](./src/graphql/queries/)
 
 You can find the generated documentation here:
 
-**[Documentation](https://plain-typescript-sdk-docs.vercel.app/classes/PlainSDKClient.html)**
+**[Documentation](https://plain-typescript-sdk-docs.vercel.app/classes/PlainClient.html)**
 
 If you would like to add a query or mutation please open an issue and we can add it for you.
 
@@ -46,7 +46,7 @@ Every SDK method will return an object with either data or an error.
 Here is an example: 
 
 ```ts
-const client = new PlainSDKClient({
+const client = new PlainClient({
   apiKey: 'plainApiKey__tmRD_xF5qiMH0667LkbLCC1maN2hLsBIbyOgjqEP4w'
 })
 

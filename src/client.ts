@@ -44,7 +44,7 @@ function unwrapData<T, X>(
   }
 }
 
-export class PlainSDKClient {
+export class PlainClient {
   #ctx: Context;
 
   constructor(options: { apiKey: string }) {

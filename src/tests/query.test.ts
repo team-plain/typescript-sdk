@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import nock from 'nock';
-import { PlainSDKClient } from '..';
+import { PlainClient } from '..';
 import { print } from 'graphql';
 import { CustomerByIdDocument } from '../graphql/types';
 import { PlainSDKError } from '../error';
@@ -44,7 +44,7 @@ describe('query test - customer by id', () => {
       .matchHeader('Authorization', `Bearer abc`)
       .reply(200, response);
 
-    const client = new PlainSDKClient({ apiKey: 'abc' });
+    const client = new PlainClient({ apiKey: 'abc' });
     const result = await client.getCustomerById({ customerId: customerId });
 
     expect(result.error).toBeUndefined();
@@ -67,7 +67,7 @@ describe('query test - customer by id', () => {
         },
       });
 
-    const client = new PlainSDKClient({ apiKey: '123' });
+    const client = new PlainClient({ apiKey: '123' });
     const result = await client.getCustomerById({ customerId: customerId });
 
     expect(result.error).toBeUndefined();
@@ -95,7 +95,7 @@ describe('query test - customer by id', () => {
         errors: graphqlErrors,
       });
 
-    const client = new PlainSDKClient({ apiKey: '456' });
+    const client = new PlainClient({ apiKey: '456' });
 
     // We're testing a broken input here for users who don't use typescript
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
