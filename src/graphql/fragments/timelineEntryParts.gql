@@ -7,17 +7,19 @@ fragment TimelineEntryParts on TimelineEntry {
     actor {
         ...ActorParts
     }
-
-    # Why is 'entry' not queried?
-    # --
-    # We could be querying for the `entry` we just created here
-    # but in practice this is of little value and it's a huge
-    # union of all possible entries etc. This means that we'd have to
-    # carefully keep it in sync with every newly created timeline entry.
-    # 
-    # If we were to add an entry and forget to add it here the returned
-    # response would be confusing since it would not include the created
-    # content.
-    # 
-    # For this reason, for now, we are omiting entry from this query.
+    entry {
+        __typename
+        # Why are we not querying for the full entry?
+        # --
+        # We could be returning the full entry we just created here
+        # but in practice this is of little value and it's a huge
+        # union of all possible entries etc. This means that we'd have to
+        # carefully keep it in sync with every newly created timeline entry.
+        # 
+        # If we were to add an entry and forget to add it here the returned
+        # response would be confusing since it would not include the created
+        # content.
+        # 
+        # For this reason, for now, we are omiting entry from this query.
+    }
 }
