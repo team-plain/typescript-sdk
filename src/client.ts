@@ -77,7 +77,7 @@ export class PlainSDKClient {
       variables,
     });
 
-    return unwrapData(res, (q) => q.customer || null);
+    return unwrapData(res, (q) => q.customer);
   }
 
   /**
