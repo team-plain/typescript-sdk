@@ -1,0 +1,11 @@
+mutation upsertCustomTimelineEntry($input: UpsertCustomTimelineEntryInput!) {
+    upsertCustomTimelineEntry(input: $input) {
+        result
+        timelineEntry {
+            ...TimelineEntryParts
+        }
+        error {
+            ...MutationErrorParts
+        }
+    }
+}

@@ -1,0 +1,7 @@
+mutation removeCustomerFromCustomerGroups($input:RemoveCustomerFromCustomerGroupsInput!) {
+  removeCustomerFromCustomerGroups(input:$input) {
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

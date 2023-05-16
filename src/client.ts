@@ -1,14 +1,25 @@
 import { Context } from './context';
 import { PlainSDKError } from './error';
 import {
+  CustomerGroupMembershipPartsFragment,
+  RemoveCustomerFromCustomerGroupsDocument,
+  RemoveCustomerFromCustomerGroupsInput,
+} from './graphql/types';
+import { AddCustomerToCustomerGroupsDocument } from './graphql/types';
+import { AddCustomerToCustomerGroupsInput } from './graphql/types';
+import {
   CreateIssueDocument,
   CreateIssueInput,
   CustomerByIdDocument,
   CustomerByIdQueryVariables,
   CustomerPartsFragment,
   IssuePartsFragment,
+  TimelineEntryPartsFragment,
+  UpsertCustomTimelineEntryDocument,
+  UpsertCustomTimelineEntryInput,
   UpsertCustomerDocument,
   UpsertCustomerInput,
+  UpsertResult,
 } from './graphql/types';
 import { request } from './request';
 import { Result } from './result';
@@ -102,5 +113,62 @@ export class PlainSDKClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.createIssue.issue));
+  }
+
+  /**
+   * Adds a customer to a customer groups.
+   */
+  async addCustomerToCustomerGroups(
+    input: AddCustomerToCustomerGroupsInput
+  ): SDKResult<CustomerGroupMembershipPartsFragment[]> {
+    const res = await request(this.#ctx, {
+      query: AddCustomerToCustomerGroupsDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) =>
+      nonNullable(q.addCustomerToCustomerGroups.customerGroupMemberships)
+    );
+  }
+
+  /**
+   * Remove a customer from customer groups.
+   */
+  async removeCustomerFromCustomerGroups(
+    input: RemoveCustomerFromCustomerGroupsInput
+  ): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: RemoveCustomerFromCustomerGroupsDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
+  }
+
+  /**
+   * Add a custom timeline entry to a customer's timeline.
+   *
+   * This can be used to power custom contact forms, log events from your own systems and much more.
+   */
+  async upsertCustomTimelineEntry(
+    input: UpsertCustomTimelineEntryInput
+  ): SDKResult<{ result: UpsertResult; timelineEntry: TimelineEntryPartsFragment }> {
+    const res = await request(this.#ctx, {
+      query: UpsertCustomTimelineEntryDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => {
+      return {
+        result: nonNullable(q.upsertCustomTimelineEntry.result),
+        timelineEntry: nonNullable(q.upsertCustomTimelineEntry.timelineEntry),
+      };
+    });
   }
 }
