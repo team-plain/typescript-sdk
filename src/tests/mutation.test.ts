@@ -118,7 +118,7 @@ describe('mutation test - create an issue', () => {
     const result = await client.createIssue({ customerId: '', issueTypeId: '', priorityValue: 1 });
 
     const err: PlainSDKError = {
-      code: 'mutation_error',
+      type: 'mutation_error',
       message: 'There was a validation error.',
       errorDetails: graphqlError,
     };

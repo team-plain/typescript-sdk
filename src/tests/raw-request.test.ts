@@ -66,7 +66,7 @@ describe('raw request', () => {
     });
 
     const err: PlainSDKError = {
-      code: 'bad_request',
+      type: 'bad_request',
       message: 'Missing or invalid arguments provided.',
       graphqlErrors,
     };

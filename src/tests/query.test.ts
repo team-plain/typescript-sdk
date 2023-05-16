@@ -102,7 +102,7 @@ describe('query test - customer by id', () => {
     const result = await client.getCustomerById({} as any);
 
     const err: PlainSDKError = {
-      code: 'bad_request',
+      type: 'bad_request',
       message: 'Missing or invalid arguments provided.',
       graphqlErrors,
     };

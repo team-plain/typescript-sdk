@@ -7,6 +7,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && rollup -c",
+    "build:docs": "typedoc --plugin typedoc-plugin-missing-exports src/index.ts",
     "codegen": "graphql-codegen",
     "typecheck": "tsc --noEmit",
     "lint": "eslint 'src/**/*.ts'",
@@ -31,6 +32,8 @@
     "rollup": "^3.21.5",
     "rollup-plugin-dts": "^5.3.0",
     "rollup-plugin-esbuild": "^5.0.0",
+    "typedoc": "^0.24.7",
+    "typedoc-plugin-missing-exports": "^2.0.0",
     "vitest": "^0.31.0"
   },
   "dependencies": {

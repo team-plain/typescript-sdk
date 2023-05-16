@@ -1,3 +1,6 @@
 node_modules
 dist
 .vscode
+
+# These are generated and not commited
+docs
