@@ -150,7 +150,7 @@ export class PlainSDKClient {
   }
 
   /**
-   * Add a timeline entry to a customer's timeline.
+   * Add a custom timeline entry to a customer's timeline.
    *
    * This can be used to power custom contact forms, log events from your own systems and much more.
    */
