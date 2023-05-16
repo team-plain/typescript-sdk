@@ -1,24 +1,19 @@
+import { VariablesOf } from '@graphql-typed-document-node/core';
 import { Context } from './context';
 import { PlainSDKError } from './error';
 import {
+  AddCustomerToCustomerGroupsDocument,
+  CustomerByIdDocument,
   CustomerGroupMembershipPartsFragment,
   RemoveCustomerFromCustomerGroupsDocument,
-  RemoveCustomerFromCustomerGroupsInput,
 } from './graphql/types';
-import { AddCustomerToCustomerGroupsDocument } from './graphql/types';
-import { AddCustomerToCustomerGroupsInput } from './graphql/types';
 import {
   CreateIssueDocument,
-  CreateIssueInput,
-  CustomerByIdDocument,
-  CustomerByIdQueryVariables,
   CustomerPartsFragment,
   IssuePartsFragment,
   TimelineEntryPartsFragment,
   UpsertCustomTimelineEntryDocument,
-  UpsertCustomTimelineEntryInput,
   UpsertCustomerDocument,
-  UpsertCustomerInput,
   UpsertResult,
 } from './graphql/types';
 import { request } from './request';
@@ -26,8 +21,8 @@ import { Result } from './result';
 
 type SDKResult<T> = Promise<Result<T, PlainSDKError>>;
 
-function nonNullable<T>(x: T | null): T {
-  if (x === null) {
+function nonNullable<T>(x: T | null | undefined): T {
+  if (x === null || x === undefined) {
     throw new Error(`Expected value to be non nullable`);
   }
 
@@ -74,22 +69,24 @@ export class PlainSDKClient {
   /**
    * If the customer is not found this will return null.
    */
-  async getCustomerById(args: CustomerByIdQueryVariables): SDKResult<CustomerPartsFragment | null> {
+  async getCustomerById(
+    variables: VariablesOf<typeof CustomerByIdDocument>
+  ): SDKResult<CustomerPartsFragment | null> {
     const res = await request(this.#ctx, {
       query: CustomerByIdDocument,
-      variables: {
-        customerId: args.customerId,
-      },
+      variables,
     });
 
-    return unwrapData(res, (q) => q.customer);
+    return unwrapData(res, (q) => q.customer || null);
   }
 
   /**
    * Allows you to create or update a customer. If you need to get the customer id
    * for a customer in Plain, this is typically your first step.
    */
-  async upsertCustomer(input: UpsertCustomerInput): SDKResult<CustomerPartsFragment> {
+  async upsertCustomer(
+    input: VariablesOf<typeof UpsertCustomerDocument>['input']
+  ): SDKResult<CustomerPartsFragment> {
     const res = await request(this.#ctx, {
       query: UpsertCustomerDocument,
       variables: {
@@ -104,7 +101,9 @@ export class PlainSDKClient {
    * Create an issue for a customer. If you want you can override the default issue priority
    * in your settings by specifying a priority manually here.
    */
-  async createIssue(input: CreateIssueInput): SDKResult<IssuePartsFragment> {
+  async createIssue(
+    input: VariablesOf<typeof CreateIssueDocument>['input']
+  ): SDKResult<IssuePartsFragment> {
     const res = await request(this.#ctx, {
       query: CreateIssueDocument,
       variables: {
@@ -119,7 +118,7 @@ export class PlainSDKClient {
    * Adds a customer to a customer groups.
    */
   async addCustomerToCustomerGroups(
-    input: AddCustomerToCustomerGroupsInput
+    input: VariablesOf<typeof AddCustomerToCustomerGroupsDocument>['input']
   ): SDKResult<CustomerGroupMembershipPartsFragment[]> {
     const res = await request(this.#ctx, {
       query: AddCustomerToCustomerGroupsDocument,
@@ -137,7 +136,7 @@ export class PlainSDKClient {
    * Remove a customer from customer groups.
    */
   async removeCustomerFromCustomerGroups(
-    input: RemoveCustomerFromCustomerGroupsInput
+    input: VariablesOf<typeof RemoveCustomerFromCustomerGroupsDocument>['input']
   ): SDKResult<null> {
     const res = await request(this.#ctx, {
       query: RemoveCustomerFromCustomerGroupsDocument,
@@ -155,7 +154,7 @@ export class PlainSDKClient {
    * This can be used to power custom contact forms, log events from your own systems and much more.
    */
   async upsertCustomTimelineEntry(
-    input: UpsertCustomTimelineEntryInput
+    input: VariablesOf<typeof UpsertCustomTimelineEntryDocument>['input']
   ): SDKResult<{ result: UpsertResult; timelineEntry: TimelineEntryPartsFragment }> {
     const res = await request(this.#ctx, {
       query: UpsertCustomTimelineEntryDocument,

@@ -20,8 +20,8 @@ export type AcceptWorkspaceInviteInput = {
 
 export type AcceptWorkspaceInviteOutput = {
   __typename?: 'AcceptWorkspaceInviteOutput';
-  error: Maybe<MutationError>;
-  invite: Maybe<WorkspaceInvite>;
+  error?: Maybe<MutationError>;
+  invite?: Maybe<WorkspaceInvite>;
 };
 
 export type Actor = CustomerActor | DeletedCustomerActor | MachineUserActor | SystemActor | UserActor;
@@ -33,17 +33,17 @@ export type AddCustomerToCustomerGroupsInput = {
 
 export type AddCustomerToCustomerGroupsOutput = {
   __typename?: 'AddCustomerToCustomerGroupsOutput';
-  customerGroupMemberships: Maybe<Array<CustomerGroupMembership>>;
-  error: Maybe<MutationError>;
+  customerGroupMemberships?: Maybe<Array<CustomerGroupMembership>>;
+  error?: Maybe<MutationError>;
 };
 
 export type ApiKey = {
   __typename?: 'ApiKey';
   createdAt: DateTime;
   createdBy: InternalActor;
-  deletedAt: Maybe<DateTime>;
-  deletedBy: Maybe<Actor>;
-  description: Maybe<Scalars['String']>;
+  deletedAt?: Maybe<DateTime>;
+  deletedBy?: Maybe<Actor>;
+  description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isDeleted: Scalars['Boolean'];
   permissions: Array<Scalars['String']>;
@@ -69,8 +69,8 @@ export type ArchiveIssueTypeInput = {
 
 export type ArchiveIssueTypeOutput = {
   __typename?: 'ArchiveIssueTypeOutput';
-  error: Maybe<MutationError>;
-  issueType: Maybe<IssueType>;
+  error?: Maybe<MutationError>;
+  issueType?: Maybe<IssueType>;
 };
 
 export type AssignCustomerToUserInput = {
@@ -79,15 +79,15 @@ export type AssignCustomerToUserInput = {
    *
    * Defaults to true.
    */
-  changeCustomerStatusToActive: InputMaybe<Scalars['Boolean']>;
+  changeCustomerStatusToActive?: InputMaybe<Scalars['Boolean']>;
   customerId: Scalars['ID'];
-  userId: InputMaybe<Scalars['ID']>;
+  userId?: InputMaybe<Scalars['ID']>;
 };
 
 export type AssignCustomerToUserOutput = {
   __typename?: 'AssignCustomerToUserOutput';
-  customer: Maybe<Customer>;
-  error: Maybe<MutationError>;
+  customer?: Maybe<Customer>;
+  error?: Maybe<MutationError>;
 };
 
 export type AssignRolesToUserInput = {
@@ -97,14 +97,14 @@ export type AssignRolesToUserInput = {
 
 export type AssignRolesToUserOutput = {
   __typename?: 'AssignRolesToUserOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type Attachment = {
   __typename?: 'Attachment';
   createdAt: DateTime;
   createdBy: Actor;
-  fileExtension: Maybe<Scalars['String']>;
+  fileExtension?: Maybe<Scalars['String']>;
   fileMimeType: Scalars['String'];
   fileName: Scalars['String'];
   fileSize: FileSize;
@@ -157,7 +157,7 @@ export type ChangeCustomerStatusAsyncInput = {
 
 export type ChangeCustomerStatusAsyncOutput = {
   __typename?: 'ChangeCustomerStatusAsyncOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type ChangeCustomerStatusInput = {
@@ -167,8 +167,8 @@ export type ChangeCustomerStatusInput = {
 
 export type ChangeCustomerStatusOutput = {
   __typename?: 'ChangeCustomerStatusOutput';
-  customer: Maybe<Customer>;
-  error: Maybe<MutationError>;
+  customer?: Maybe<Customer>;
+  error?: Maybe<MutationError>;
 };
 
 export type ChangeIssueIssueTypeInput = {
@@ -178,8 +178,8 @@ export type ChangeIssueIssueTypeInput = {
 
 export type ChangeIssueIssueTypeOutput = {
   __typename?: 'ChangeIssueIssueTypeOutput';
-  error: Maybe<MutationError>;
-  issue: Maybe<Issue>;
+  error?: Maybe<MutationError>;
+  issue?: Maybe<Issue>;
 };
 
 export type ChangeIssuePriorityInput = {
@@ -189,8 +189,8 @@ export type ChangeIssuePriorityInput = {
 
 export type ChangeIssuePriorityOutput = {
   __typename?: 'ChangeIssuePriorityOutput';
-  error: Maybe<MutationError>;
-  issue: Maybe<Issue>;
+  error?: Maybe<MutationError>;
+  issue?: Maybe<Issue>;
 };
 
 export enum ChangeType {
@@ -206,8 +206,8 @@ export type ChangeUserStatusInput = {
 
 export type ChangeUserStatusOutput = {
   __typename?: 'ChangeUserStatusOutput';
-  error: Maybe<MutationError>;
-  user: Maybe<User>;
+  error?: Maybe<MutationError>;
+  user?: Maybe<User>;
 };
 
 export type Chat = {
@@ -215,9 +215,9 @@ export type Chat = {
   attachments: Array<Attachment>;
   createdAt: DateTime;
   createdBy: Actor;
-  customerReadAt: Maybe<DateTime>;
+  customerReadAt?: Maybe<DateTime>;
   id: Scalars['ID'];
-  text: Maybe<Scalars['String']>;
+  text?: Maybe<Scalars['String']>;
   updatedAt: DateTime;
   updatedBy: Actor;
 };
@@ -226,8 +226,8 @@ export type ChatEntry = {
   __typename?: 'ChatEntry';
   attachments: Array<Attachment>;
   chatId: Scalars['ID'];
-  customerReadAt: Maybe<DateTime>;
-  text: Maybe<Scalars['String']>;
+  customerReadAt?: Maybe<DateTime>;
+  text?: Maybe<Scalars['String']>;
 };
 
 export enum CommunicationChannel {
@@ -243,7 +243,7 @@ export enum CommunicationChannelInput {
 
 export type ComponentBadge = {
   __typename?: 'ComponentBadge';
-  badgeColor: Maybe<ComponentBadgeColor>;
+  badgeColor?: Maybe<ComponentBadgeColor>;
   badgeLabel: Scalars['String'];
 };
 
@@ -256,7 +256,7 @@ export enum ComponentBadgeColor {
 }
 
 export type ComponentBadgeInput = {
-  badgeColor: InputMaybe<ComponentBadgeColor>;
+  badgeColor?: InputMaybe<ComponentBadgeColor>;
   badgeLabel: Scalars['String'];
 };
 
@@ -268,14 +268,14 @@ export type ComponentContainer = {
 export type ComponentContainerContent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
 
 export type ComponentContainerContentInput = {
-  componentBadge: InputMaybe<ComponentBadgeInput>;
-  componentCopyButton: InputMaybe<ComponentCopyButtonInput>;
-  componentDivider: InputMaybe<ComponentDividerInput>;
-  componentLinkButton: InputMaybe<ComponentLinkButtonInput>;
-  componentPlainText: InputMaybe<ComponentPlainTextInput>;
-  componentRow: InputMaybe<ComponentRowInput>;
-  componentSpacer: InputMaybe<ComponentSpacerInput>;
-  componentText: InputMaybe<ComponentTextInput>;
+  componentBadge?: InputMaybe<ComponentBadgeInput>;
+  componentCopyButton?: InputMaybe<ComponentCopyButtonInput>;
+  componentDivider?: InputMaybe<ComponentDividerInput>;
+  componentLinkButton?: InputMaybe<ComponentLinkButtonInput>;
+  componentPlainText?: InputMaybe<ComponentPlainTextInput>;
+  componentRow?: InputMaybe<ComponentRowInput>;
+  componentSpacer?: InputMaybe<ComponentSpacerInput>;
+  componentText?: InputMaybe<ComponentTextInput>;
 };
 
 export type ComponentContainerInput = {
@@ -284,26 +284,26 @@ export type ComponentContainerInput = {
 
 export type ComponentCopyButton = {
   __typename?: 'ComponentCopyButton';
-  copyButtonTooltipLabel: Maybe<Scalars['String']>;
+  copyButtonTooltipLabel?: Maybe<Scalars['String']>;
   copyButtonValue: Scalars['String'];
 };
 
 export type ComponentCopyButtonInput = {
-  copyButtonTooltipLabel: InputMaybe<Scalars['String']>;
+  copyButtonTooltipLabel?: InputMaybe<Scalars['String']>;
   copyButtonValue: Scalars['String'];
 };
 
 export type ComponentDivider = {
   __typename?: 'ComponentDivider';
-  dividerSpacingSize: Maybe<ComponentDividerSpacingSize>;
+  dividerSpacingSize?: Maybe<ComponentDividerSpacingSize>;
   /** @deprecated use dividerSpacingSize instead */
-  spacingSize: Maybe<ComponentDividerSpacingSize>;
+  spacingSize?: Maybe<ComponentDividerSpacingSize>;
 };
 
 export type ComponentDividerInput = {
-  dividerSpacingSize: InputMaybe<ComponentDividerSpacingSize>;
+  dividerSpacingSize?: InputMaybe<ComponentDividerSpacingSize>;
   /** @deprecated use dividerSpacingSize instead */
-  spacingSize: InputMaybe<ComponentDividerSpacingSize>;
+  spacingSize?: InputMaybe<ComponentDividerSpacingSize>;
 };
 
 export enum ComponentDividerSpacingSize {
@@ -315,15 +315,15 @@ export enum ComponentDividerSpacingSize {
 }
 
 export type ComponentInput = {
-  componentBadge: InputMaybe<ComponentBadgeInput>;
-  componentContainer: InputMaybe<ComponentContainerInput>;
-  componentCopyButton: InputMaybe<ComponentCopyButtonInput>;
-  componentDivider: InputMaybe<ComponentDividerInput>;
-  componentLinkButton: InputMaybe<ComponentLinkButtonInput>;
-  componentPlainText: InputMaybe<ComponentPlainTextInput>;
-  componentRow: InputMaybe<ComponentRowInput>;
-  componentSpacer: InputMaybe<ComponentSpacerInput>;
-  componentText: InputMaybe<ComponentTextInput>;
+  componentBadge?: InputMaybe<ComponentBadgeInput>;
+  componentContainer?: InputMaybe<ComponentContainerInput>;
+  componentCopyButton?: InputMaybe<ComponentCopyButtonInput>;
+  componentDivider?: InputMaybe<ComponentDividerInput>;
+  componentLinkButton?: InputMaybe<ComponentLinkButtonInput>;
+  componentPlainText?: InputMaybe<ComponentPlainTextInput>;
+  componentRow?: InputMaybe<ComponentRowInput>;
+  componentSpacer?: InputMaybe<ComponentSpacerInput>;
+  componentText?: InputMaybe<ComponentTextInput>;
 };
 
 export type ComponentLinkButton = {
@@ -338,20 +338,20 @@ export type ComponentLinkButton = {
 
 export type ComponentLinkButtonInput = {
   /** @deprecated use linkButtonLabel instead */
-  label: InputMaybe<Scalars['String']>;
+  label?: InputMaybe<Scalars['String']>;
   /** Required input, will be made required after deprecated fields are removed. */
-  linkButtonLabel: InputMaybe<Scalars['String']>;
+  linkButtonLabel?: InputMaybe<Scalars['String']>;
   /** Required input, will be made required after deprecated fields are removed. */
-  linkButtonUrl: InputMaybe<Scalars['String']>;
+  linkButtonUrl?: InputMaybe<Scalars['String']>;
   /** @deprecated use linkButtonUrl instead */
-  url: InputMaybe<Scalars['String']>;
+  url?: InputMaybe<Scalars['String']>;
 };
 
 export type ComponentPlainText = {
   __typename?: 'ComponentPlainText';
   plainText: Scalars['String'];
-  plainTextColor: Maybe<ComponentPlainTextColor>;
-  plainTextSize: Maybe<ComponentPlainTextSize>;
+  plainTextColor?: Maybe<ComponentPlainTextColor>;
+  plainTextSize?: Maybe<ComponentPlainTextSize>;
 };
 
 export enum ComponentPlainTextColor {
@@ -364,8 +364,8 @@ export enum ComponentPlainTextColor {
 
 export type ComponentPlainTextInput = {
   plainText: Scalars['String'];
-  plainTextColor: InputMaybe<ComponentPlainTextColor>;
-  plainTextSize: InputMaybe<ComponentPlainTextSize>;
+  plainTextColor?: InputMaybe<ComponentPlainTextColor>;
+  plainTextSize?: InputMaybe<ComponentPlainTextSize>;
 };
 
 export enum ComponentPlainTextSize {
@@ -383,13 +383,13 @@ export type ComponentRow = {
 export type ComponentRowContent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentSpacer | ComponentText;
 
 export type ComponentRowContentInput = {
-  componentBadge: InputMaybe<ComponentBadgeInput>;
-  componentCopyButton: InputMaybe<ComponentCopyButtonInput>;
-  componentDivider: InputMaybe<ComponentDividerInput>;
-  componentLinkButton: InputMaybe<ComponentLinkButtonInput>;
-  componentPlainText: InputMaybe<ComponentPlainTextInput>;
-  componentSpacer: InputMaybe<ComponentSpacerInput>;
-  componentText: InputMaybe<ComponentTextInput>;
+  componentBadge?: InputMaybe<ComponentBadgeInput>;
+  componentCopyButton?: InputMaybe<ComponentCopyButtonInput>;
+  componentDivider?: InputMaybe<ComponentDividerInput>;
+  componentLinkButton?: InputMaybe<ComponentLinkButtonInput>;
+  componentPlainText?: InputMaybe<ComponentPlainTextInput>;
+  componentSpacer?: InputMaybe<ComponentSpacerInput>;
+  componentText?: InputMaybe<ComponentTextInput>;
 };
 
 export type ComponentRowInput = {
@@ -406,9 +406,9 @@ export type ComponentSpacer = {
 
 export type ComponentSpacerInput = {
   /** @deprecated user spacerSize instead */
-  size: InputMaybe<ComponentSpacerSize>;
+  size?: InputMaybe<ComponentSpacerSize>;
   /** Required input, will be made required after deprecated fields are removed. */
-  spacerSize: InputMaybe<ComponentSpacerSize>;
+  spacerSize?: InputMaybe<ComponentSpacerSize>;
 };
 
 export enum ComponentSpacerSize {
@@ -422,12 +422,12 @@ export enum ComponentSpacerSize {
 export type ComponentText = {
   __typename?: 'ComponentText';
   /** @deprecated Use textColor instead, which has the same type */
-  color: Maybe<ComponentTextColor>;
+  color?: Maybe<ComponentTextColor>;
   /** @deprecated Use textSize instead, which has the same type */
-  size: Maybe<ComponentTextSize>;
+  size?: Maybe<ComponentTextSize>;
   text: Scalars['String'];
-  textColor: Maybe<ComponentTextColor>;
-  textSize: Maybe<ComponentTextSize>;
+  textColor?: Maybe<ComponentTextColor>;
+  textSize?: Maybe<ComponentTextSize>;
 };
 
 export enum ComponentTextColor {
@@ -440,12 +440,12 @@ export enum ComponentTextColor {
 
 export type ComponentTextInput = {
   /** @deprecated use textColor instead */
-  color: InputMaybe<ComponentTextColor>;
+  color?: InputMaybe<ComponentTextColor>;
   /** @deprecated use textSize instead */
-  size: InputMaybe<ComponentTextSize>;
+  size?: InputMaybe<ComponentTextSize>;
   text: Scalars['String'];
-  textColor: InputMaybe<ComponentTextColor>;
-  textSize: InputMaybe<ComponentTextSize>;
+  textColor?: InputMaybe<ComponentTextColor>;
+  textSize?: InputMaybe<ComponentTextSize>;
 };
 
 export enum ComponentTextSize {
@@ -455,16 +455,16 @@ export enum ComponentTextSize {
 }
 
 export type CreateApiKeyInput = {
-  description: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
   machineUserId: Scalars['ID'];
   permissions: Array<Scalars['String']>;
 };
 
 export type CreateApiKeyOutput = {
   __typename?: 'CreateApiKeyOutput';
-  apiKey: Maybe<ApiKey>;
-  apiKeySecret: Maybe<Scalars['String']>;
-  error: Maybe<MutationError>;
+  apiKey?: Maybe<ApiKey>;
+  apiKeySecret?: Maybe<Scalars['String']>;
+  error?: Maybe<MutationError>;
 };
 
 export type CreateAttachmentDownloadUrlInput = {
@@ -473,8 +473,8 @@ export type CreateAttachmentDownloadUrlInput = {
 
 export type CreateAttachmentDownloadUrlOutput = {
   __typename?: 'CreateAttachmentDownloadUrlOutput';
-  attachmentDownloadUrl: Maybe<AttachmentDownloadUrl>;
-  error: Maybe<MutationError>;
+  attachmentDownloadUrl?: Maybe<AttachmentDownloadUrl>;
+  error?: Maybe<MutationError>;
 };
 
 export type CreateAttachmentUploadUrlInput = {
@@ -486,8 +486,8 @@ export type CreateAttachmentUploadUrlInput = {
 
 export type CreateAttachmentUploadUrlOutput = {
   __typename?: 'CreateAttachmentUploadUrlOutput';
-  attachmentUploadUrl: Maybe<AttachmentUploadUrl>;
-  error: Maybe<MutationError>;
+  attachmentUploadUrl?: Maybe<AttachmentUploadUrl>;
+  error?: Maybe<MutationError>;
 };
 
 /**
@@ -511,8 +511,8 @@ export type CreateCustomerCardConfigInput = {
 export type CreateCustomerCardConfigOutput = {
   __typename?: 'CreateCustomerCardConfigOutput';
   /** The created customer card config. */
-  customerCardConfig: Maybe<CustomerCardConfig>;
-  error: Maybe<MutationError>;
+  customerCardConfig?: Maybe<CustomerCardConfig>;
+  error?: Maybe<MutationError>;
 };
 
 export type CreateCustomerGroupInput = {
@@ -523,8 +523,8 @@ export type CreateCustomerGroupInput = {
 
 export type CreateCustomerGroupOutput = {
   __typename?: 'CreateCustomerGroupOutput';
-  customerGroup: Maybe<CustomerGroup>;
-  error: Maybe<MutationError>;
+  customerGroup?: Maybe<CustomerGroup>;
+  error?: Maybe<MutationError>;
 };
 
 export type CreateIssueInput = {
@@ -535,24 +535,24 @@ export type CreateIssueInput = {
    *
    * Valid values are 0, 1, 2 and 3.
    */
-  priorityValue: InputMaybe<Scalars['Int']>;
+  priorityValue?: InputMaybe<Scalars['Int']>;
 };
 
 export type CreateIssueLinkInput = {
   issueId: Scalars['ID'];
-  linearIssue: InputMaybe<LinearIssueIssueLinkInput>;
+  linearIssue?: InputMaybe<LinearIssueIssueLinkInput>;
 };
 
 export type CreateIssueLinkOutput = {
   __typename?: 'CreateIssueLinkOutput';
-  error: Maybe<MutationError>;
-  issueLink: Maybe<IssueLink>;
+  error?: Maybe<MutationError>;
+  issueLink?: Maybe<IssueLink>;
 };
 
 export type CreateIssueOutput = {
   __typename?: 'CreateIssueOutput';
-  error: Maybe<MutationError>;
-  issue: Maybe<Issue>;
+  error?: Maybe<MutationError>;
+  issue?: Maybe<Issue>;
 };
 
 export type CreateIssueTypeInput = {
@@ -561,32 +561,32 @@ export type CreateIssueTypeInput = {
    *
    * Valid values are 0, 1, 2 and 3.
    */
-  defaultIssuePriorityValue: InputMaybe<Scalars['Int']>;
+  defaultIssuePriorityValue?: InputMaybe<Scalars['Int']>;
   /**
    * The icon to use for this issue type. The maximum length is 50 characters.
    *
    * Only lowercase alphanumeric characters, '-' and '_' are allowed.
    */
-  icon: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
   publicName: Scalars['String'];
 };
 
 export type CreateIssueTypeOutput = {
   __typename?: 'CreateIssueTypeOutput';
-  error: Maybe<MutationError>;
-  issueType: Maybe<IssueType>;
+  error?: Maybe<MutationError>;
+  issueType?: Maybe<IssueType>;
 };
 
 export type CreateMachineUserInput = {
-  description: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
   fullName: Scalars['String'];
   publicName: Scalars['String'];
 };
 
 export type CreateMachineUserOutput = {
   __typename?: 'CreateMachineUserOutput';
-  error: Maybe<MutationError>;
-  machineUser: Maybe<MachineUser>;
+  error?: Maybe<MutationError>;
+  machineUser?: Maybe<MachineUser>;
 };
 
 export type CreateMyLinearIntegrationInput = {
@@ -596,8 +596,8 @@ export type CreateMyLinearIntegrationInput = {
 
 export type CreateMyLinearIntegrationOutput = {
   __typename?: 'CreateMyLinearIntegrationOutput';
-  error: Maybe<MutationError>;
-  integration: Maybe<UserLinearIntegration>;
+  error?: Maybe<MutationError>;
+  integration?: Maybe<UserLinearIntegration>;
 };
 
 export type CreateMySlackIntegrationInput = {
@@ -607,8 +607,8 @@ export type CreateMySlackIntegrationInput = {
 
 export type CreateMySlackIntegrationOutput = {
   __typename?: 'CreateMySlackIntegrationOutput';
-  error: Maybe<MutationError>;
-  integration: Maybe<UserSlackIntegration>;
+  error?: Maybe<MutationError>;
+  integration?: Maybe<UserSlackIntegration>;
 };
 
 export type CreateNoteInput = {
@@ -618,8 +618,8 @@ export type CreateNoteInput = {
 
 export type CreateNoteOutput = {
   __typename?: 'CreateNoteOutput';
-  error: Maybe<MutationError>;
-  note: Maybe<Note>;
+  error?: Maybe<MutationError>;
+  note?: Maybe<Note>;
 };
 
 export type CreateSnippetInput = {
@@ -629,8 +629,8 @@ export type CreateSnippetInput = {
 
 export type CreateSnippetOutput = {
   __typename?: 'CreateSnippetOutput';
-  error: Maybe<MutationError>;
-  snippet: Maybe<Snippet>;
+  error?: Maybe<MutationError>;
+  snippet?: Maybe<Snippet>;
 };
 
 export type CreateUserAccountInput = {
@@ -640,8 +640,8 @@ export type CreateUserAccountInput = {
 
 export type CreateUserAccountOutput = {
   __typename?: 'CreateUserAccountOutput';
-  error: Maybe<MutationError>;
-  userAccount: Maybe<UserAccount>;
+  error?: Maybe<MutationError>;
+  userAccount?: Maybe<UserAccount>;
 };
 
 export type CreateWebhookTargetInput = {
@@ -653,8 +653,8 @@ export type CreateWebhookTargetInput = {
 
 export type CreateWebhookTargetOutput = {
   __typename?: 'CreateWebhookTargetOutput';
-  error: Maybe<MutationError>;
-  webhookTarget: Maybe<WebhookTarget>;
+  error?: Maybe<MutationError>;
+  webhookTarget?: Maybe<WebhookTarget>;
 };
 
 export type CreateWorkspaceAppInput = {
@@ -664,8 +664,8 @@ export type CreateWorkspaceAppInput = {
 
 export type CreateWorkspaceAppOutput = {
   __typename?: 'CreateWorkspaceAppOutput';
-  error: Maybe<MutationError>;
-  workspaceApp: Maybe<WorkspaceApp>;
+  error?: Maybe<MutationError>;
+  workspaceApp?: Maybe<WorkspaceApp>;
 };
 
 export type CreateWorkspaceAppPublicKeyInput = {
@@ -676,8 +676,8 @@ export type CreateWorkspaceAppPublicKeyInput = {
 
 export type CreateWorkspaceAppPublicKeyOutput = {
   __typename?: 'CreateWorkspaceAppPublicKeyOutput';
-  error: Maybe<MutationError>;
-  workspaceAppPublicKey: Maybe<WorkspaceAppPublicKey>;
+  error?: Maybe<MutationError>;
+  workspaceAppPublicKey?: Maybe<WorkspaceAppPublicKey>;
 };
 
 export type CreateWorkspaceDiscordIntegrationInput = {
@@ -687,8 +687,8 @@ export type CreateWorkspaceDiscordIntegrationInput = {
 
 export type CreateWorkspaceDiscordIntegrationOutput = {
   __typename?: 'CreateWorkspaceDiscordIntegrationOutput';
-  error: Maybe<MutationError>;
-  integration: Maybe<WorkspaceDiscordIntegration>;
+  error?: Maybe<MutationError>;
+  integration?: Maybe<WorkspaceDiscordIntegration>;
 };
 
 export type CreateWorkspaceEmailDomainSettingsInput = {
@@ -697,8 +697,8 @@ export type CreateWorkspaceEmailDomainSettingsInput = {
 
 export type CreateWorkspaceEmailDomainSettingsOutput = {
   __typename?: 'CreateWorkspaceEmailDomainSettingsOutput';
-  error: Maybe<MutationError>;
-  workspaceEmailDomainSettings: Maybe<WorkspaceEmailDomainSettings>;
+  error?: Maybe<MutationError>;
+  workspaceEmailDomainSettings?: Maybe<WorkspaceEmailDomainSettings>;
 };
 
 export type CreateWorkspaceInput = {
@@ -708,8 +708,8 @@ export type CreateWorkspaceInput = {
 
 export type CreateWorkspaceOutput = {
   __typename?: 'CreateWorkspaceOutput';
-  error: Maybe<MutationError>;
-  workspace: Maybe<Workspace>;
+  error?: Maybe<MutationError>;
+  workspace?: Maybe<Workspace>;
 };
 
 export type CreateWorkspaceSlackIntegrationInput = {
@@ -719,17 +719,17 @@ export type CreateWorkspaceSlackIntegrationInput = {
 
 export type CreateWorkspaceSlackIntegrationOutput = {
   __typename?: 'CreateWorkspaceSlackIntegrationOutput';
-  error: Maybe<MutationError>;
-  integration: Maybe<WorkspaceSlackIntegration>;
+  error?: Maybe<MutationError>;
+  integration?: Maybe<WorkspaceSlackIntegration>;
 };
 
 export type CustomEntry = {
   __typename?: 'CustomEntry';
   attachments: Array<Attachment>;
   components: Array<CustomTimelineEntryComponent>;
-  externalId: Maybe<Scalars['ID']>;
+  externalId?: Maybe<Scalars['ID']>;
   title: Scalars['String'];
-  type: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
 };
 
 export type CustomTimelineEntryComponent = ComponentBadge | ComponentContainer | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
@@ -743,9 +743,9 @@ export type CustomTimelineEntryComponent = ComponentBadge | ComponentContainer |
 export type Customer = {
   __typename?: 'Customer';
   /** When the customer was assigned to a user. */
-  assignedAt: Maybe<DateTime>;
+  assignedAt?: Maybe<DateTime>;
   /** The user the customer is assigned to. */
-  assignedToUser: Maybe<UserActor>;
+  assignedToUser?: Maybe<UserActor>;
   createdAt: DateTime;
   createdBy: Actor;
   /** A subquery to fetch the customer's group memberships. */
@@ -753,7 +753,7 @@ export type Customer = {
   /** The customer's email address. */
   email: EmailAddress;
   /** Your system's ID for this customer. */
-  externalId: Maybe<Scalars['ID']>;
+  externalId?: Maybe<Scalars['ID']>;
   /** The full name of the customer. */
   fullName: Scalars['String'];
   /** Uniquely identifies a customer in Plain. */
@@ -761,11 +761,11 @@ export type Customer = {
   /** A subquery to fetch the customer's issues. */
   issues: IssueConnection;
   /** When the customer was last in the `IDLE` status. */
-  lastIdleAt: Maybe<DateTime>;
-  markedAsSpamAt: Maybe<DateTime>;
-  markedAsSpamBy: Maybe<InternalActor>;
+  lastIdleAt?: Maybe<DateTime>;
+  markedAsSpamAt?: Maybe<DateTime>;
+  markedAsSpamBy?: Maybe<InternalActor>;
   /** An optional short name of the customer, typically their first name. */
-  shortName: Maybe<Scalars['String']>;
+  shortName?: Maybe<Scalars['String']>;
   /** The customer's status. */
   status: CustomerStatus;
   /** When the customer's status was last changed. */
@@ -784,10 +784,10 @@ export type Customer = {
  * 2. `email`
  */
 export type CustomerCustomerGroupMembershipsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -798,12 +798,12 @@ export type CustomerCustomerGroupMembershipsArgs = {
  * 2. `email`
  */
 export type CustomerIssuesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  filters: InputMaybe<CustomerIssuesFilter>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
-  sortBy: InputMaybe<IssuesSort>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<CustomerIssuesFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<IssuesSort>;
 };
 
 export type CustomerActor = {
@@ -814,10 +814,10 @@ export type CustomerActor = {
 
 export type CustomerAssignmentTransitionedEntry = {
   __typename?: 'CustomerAssignmentTransitionedEntry';
-  nextUser: Maybe<User>;
-  nextUserId: Maybe<Scalars['ID']>;
-  previousUser: Maybe<User>;
-  previousUserId: Maybe<Scalars['ID']>;
+  nextUser?: Maybe<User>;
+  nextUserId?: Maybe<Scalars['ID']>;
+  previousUser?: Maybe<User>;
+  previousUserId?: Maybe<Scalars['ID']>;
 };
 
 export type CustomerCardComponent = ComponentBadge | ComponentContainer | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
@@ -939,7 +939,7 @@ export type CustomerCardInstanceErrorDetail = CustomerCardInstanceMissingCardErr
 export type CustomerCardInstanceLoaded = CustomerCardInstance & {
   __typename?: 'CustomerCardInstanceLoaded';
   /** The list of components of the customer card. If this is null it means the customer card was returned on the API, but the components array was empty. */
-  components: Maybe<Array<CustomerCardComponent>>;
+  components?: Maybe<Array<CustomerCardComponent>>;
   createdAt: DateTime;
   createdBy: Actor;
   /** The customer card config this instance is for. */
@@ -1022,7 +1022,7 @@ export type CustomerChange = {
 };
 
 export type CustomerChangesFilter = {
-  assignedToUser: InputMaybe<Array<Scalars['ID']>>;
+  assignedToUser?: InputMaybe<Array<Scalars['ID']>>;
 };
 
 export type CustomerConnection = {
@@ -1069,8 +1069,8 @@ export type CustomerGroupEdge = {
 };
 
 export type CustomerGroupIdentifier = {
-  customerGroupId: InputMaybe<Scalars['ID']>;
-  customerGroupKey: InputMaybe<Scalars['String']>;
+  customerGroupId?: InputMaybe<Scalars['ID']>;
+  customerGroupKey?: InputMaybe<Scalars['String']>;
 };
 
 export type CustomerGroupMembership = {
@@ -1096,7 +1096,7 @@ export type CustomerGroupMembershipEdge = {
 };
 
 export type CustomerIssuesFilter = {
-  statuses: InputMaybe<Array<IssueStatus>>;
+  statuses?: InputMaybe<Array<IssueStatus>>;
 };
 
 /**
@@ -1105,13 +1105,13 @@ export type CustomerIssuesFilter = {
  */
 export type CustomerSearchCondition = {
   /** Search expression on the customer's email address. */
-  email: InputMaybe<StringSearchExpression>;
+  email?: InputMaybe<StringSearchExpression>;
   /** Search expression on the customer's external id. */
-  externalId: InputMaybe<StringSearchExpression>;
+  externalId?: InputMaybe<StringSearchExpression>;
   /** Search expression on the customer's full name. */
-  fullName: InputMaybe<StringSearchExpression>;
+  fullName?: InputMaybe<StringSearchExpression>;
   /** Search expression on the customer's short name. */
-  shortName: InputMaybe<StringSearchExpression>;
+  shortName?: InputMaybe<StringSearchExpression>;
 };
 
 export type CustomerSearchConnection = {
@@ -1138,50 +1138,50 @@ export enum CustomerStatus {
 
 export type CustomerStatusTransitionedEntry = {
   __typename?: 'CustomerStatusTransitionedEntry';
-  nextStatus: Maybe<CustomerStatus>;
-  previousStatus: Maybe<CustomerStatus>;
+  nextStatus?: Maybe<CustomerStatus>;
+  previousStatus?: Maybe<CustomerStatus>;
 };
 
 export type CustomersFilter = {
-  assignedToUser: InputMaybe<Array<Scalars['ID']>>;
+  assignedToUser?: InputMaybe<Array<Scalars['ID']>>;
   /**
    * Filters customers to those with at least one of the given customer group IDs.
    * Customers with no groups will not be included.
    * Can be combined with other group filters.
    */
-  customerGroupIds: InputMaybe<Array<Scalars['ID']>>;
+  customerGroupIds?: InputMaybe<Array<Scalars['ID']>>;
   /**
    * Filters customers to those with at least one of the given customer group keys.
    * Customers with no groups will not be included.
    * Can be combined with other group filters.
    */
-  customerGroupKeys: InputMaybe<Array<Scalars['String']>>;
-  isAssigned: InputMaybe<Scalars['Boolean']>;
+  customerGroupKeys?: InputMaybe<Array<Scalars['String']>>;
+  isAssigned?: InputMaybe<Scalars['Boolean']>;
   /**
    * When true, filters customers to those with at least one open issue. If false, only customers
    * who have not been marked as spam will be included.
    */
-  isMarkedAsSpam: InputMaybe<Scalars['Boolean']>;
+  isMarkedAsSpam?: InputMaybe<Scalars['Boolean']>;
   /**
    * Filters customers to those with at least one issue of the given issue priority values.
    * Customers with no issues will not be included.
    * Can be combined with other issue filters.
    */
-  issuePriorityValues: InputMaybe<Array<Scalars['Int']>>;
+  issuePriorityValues?: InputMaybe<Array<Scalars['Int']>>;
   /**
    * Filters customers to those with at least one issue of the given issue statuses (OPEN or RESOLVED).
    * Customers with no issues will not be included.
    * Can be combined with other issue filters.
    */
-  issueStatuses: InputMaybe<Array<IssueStatus>>;
+  issueStatuses?: InputMaybe<Array<IssueStatus>>;
   /**
    * Filters customers to those with at least one issue of the given issue type IDs.
    * Customers with no issues will not be included.
    * Can be combined with other issue filters.
    */
-  issueTypeIds: InputMaybe<Array<Scalars['ID']>>;
-  lastCommunicationChannels: InputMaybe<Array<CommunicationChannelInput>>;
-  statuses: InputMaybe<Array<CustomerStatus>>;
+  issueTypeIds?: InputMaybe<Array<Scalars['ID']>>;
+  lastCommunicationChannels?: InputMaybe<Array<CommunicationChannelInput>>;
+  statuses?: InputMaybe<Array<CustomerStatus>>;
 };
 
 /**
@@ -1190,7 +1190,7 @@ export type CustomersFilter = {
  */
 export type CustomersSearchQuery = {
   /** An array of search conditions that will be combined using a 'logical OR' to search for customers. */
-  or: InputMaybe<Array<CustomerSearchCondition>>;
+  or?: InputMaybe<Array<CustomerSearchCondition>>;
 };
 
 export type CustomersSort = {
@@ -1223,8 +1223,8 @@ export type DeleteApiKeyInput = {
 
 export type DeleteApiKeyOutput = {
   __typename?: 'DeleteApiKeyOutput';
-  apiKey: Maybe<ApiKey>;
-  error: Maybe<MutationError>;
+  apiKey?: Maybe<ApiKey>;
+  error?: Maybe<MutationError>;
 };
 
 export type DeleteCustomerCardConfigInput = {
@@ -1234,7 +1234,7 @@ export type DeleteCustomerCardConfigInput = {
 
 export type DeleteCustomerCardConfigOutput = {
   __typename?: 'DeleteCustomerCardConfigOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type DeleteCustomerGroupInput = {
@@ -1243,7 +1243,7 @@ export type DeleteCustomerGroupInput = {
 
 export type DeleteCustomerGroupOutput = {
   __typename?: 'DeleteCustomerGroupOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type DeleteCustomerInput = {
@@ -1252,7 +1252,7 @@ export type DeleteCustomerInput = {
 
 export type DeleteCustomerOutput = {
   __typename?: 'DeleteCustomerOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type DeleteIssueInput = {
@@ -1265,14 +1265,14 @@ export type DeleteIssueLinkInput = {
 
 export type DeleteIssueLinkOutput = {
   __typename?: 'DeleteIssueLinkOutput';
-  error: Maybe<MutationError>;
-  issueLink: Maybe<IssueLink>;
+  error?: Maybe<MutationError>;
+  issueLink?: Maybe<IssueLink>;
 };
 
 export type DeleteIssueOutput = {
   __typename?: 'DeleteIssueOutput';
-  error: Maybe<MutationError>;
-  issue: Maybe<Issue>;
+  error?: Maybe<MutationError>;
+  issue?: Maybe<Issue>;
 };
 
 export type DeleteMachineUserInput = {
@@ -1281,18 +1281,18 @@ export type DeleteMachineUserInput = {
 
 export type DeleteMachineUserOutput = {
   __typename?: 'DeleteMachineUserOutput';
-  error: Maybe<MutationError>;
-  machineUser: Maybe<MachineUser>;
+  error?: Maybe<MutationError>;
+  machineUser?: Maybe<MachineUser>;
 };
 
 export type DeleteMyLinearIntegrationOutput = {
   __typename?: 'DeleteMyLinearIntegrationOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type DeleteMySlackIntegrationOutput = {
   __typename?: 'DeleteMySlackIntegrationOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type DeleteNoteInput = {
@@ -1301,8 +1301,8 @@ export type DeleteNoteInput = {
 
 export type DeleteNoteOutput = {
   __typename?: 'DeleteNoteOutput';
-  error: Maybe<MutationError>;
-  note: Maybe<Note>;
+  error?: Maybe<MutationError>;
+  note?: Maybe<Note>;
 };
 
 export type DeleteSnippetInput = {
@@ -1311,8 +1311,8 @@ export type DeleteSnippetInput = {
 
 export type DeleteSnippetOutput = {
   __typename?: 'DeleteSnippetOutput';
-  error: Maybe<MutationError>;
-  snippet: Maybe<Snippet>;
+  error?: Maybe<MutationError>;
+  snippet?: Maybe<Snippet>;
 };
 
 export type DeleteUserInput = {
@@ -1321,7 +1321,7 @@ export type DeleteUserInput = {
 
 export type DeleteUserOutput = {
   __typename?: 'DeleteUserOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type DeleteWebhookTargetInput = {
@@ -1330,7 +1330,7 @@ export type DeleteWebhookTargetInput = {
 
 export type DeleteWebhookTargetOutput = {
   __typename?: 'DeleteWebhookTargetOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type DeleteWorkspaceAppInput = {
@@ -1339,8 +1339,8 @@ export type DeleteWorkspaceAppInput = {
 
 export type DeleteWorkspaceAppOutput = {
   __typename?: 'DeleteWorkspaceAppOutput';
-  error: Maybe<MutationError>;
-  workspaceApp: Maybe<WorkspaceApp>;
+  error?: Maybe<MutationError>;
+  workspaceApp?: Maybe<WorkspaceApp>;
 };
 
 export type DeleteWorkspaceAppPublicKeyInput = {
@@ -1349,8 +1349,8 @@ export type DeleteWorkspaceAppPublicKeyInput = {
 
 export type DeleteWorkspaceAppPublicKeyOutput = {
   __typename?: 'DeleteWorkspaceAppPublicKeyOutput';
-  error: Maybe<MutationError>;
-  workspaceAppPublicKey: Maybe<WorkspaceAppPublicKey>;
+  error?: Maybe<MutationError>;
+  workspaceAppPublicKey?: Maybe<WorkspaceAppPublicKey>;
 };
 
 export type DeleteWorkspaceDiscordIntegrationInput = {
@@ -1359,13 +1359,13 @@ export type DeleteWorkspaceDiscordIntegrationInput = {
 
 export type DeleteWorkspaceDiscordIntegrationOutput = {
   __typename?: 'DeleteWorkspaceDiscordIntegrationOutput';
-  error: Maybe<MutationError>;
-  integration: Maybe<WorkspaceDiscordIntegration>;
+  error?: Maybe<MutationError>;
+  integration?: Maybe<WorkspaceDiscordIntegration>;
 };
 
 export type DeleteWorkspaceEmailDomainSettingsOutput = {
   __typename?: 'DeleteWorkspaceEmailDomainSettingsOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type DeleteWorkspaceInviteInput = {
@@ -1374,8 +1374,8 @@ export type DeleteWorkspaceInviteInput = {
 
 export type DeleteWorkspaceInviteOutput = {
   __typename?: 'DeleteWorkspaceInviteOutput';
-  error: Maybe<MutationError>;
-  invite: Maybe<WorkspaceInvite>;
+  error?: Maybe<MutationError>;
+  invite?: Maybe<WorkspaceInvite>;
 };
 
 export type DeleteWorkspaceSlackIntegrationInput = {
@@ -1384,8 +1384,8 @@ export type DeleteWorkspaceSlackIntegrationInput = {
 
 export type DeleteWorkspaceSlackIntegrationOutput = {
   __typename?: 'DeleteWorkspaceSlackIntegrationOutput';
-  error: Maybe<MutationError>;
-  integration: Maybe<WorkspaceSlackIntegration>;
+  error?: Maybe<MutationError>;
+  integration?: Maybe<WorkspaceSlackIntegration>;
 };
 
 export type DeletedCustomerActor = {
@@ -1401,11 +1401,11 @@ export type DeletedCustomerEmailActor = {
 export type DnsRecord = {
   __typename?: 'DnsRecord';
   isVerified: Scalars['Boolean'];
-  lastCheckedAt: Maybe<DateTime>;
+  lastCheckedAt?: Maybe<DateTime>;
   name: Scalars['String'];
   type: Scalars['String'];
   value: Scalars['String'];
-  verifiedAt: Maybe<DateTime>;
+  verifiedAt?: Maybe<DateTime>;
 };
 
 export type Email = {
@@ -1418,9 +1418,9 @@ export type Email = {
   from: EmailParticipant;
   hiddenRecipients: Array<EmailParticipant>;
   id: Scalars['ID'];
-  inReplyToEmailId: Maybe<Scalars['ID']>;
-  subject: Maybe<Scalars['String']>;
-  textContent: Maybe<Scalars['String']>;
+  inReplyToEmailId?: Maybe<Scalars['ID']>;
+  subject?: Maybe<Scalars['String']>;
+  textContent?: Maybe<Scalars['String']>;
   to: EmailParticipant;
   updatedAt: DateTime;
   updatedBy: Actor;
@@ -1436,7 +1436,7 @@ export type EmailAddress = {
   /** If the email address ownership has been verified (e.g. via sending an email with a code). If the email is not verified, Plain may not email this address. */
   isVerified: Scalars['Boolean'];
   /** When the email became verified in Plain. */
-  verifiedAt: Maybe<DateTime>;
+  verifiedAt?: Maybe<DateTime>;
 };
 
 export type EmailAddressInput = {
@@ -1458,9 +1458,9 @@ export type EmailEntry = {
   emailId: Scalars['ID'];
   from: EmailParticipant;
   /** The full email's markdown content, including all replies. */
-  fullMarkdownContent: Maybe<Scalars['String']>;
+  fullMarkdownContent?: Maybe<Scalars['String']>;
   /** The full email's text content, including all replies. */
-  fullTextContent: Maybe<Scalars['String']>;
+  fullTextContent?: Maybe<Scalars['String']>;
   /** Boolean indicating whether there is more markdown content available that can be resolved via the `fullMarkdownContent` field. */
   hasMoreMarkdownContent: Scalars['Boolean'];
   /** Boolean indicating whether there is more text content available that can be resolved via the `fullTextContent` field. */
@@ -1469,27 +1469,27 @@ export type EmailEntry = {
   /** Whether this email entry is the start of a new thread in Plain. Can be used to show the full email content. */
   isStartOfThread: Scalars['Boolean'];
   /** The most recent email's markdown content. */
-  markdownContent: Maybe<Scalars['String']>;
+  markdownContent?: Maybe<Scalars['String']>;
   /** When the email was received by Plain. */
-  receivedAt: Maybe<DateTime>;
+  receivedAt?: Maybe<DateTime>;
   /** When the email was sent. Initially set to null while the email is being processed. */
-  sentAt: Maybe<DateTime>;
-  subject: Maybe<Scalars['String']>;
+  sentAt?: Maybe<DateTime>;
+  subject?: Maybe<Scalars['String']>;
   /** The most recent email's text content. */
-  textContent: Maybe<Scalars['String']>;
+  textContent?: Maybe<Scalars['String']>;
   to: EmailParticipant;
 };
 
 export type EmailParticipant = {
   __typename?: 'EmailParticipant';
   email: Scalars['String'];
-  emailActor: Maybe<EmailActor>;
-  name: Maybe<Scalars['String']>;
+  emailActor?: Maybe<EmailActor>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type EmailParticipantInput = {
   email: Scalars['String'];
-  name: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 /** A union of all possible entries that can appear in a timeline. */
@@ -1515,8 +1515,8 @@ export type InviteUserToWorkspaceInput = {
 
 export type InviteUserToWorkspaceOutput = {
   __typename?: 'InviteUserToWorkspaceOutput';
-  error: Maybe<MutationError>;
-  invite: Maybe<WorkspaceInvite>;
+  error?: Maybe<MutationError>;
+  invite?: Maybe<WorkspaceInvite>;
 };
 
 export type Issue = {
@@ -1524,8 +1524,8 @@ export type Issue = {
   createdAt: DateTime;
   createdBy: Actor;
   customer: Customer;
-  deletedAt: Maybe<DateTime>;
-  deletedBy: Maybe<Actor>;
+  deletedAt?: Maybe<DateTime>;
+  deletedBy?: Maybe<Actor>;
   id: Scalars['ID'];
   isDeleted: Scalars['Boolean'];
   issueKey: Scalars['String'];
@@ -1540,10 +1540,10 @@ export type Issue = {
 
 
 export type IssueLinksArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type IssueChange = {
@@ -1562,7 +1562,7 @@ export type IssueDeletedEntry = {
   __typename?: 'IssueDeletedEntry';
   issueId: Scalars['ID'];
   issueKey: Scalars['String'];
-  issueTypeIcon: Maybe<Scalars['String']>;
+  issueTypeIcon?: Maybe<Scalars['String']>;
   issueTypeId: Scalars['ID'];
   issueTypePublicName: Scalars['String'];
   priority: IssuePriority;
@@ -1579,10 +1579,10 @@ export type IssueIssueTypeChangedEntry = {
   __typename?: 'IssueIssueTypeChangedEntry';
   issueId: Scalars['ID'];
   issueKey: Scalars['String'];
-  nextIssueTypeIcon: Maybe<Scalars['String']>;
+  nextIssueTypeIcon?: Maybe<Scalars['String']>;
   nextIssueTypeId: Scalars['ID'];
   nextIssueTypePublicName: Scalars['String'];
-  previousIssueTypeIcon: Maybe<Scalars['String']>;
+  previousIssueTypeIcon?: Maybe<Scalars['String']>;
   previousIssueTypeId: Scalars['ID'];
   previousIssueTypePublicName: Scalars['String'];
   priority: IssuePriority;
@@ -1631,7 +1631,7 @@ export type IssuePriorityChangedEntry = {
   /** The key of the issue that changed priority. */
   issueKey: Scalars['String'];
   /** The icon of the issue type of the issue that changed priority. */
-  issueTypeIcon: Maybe<Scalars['String']>;
+  issueTypeIcon?: Maybe<Scalars['String']>;
   /** The ID of the issue type of the issue that changed priority. */
   issueTypeId: Scalars['ID'];
   /** The public name of the issue type of the issue that changed priority. */
@@ -1653,24 +1653,24 @@ export type IssueStatusTransitionedEntry = {
   __typename?: 'IssueStatusTransitionedEntry';
   issueId: Scalars['ID'];
   issueKey: Scalars['String'];
-  issueTypeIcon: Maybe<Scalars['String']>;
+  issueTypeIcon?: Maybe<Scalars['String']>;
   issueTypeId: Scalars['ID'];
   issueTypePublicName: Scalars['String'];
   nextStatus: IssueStatus;
-  previousStatus: Maybe<IssueStatus>;
+  previousStatus?: Maybe<IssueStatus>;
   priority: IssuePriority;
 };
 
 export type IssueType = {
   __typename?: 'IssueType';
-  archivedAt: Maybe<DateTime>;
-  archivedBy: Maybe<InternalActor>;
+  archivedAt?: Maybe<DateTime>;
+  archivedBy?: Maybe<InternalActor>;
   createdAt: DateTime;
   createdBy: InternalActor;
   /** The default priority for issues of this type. */
   defaultIssuePriority: IssuePriority;
   /** The icon for this issue type. */
-  icon: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isArchived: Scalars['Boolean'];
   publicName: Scalars['String'];
@@ -1691,15 +1691,15 @@ export type IssueTypeEdge = {
 };
 
 export type IssueTypeFilter = {
-  isArchived: InputMaybe<Scalars['Boolean']>;
+  isArchived?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type IssuesFilter = {
-  customerId: InputMaybe<Scalars['ID']>;
-  issueTypeIds: InputMaybe<Array<Scalars['ID']>>;
+  customerId?: InputMaybe<Scalars['ID']>;
+  issueTypeIds?: InputMaybe<Array<Scalars['ID']>>;
   /** Filters issues to those with the given issue priority values. */
-  priorityValues: InputMaybe<Array<Scalars['Int']>>;
-  statuses: InputMaybe<Array<IssueStatus>>;
+  priorityValues?: InputMaybe<Array<Scalars['Int']>>;
+  statuses?: InputMaybe<Array<IssueStatus>>;
 };
 
 export type IssuesSort = {
@@ -1738,7 +1738,7 @@ export type LinearIssueLinkStateTransitionedEntry = {
   __typename?: 'LinearIssueLinkStateTransitionedEntry';
   issueId: Scalars['ID'];
   issueKey: Scalars['String'];
-  issueTypeIcon: Maybe<Scalars['String']>;
+  issueTypeIcon?: Maybe<Scalars['String']>;
   issueTypeId: Scalars['ID'];
   issueTypePublicName: Scalars['String'];
   linearIssueId: Scalars['ID'];
@@ -1748,13 +1748,13 @@ export type LinearIssueLinkStateTransitionedEntry = {
 
 export type MachineUser = {
   __typename?: 'MachineUser';
-  apiKey: Maybe<ApiKey>;
+  apiKey?: Maybe<ApiKey>;
   apiKeys: ApiKeyConnection;
   createdAt: DateTime;
   createdBy: InternalActor;
-  deletedAt: Maybe<DateTime>;
-  deletedBy: Maybe<Actor>;
-  description: Maybe<Scalars['String']>;
+  deletedAt?: Maybe<DateTime>;
+  deletedBy?: Maybe<Actor>;
+  description?: Maybe<Scalars['String']>;
   fullName: Scalars['String'];
   id: Scalars['ID'];
   isDeleted: Scalars['Boolean'];
@@ -1770,10 +1770,10 @@ export type MachineUserApiKeyArgs = {
 
 
 export type MachineUserApiKeysArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type MachineUserActor = {
@@ -1800,8 +1800,8 @@ export type MarkCustomerAsSpamInput = {
 
 export type MarkCustomerAsSpamOutput = {
   __typename?: 'MarkCustomerAsSpamOutput';
-  customer: Maybe<Customer>;
-  error: Maybe<MutationError>;
+  customer?: Maybe<Customer>;
+  error?: Maybe<MutationError>;
 };
 
 export type MarkTimelineAsReadInput = {
@@ -1811,7 +1811,7 @@ export type MarkTimelineAsReadInput = {
 
 export type MarkTimelineAsReadOutput = {
   __typename?: 'MarkTimelineAsReadOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type MonthlyUsage = {
@@ -2354,8 +2354,8 @@ export type Note = {
   createdAt: DateTime;
   createdBy: Actor;
   customer: Customer;
-  deletedAt: Maybe<DateTime>;
-  deletedBy: Maybe<Actor>;
+  deletedAt?: Maybe<DateTime>;
+  deletedBy?: Maybe<Actor>;
   id: Scalars['ID'];
   isDeleted: Scalars['Boolean'];
   text: Scalars['String'];
@@ -2370,15 +2370,15 @@ export type NoteEntry = {
 };
 
 export type OptionalStringInput = {
-  value: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
 };
 
 export type PageInfo = {
   __typename?: 'PageInfo';
-  endCursor: Maybe<Scalars['String']>;
+  endCursor?: Maybe<Scalars['String']>;
   hasNextPage: Scalars['Boolean'];
   hasPreviousPage: Scalars['Boolean'];
-  startCursor: Maybe<Scalars['String']>;
+  startCursor?: Maybe<Scalars['String']>;
 };
 
 export type Permissions = {
@@ -2388,10 +2388,10 @@ export type Permissions = {
 
 export type Query = {
   __typename?: 'Query';
-  customer: Maybe<Customer>;
-  customerByEmail: Maybe<Customer>;
-  customerByExternalId: Maybe<Customer>;
-  customerCardConfig: Maybe<CustomerCardConfig>;
+  customer?: Maybe<Customer>;
+  customerByEmail?: Maybe<Customer>;
+  customerByExternalId?: Maybe<Customer>;
+  customerCardConfig?: Maybe<CustomerCardConfig>;
   customerCardConfigs: Array<CustomerCardConfig>;
   /**
    * Loads the customer's card instances.
@@ -2404,33 +2404,33 @@ export type Query = {
    */
   customerCardInstances: Array<CustomerCardInstance>;
   /** Get a customer group by ID. */
-  customerGroup: Maybe<CustomerGroup>;
+  customerGroup?: Maybe<CustomerGroup>;
   /** Get a paginated list of customer groups. */
   customerGroups: CustomerGroupConnection;
   customers: CustomerConnection;
-  issue: Maybe<Issue>;
+  issue?: Maybe<Issue>;
   /**
    * Returns an issue type by ID or null if the issue type is not found.
    *
    * Archived issue types are also returned, see isArchived, archivedAt and archivedBy fields on the IssueType type.
    */
-  issueType: Maybe<IssueType>;
+  issueType?: Maybe<IssueType>;
   issueTypes: IssueTypeConnection;
   issues: IssueConnection;
-  machineUser: Maybe<MachineUser>;
+  machineUser?: Maybe<MachineUser>;
   machineUsers: MachineUserConnection;
   /** Gets usage for a given month for the current workspace. */
   monthlyUsage: MonthlyUsage;
   myLinearInstallationInfo: UserLinearInstallationInfo;
-  myLinearIntegration: Maybe<UserLinearIntegration>;
-  myLinearIntegrationToken: Maybe<LinearIntegrationToken>;
-  myMachineUser: Maybe<MachineUser>;
+  myLinearIntegration?: Maybe<UserLinearIntegration>;
+  myLinearIntegrationToken?: Maybe<LinearIntegrationToken>;
+  myMachineUser?: Maybe<MachineUser>;
   myPermissions: Permissions;
   mySlackInstallationInfo: UserSlackInstallationInfo;
-  mySlackIntegration: Maybe<UserSlackIntegration>;
-  myUser: Maybe<User>;
-  myUserAccount: Maybe<UserAccount>;
-  myWorkspace: Maybe<Workspace>;
+  mySlackIntegration?: Maybe<UserSlackIntegration>;
+  myUser?: Maybe<User>;
+  myUserAccount?: Maybe<UserAccount>;
+  myWorkspace?: Maybe<Workspace>;
   myWorkspaceInvites: WorkspaceInviteConnection;
   myWorkspaces: WorkspaceConnection;
   permissions: Permissions;
@@ -2444,36 +2444,36 @@ export type Query = {
    * Gets a single setting based on the code and the scope.
    * For a list of codes and more details, please see: https://docs.plain.com/advanced/settings.
    */
-  setting: Maybe<Setting>;
-  snippet: Maybe<Snippet>;
+  setting?: Maybe<Setting>;
+  snippet?: Maybe<Snippet>;
   snippets: SnippetConnection;
   /** List all the events types you can subscribe to. */
   subscriptionEventTypes: Array<SubscriptionEventType>;
   timelineEntries: TimelineEntryConnection;
-  timelineEntry: Maybe<TimelineEntry>;
-  user: Maybe<User>;
+  timelineEntry?: Maybe<TimelineEntry>;
+  user?: Maybe<User>;
   /**
    * Returns a user by email or null if the user is not found.
    *
    * Deleted users are also returned, see isDeleted, deletedAt and deletedBy fields on the User type.
    */
-  userByEmail: Maybe<User>;
+  userByEmail?: Maybe<User>;
   users: UserConnection;
   /** Gets a webhook target. */
-  webhookTarget: Maybe<WebhookTarget>;
+  webhookTarget?: Maybe<WebhookTarget>;
   /** List webhook targets. */
   webhookTargets: WebhookTargetConnection;
-  workspace: Maybe<Workspace>;
-  workspaceApp: Maybe<WorkspaceApp>;
+  workspace?: Maybe<Workspace>;
+  workspaceApp?: Maybe<WorkspaceApp>;
   workspaceAppPublicKeys: WorkspaceAppPublicKeyConnection;
   workspaceApps: WorkspaceAppConnection;
   workspaceChatSettings: WorkspaceChatSettings;
-  workspaceDiscordIntegration: Maybe<WorkspaceDiscordIntegration>;
+  workspaceDiscordIntegration?: Maybe<WorkspaceDiscordIntegration>;
   workspaceDiscordIntegrations: WorkspaceDiscordIntegrationConnection;
   workspaceEmailSettings: WorkspaceEmailSettings;
   workspaceInvites: WorkspaceInviteConnection;
   workspaceSlackInstallationInfo: WorkspaceSlackInstallationInfo;
-  workspaceSlackIntegration: Maybe<WorkspaceSlackIntegration>;
+  workspaceSlackIntegration?: Maybe<WorkspaceSlackIntegration>;
   workspaceSlackIntegrations: WorkspaceSlackIntegrationConnection;
 };
 
@@ -2509,20 +2509,20 @@ export type QueryCustomerGroupArgs = {
 
 
 export type QueryCustomerGroupsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryCustomersArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  filters: InputMaybe<CustomersFilter>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
-  sortBy: InputMaybe<CustomersSort>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<CustomersFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<CustomersSort>;
 };
 
 
@@ -2537,21 +2537,21 @@ export type QueryIssueTypeArgs = {
 
 
 export type QueryIssueTypesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  filters: InputMaybe<IssueTypeFilter>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<IssueTypeFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryIssuesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  filters: InputMaybe<IssuesFilter>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
-  sortBy: InputMaybe<IssuesSort>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<IssuesFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<IssuesSort>;
 };
 
 
@@ -2561,10 +2561,10 @@ export type QueryMachineUserArgs = {
 
 
 export type QueryMachineUsersArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2584,34 +2584,34 @@ export type QueryMySlackInstallationInfoArgs = {
 
 
 export type QueryMyWorkspaceInvitesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryMyWorkspacesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryRolesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QuerySearchCustomersArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
   searchQuery: CustomersSearchQuery;
 };
 
@@ -2628,19 +2628,19 @@ export type QuerySnippetArgs = {
 
 
 export type QuerySnippetsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryTimelineEntriesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
   customerId: Scalars['ID'];
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2661,11 +2661,11 @@ export type QueryUserByEmailArgs = {
 
 
 export type QueryUsersArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  filters: InputMaybe<UsersFilter>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<UsersFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2675,10 +2675,10 @@ export type QueryWebhookTargetArgs = {
 
 
 export type QueryWebhookTargetsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2693,19 +2693,19 @@ export type QueryWorkspaceAppArgs = {
 
 
 export type QueryWorkspaceAppPublicKeysArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
   workspaceAppId: Scalars['ID'];
 };
 
 
 export type QueryWorkspaceAppsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2715,18 +2715,18 @@ export type QueryWorkspaceDiscordIntegrationArgs = {
 
 
 export type QueryWorkspaceDiscordIntegrationsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryWorkspaceInvitesArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2741,10 +2741,10 @@ export type QueryWorkspaceSlackIntegrationArgs = {
 
 
 export type QueryWorkspaceSlackIntegrationsArgs = {
-  after: InputMaybe<Scalars['String']>;
-  before: InputMaybe<Scalars['String']>;
-  first: InputMaybe<Scalars['Int']>;
-  last: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type ReloadCustomerCardInstanceInput = {
@@ -2755,8 +2755,8 @@ export type ReloadCustomerCardInstanceInput = {
 export type ReloadCustomerCardInstanceOutput = {
   __typename?: 'ReloadCustomerCardInstanceOutput';
   /** The reloaded customer card instance. Currently this will always be a `CustomerCardInstanceLoading` type. */
-  customerCardInstance: Maybe<CustomerCardInstance>;
-  error: Maybe<MutationError>;
+  customerCardInstance?: Maybe<CustomerCardInstance>;
+  error?: Maybe<MutationError>;
 };
 
 export type RemoveCustomerFromCustomerGroupsInput = {
@@ -2766,7 +2766,7 @@ export type RemoveCustomerFromCustomerGroupsInput = {
 
 export type RemoveCustomerFromCustomerGroupsOutput = {
   __typename?: 'RemoveCustomerFromCustomerGroupsOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
 };
 
 export type ReopenIssueInput = {
@@ -2775,8 +2775,8 @@ export type ReopenIssueInput = {
 
 export type ReopenIssueOutput = {
   __typename?: 'ReopenIssueOutput';
-  error: Maybe<MutationError>;
-  issue: Maybe<Issue>;
+  error?: Maybe<MutationError>;
+  issue?: Maybe<Issue>;
 };
 
 export type ReorderCustomerCardConfigsInput = {
@@ -2787,23 +2787,23 @@ export type ReorderCustomerCardConfigsInput = {
 export type ReorderCustomerCardConfigsOutput = {
   __typename?: 'ReorderCustomerCardConfigsOutput';
   /** The reordered customer card configs. */
-  customerCardConfigs: Maybe<Array<CustomerCardConfig>>;
-  error: Maybe<MutationError>;
+  customerCardConfigs?: Maybe<Array<CustomerCardConfig>>;
+  error?: Maybe<MutationError>;
 };
 
 export type ReplyToEmailInput = {
-  additionalRecipients: InputMaybe<Array<EmailParticipantInput>>;
-  attachmentIds: InputMaybe<Array<Scalars['ID']>>;
+  additionalRecipients?: InputMaybe<Array<EmailParticipantInput>>;
+  attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
   customerId: Scalars['ID'];
-  hiddenRecipients: InputMaybe<Array<EmailParticipantInput>>;
+  hiddenRecipients?: InputMaybe<Array<EmailParticipantInput>>;
   inReplyToEmailId: Scalars['ID'];
   textContent: Scalars['String'];
 };
 
 export type ReplyToEmailOutput = {
   __typename?: 'ReplyToEmailOutput';
-  email: Maybe<Email>;
-  error: Maybe<MutationError>;
+  email?: Maybe<Email>;
+  error?: Maybe<MutationError>;
 };
 
 export type ResolveIssueInput = {
@@ -2812,13 +2812,13 @@ export type ResolveIssueInput = {
 
 export type ResolveIssueOutput = {
   __typename?: 'ResolveIssueOutput';
-  error: Maybe<MutationError>;
-  issue: Maybe<Issue>;
+  error?: Maybe<MutationError>;
+  issue?: Maybe<Issue>;
 };
 
 export type Role = {
   __typename?: 'Role';
-  description: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isAssignableToCustomer: Scalars['Boolean'];
   name: Scalars['String'];
@@ -2838,30 +2838,30 @@ export type RoleEdge = {
 };
 
 export type SendChatInput = {
-  attachmentIds: InputMaybe<Array<Scalars['ID']>>;
+  attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
   customerId: Scalars['ID'];
-  text: InputMaybe<Scalars['String']>;
+  text?: InputMaybe<Scalars['String']>;
 };
 
 export type SendChatOutput = {
   __typename?: 'SendChatOutput';
-  chat: Maybe<Chat>;
-  error: Maybe<MutationError>;
+  chat?: Maybe<Chat>;
+  error?: Maybe<MutationError>;
 };
 
 export type SendNewEmailInput = {
-  additionalRecipients: InputMaybe<Array<EmailParticipantInput>>;
-  attachmentIds: InputMaybe<Array<Scalars['ID']>>;
+  additionalRecipients?: InputMaybe<Array<EmailParticipantInput>>;
+  attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
   customerId: Scalars['ID'];
-  hiddenRecipients: InputMaybe<Array<EmailParticipantInput>>;
+  hiddenRecipients?: InputMaybe<Array<EmailParticipantInput>>;
   subject: Scalars['String'];
   textContent: Scalars['String'];
 };
 
 export type SendNewEmailOutput = {
   __typename?: 'SendNewEmailOutput';
-  email: Maybe<Email>;
-  error: Maybe<MutationError>;
+  email?: Maybe<Email>;
+  error?: Maybe<MutationError>;
 };
 
 /** A union of different types of settings. */
@@ -2869,14 +2869,14 @@ export type Setting = BooleanSetting;
 
 export type SettingScope = {
   __typename?: 'SettingScope';
-  id: Maybe<Scalars['ID']>;
+  id?: Maybe<Scalars['ID']>;
   scopeType: SettingScopeType;
 };
 
 /** An input to specify the scope for a setting. */
 export type SettingScopeInput = {
   /** An optional ID input. Depends on the type of scope if this is required. */
-  id: InputMaybe<Scalars['ID']>;
+  id?: InputMaybe<Scalars['ID']>;
   /** Determines the type of the scope. */
   scopeType: SettingScopeType;
 };
@@ -2921,15 +2921,15 @@ export enum SettingScopeType {
  */
 export type SettingValueInput = {
   /** If the setting is a boolean value then this field should be set. */
-  boolean: InputMaybe<Scalars['Boolean']>;
+  boolean?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type Snippet = {
   __typename?: 'Snippet';
   createdAt: DateTime;
   createdBy: InternalActor;
-  deletedAt: Maybe<DateTime>;
-  deletedBy: Maybe<InternalActor>;
+  deletedAt?: Maybe<DateTime>;
+  deletedBy?: Maybe<InternalActor>;
   id: Scalars['ID'];
   isDeleted: Scalars['Boolean'];
   name: Scalars['String'];
@@ -2965,7 +2965,7 @@ export type StringInput = {
  */
 export type StringSearchExpression = {
   /** Case-insensitive match values containing the provided string. */
-  caseInsensitiveContains: InputMaybe<Scalars['String']>;
+  caseInsensitiveContains?: InputMaybe<Scalars['String']>;
 };
 
 export type Subscription = {
@@ -2984,7 +2984,7 @@ export type SubscriptionCustomerCardInstanceChangesArgs = {
 
 
 export type SubscriptionCustomerChangesArgs = {
-  filters: InputMaybe<CustomerChangesFilter>;
+  filters?: InputMaybe<CustomerChangesFilter>;
 };
 
 
@@ -3043,7 +3043,7 @@ export type TimelineEntryEdge = {
 export type TimelineEntryPreview = {
   __typename?: 'TimelineEntryPreview';
   actor: Actor;
-  previewText: Maybe<Scalars['String']>;
+  previewText?: Maybe<Scalars['String']>;
   timestamp: DateTime;
 };
 
@@ -3052,9 +3052,9 @@ export type TimelineInfo = {
   assignedUserUnreadCount: Scalars['Int'];
   createdAt: DateTime;
   createdBy: Actor;
-  customerWaitingForReplySince: Maybe<DateTime>;
-  lastCommunication: Maybe<TimelineInfoCommunication>;
-  lastTimelineEntryPreview: Maybe<TimelineEntryPreview>;
+  customerWaitingForReplySince?: Maybe<DateTime>;
+  lastCommunication?: Maybe<TimelineInfoCommunication>;
+  lastTimelineEntryPreview?: Maybe<TimelineEntryPreview>;
   updatedAt: DateTime;
   updatedBy: Actor;
 };
@@ -3063,7 +3063,7 @@ export type TimelineInfoCommunication = {
   __typename?: 'TimelineInfoCommunication';
   actor: Actor;
   communicationChannel: CommunicationChannel;
-  previewText: Maybe<Scalars['String']>;
+  previewText?: Maybe<Scalars['String']>;
   timestamp: DateTime;
 };
 
@@ -3073,8 +3073,8 @@ export type UnarchiveIssueTypeInput = {
 
 export type UnarchiveIssueTypeOutput = {
   __typename?: 'UnarchiveIssueTypeOutput';
-  error: Maybe<MutationError>;
-  issueType: Maybe<IssueType>;
+  error?: Maybe<MutationError>;
+  issueType?: Maybe<IssueType>;
 };
 
 export type UnassignAllCustomersInput = {
@@ -3083,8 +3083,8 @@ export type UnassignAllCustomersInput = {
 
 export type UnassignAllCustomersOutput = {
   __typename?: 'UnassignAllCustomersOutput';
-  error: Maybe<MutationError>;
-  unassignedCustomerCount: Maybe<Scalars['Int']>;
+  error?: Maybe<MutationError>;
+  unassignedCustomerCount?: Maybe<Scalars['Int']>;
 };
 
 export type UnmarkCustomerAsSpamInput = {
@@ -3093,48 +3093,48 @@ export type UnmarkCustomerAsSpamInput = {
 
 export type UnmarkCustomerAsSpamOutput = {
   __typename?: 'UnmarkCustomerAsSpamOutput';
-  customer: Maybe<Customer>;
-  error: Maybe<MutationError>;
+  customer?: Maybe<Customer>;
+  error?: Maybe<MutationError>;
 };
 
 /** For constraints and details on the fields see the `CustomerCardConfig` type. */
 export type UpdateCustomerCardConfigInput = {
   /** If provided, will replace the existing API headers. Requires the `customerCardConfigApiDetails:edit` permission. */
-  apiHeaders: InputMaybe<Array<CustomerCardConfigApiHeaderInput>>;
+  apiHeaders?: InputMaybe<Array<CustomerCardConfigApiHeaderInput>>;
   /** If provided, will update the API URL. Requires the `customerCardConfigApiDetails:edit` permission. */
-  apiUrl: InputMaybe<StringInput>;
+  apiUrl?: InputMaybe<StringInput>;
   /** The customer card config to update. */
   customerCardConfigId: Scalars['ID'];
   /** If provided, will update the default time to live seconds. */
-  defaultTimeToLiveSeconds: InputMaybe<IntInput>;
+  defaultTimeToLiveSeconds?: InputMaybe<IntInput>;
   /** If provided, will update the enabled flag. */
-  isEnabled: InputMaybe<BooleanInput>;
+  isEnabled?: InputMaybe<BooleanInput>;
   /** If provided, will update the key. Keys must be unique in a workspace. */
-  key: InputMaybe<StringInput>;
+  key?: InputMaybe<StringInput>;
   /** If provided, will update the order. */
-  order: InputMaybe<IntInput>;
+  order?: InputMaybe<IntInput>;
   /** If provided, will update the title. */
-  title: InputMaybe<StringInput>;
+  title?: InputMaybe<StringInput>;
 };
 
 export type UpdateCustomerCardConfigOutput = {
   __typename?: 'UpdateCustomerCardConfigOutput';
   /** The updated customer card config. */
-  customerCardConfig: Maybe<CustomerCardConfig>;
-  error: Maybe<MutationError>;
+  customerCardConfig?: Maybe<CustomerCardConfig>;
+  error?: Maybe<MutationError>;
 };
 
 export type UpdateCustomerGroupInput = {
-  color: InputMaybe<StringInput>;
+  color?: InputMaybe<StringInput>;
   customerGroupId: Scalars['ID'];
-  key: InputMaybe<StringInput>;
-  name: InputMaybe<StringInput>;
+  key?: InputMaybe<StringInput>;
+  name?: InputMaybe<StringInput>;
 };
 
 export type UpdateCustomerGroupOutput = {
   __typename?: 'UpdateCustomerGroupOutput';
-  customerGroup: Maybe<CustomerGroup>;
-  error: Maybe<MutationError>;
+  customerGroup?: Maybe<CustomerGroup>;
+  error?: Maybe<MutationError>;
 };
 
 export type UpdateIssueTypeInput = {
@@ -3143,34 +3143,34 @@ export type UpdateIssueTypeInput = {
    *
    * Valid values are 0, 1, 2 and 3.
    */
-  defaultIssuePriorityValue: InputMaybe<IntInput>;
+  defaultIssuePriorityValue?: InputMaybe<IntInput>;
   /**
    * The icon to use for this issue type. The maximum length is 50 characters.
    *
    * Only lowercase alphanumeric characters, '-' and '_' are allowed.
    */
-  icon: InputMaybe<StringInput>;
+  icon?: InputMaybe<StringInput>;
   issueTypeId: Scalars['ID'];
-  publicName: InputMaybe<StringInput>;
+  publicName?: InputMaybe<StringInput>;
 };
 
 export type UpdateIssueTypeOutput = {
   __typename?: 'UpdateIssueTypeOutput';
-  error: Maybe<MutationError>;
-  issueType: Maybe<IssueType>;
+  error?: Maybe<MutationError>;
+  issueType?: Maybe<IssueType>;
 };
 
 export type UpdateMachineUserInput = {
-  description: InputMaybe<StringInput>;
-  fullName: InputMaybe<StringInput>;
+  description?: InputMaybe<StringInput>;
+  fullName?: InputMaybe<StringInput>;
   machineUserId: Scalars['ID'];
-  publicName: InputMaybe<StringInput>;
+  publicName?: InputMaybe<StringInput>;
 };
 
 export type UpdateMachineUserOutput = {
   __typename?: 'UpdateMachineUserOutput';
-  error: Maybe<MutationError>;
-  machineUser: Maybe<MachineUser>;
+  error?: Maybe<MutationError>;
+  machineUser?: Maybe<MachineUser>;
 };
 
 /**
@@ -3192,35 +3192,35 @@ export type UpdateSettingInput = {
  */
 export type UpdateSettingOutput = {
   __typename?: 'UpdateSettingOutput';
-  error: Maybe<MutationError>;
+  error?: Maybe<MutationError>;
   /** The updated setting. */
-  setting: Maybe<Setting>;
+  setting?: Maybe<Setting>;
 };
 
 export type UpdateSnippetInput = {
-  name: InputMaybe<StringInput>;
+  name?: InputMaybe<StringInput>;
   snippetId: Scalars['ID'];
-  text: InputMaybe<StringInput>;
+  text?: InputMaybe<StringInput>;
 };
 
 export type UpdateSnippetOutput = {
   __typename?: 'UpdateSnippetOutput';
-  error: Maybe<MutationError>;
-  snippet: Maybe<Snippet>;
+  error?: Maybe<MutationError>;
+  snippet?: Maybe<Snippet>;
 };
 
 export type UpdateWebhookTargetInput = {
-  description: InputMaybe<StringInput>;
-  eventSubscriptions: InputMaybe<Array<WebhookTargetEventSubscriptionInput>>;
-  isEnabled: InputMaybe<BooleanInput>;
-  url: InputMaybe<StringInput>;
+  description?: InputMaybe<StringInput>;
+  eventSubscriptions?: InputMaybe<Array<WebhookTargetEventSubscriptionInput>>;
+  isEnabled?: InputMaybe<BooleanInput>;
+  url?: InputMaybe<StringInput>;
   webhookTargetId: Scalars['ID'];
 };
 
 export type UpdateWebhookTargetOutput = {
   __typename?: 'UpdateWebhookTargetOutput';
-  error: Maybe<MutationError>;
-  webhookTarget: Maybe<WebhookTarget>;
+  error?: Maybe<MutationError>;
+  webhookTarget?: Maybe<WebhookTarget>;
 };
 
 export type UpdateWorkspaceChatSettingsInput = {
@@ -3229,8 +3229,8 @@ export type UpdateWorkspaceChatSettingsInput = {
 
 export type UpdateWorkspaceChatSettingsOutput = {
   __typename?: 'UpdateWorkspaceChatSettingsOutput';
-  error: Maybe<MutationError>;
-  workspaceChatSettings: Maybe<WorkspaceChatSettings>;
+  error?: Maybe<MutationError>;
+  workspaceChatSettings?: Maybe<WorkspaceChatSettings>;
 };
 
 export type UpdateWorkspaceEmailSettingsInput = {
@@ -3239,19 +3239,19 @@ export type UpdateWorkspaceEmailSettingsInput = {
 
 export type UpdateWorkspaceEmailSettingsOutput = {
   __typename?: 'UpdateWorkspaceEmailSettingsOutput';
-  error: Maybe<MutationError>;
-  workspaceEmailSettings: Maybe<WorkspaceEmailSettings>;
+  error?: Maybe<MutationError>;
+  workspaceEmailSettings?: Maybe<WorkspaceEmailSettings>;
 };
 
 export type UpdateWorkspaceInput = {
-  name: InputMaybe<StringInput>;
-  publicName: InputMaybe<StringInput>;
+  name?: InputMaybe<StringInput>;
+  publicName?: InputMaybe<StringInput>;
 };
 
 export type UpdateWorkspaceOutput = {
   __typename?: 'UpdateWorkspaceOutput';
-  error: Maybe<MutationError>;
-  workspace: Maybe<Workspace>;
+  error?: Maybe<MutationError>;
+  workspace?: Maybe<Workspace>;
 };
 
 export type UploadFormData = {
@@ -3261,41 +3261,41 @@ export type UploadFormData = {
 };
 
 export type UpsertCustomTimelineEntryInput = {
-  attachmentIds: InputMaybe<Array<Scalars['ID']>>;
+  attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
   /**
    * When true, this will change the customer's status to "Active". This is useful if you are using custom timeline
    * entries for contact form submissions or other events which require some attention.
    *
    * Defaults to false.
    */
-  changeCustomerStatusToActive: InputMaybe<Scalars['Boolean']>;
+  changeCustomerStatusToActive?: InputMaybe<Scalars['Boolean']>;
   components: Array<ComponentInput>;
   customerId: Scalars['ID'];
-  expiresAt: InputMaybe<Scalars['String']>;
-  externalId: InputMaybe<Scalars['ID']>;
+  expiresAt?: InputMaybe<Scalars['String']>;
+  externalId?: InputMaybe<Scalars['ID']>;
   /**
    * When true, this will send a notification for the customer when the custom timeline entry is created. It will only
    * send the notification if the user has enabled the matching notification setting.
    *
    * Defaults to false.
    */
-  sendCustomTimelineEntryCreatedNotification: InputMaybe<Scalars['Boolean']>;
-  timestamp: InputMaybe<Scalars['String']>;
+  sendCustomTimelineEntryCreatedNotification?: InputMaybe<Scalars['Boolean']>;
+  timestamp?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
-  type: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
 };
 
 export type UpsertCustomTimelineEntryOutput = {
   __typename?: 'UpsertCustomTimelineEntryOutput';
-  error: Maybe<MutationError>;
-  result: Maybe<UpsertResult>;
-  timelineEntry: Maybe<TimelineEntry>;
+  error?: Maybe<MutationError>;
+  result?: Maybe<UpsertResult>;
+  timelineEntry?: Maybe<TimelineEntry>;
 };
 
 export type UpsertCustomerIdentifierInput = {
-  customerId: InputMaybe<Scalars['ID']>;
-  emailAddress: InputMaybe<Scalars['String']>;
-  externalId: InputMaybe<Scalars['ID']>;
+  customerId?: InputMaybe<Scalars['ID']>;
+  emailAddress?: InputMaybe<Scalars['String']>;
+  externalId?: InputMaybe<Scalars['ID']>;
 };
 
 export type UpsertCustomerInput = {
@@ -3305,25 +3305,25 @@ export type UpsertCustomerInput = {
 };
 
 export type UpsertCustomerOnCreateInput = {
-  customerGroupIdentifiers: InputMaybe<Array<CustomerGroupIdentifier>>;
+  customerGroupIdentifiers?: InputMaybe<Array<CustomerGroupIdentifier>>;
   email: EmailAddressInput;
-  externalId: InputMaybe<Scalars['ID']>;
+  externalId?: InputMaybe<Scalars['ID']>;
   fullName: Scalars['String'];
-  shortName: InputMaybe<Scalars['String']>;
+  shortName?: InputMaybe<Scalars['String']>;
 };
 
 export type UpsertCustomerOnUpdateInput = {
-  email: InputMaybe<EmailAddressInput>;
-  externalId: InputMaybe<OptionalStringInput>;
-  fullName: InputMaybe<StringInput>;
-  shortName: InputMaybe<OptionalStringInput>;
+  email?: InputMaybe<EmailAddressInput>;
+  externalId?: InputMaybe<OptionalStringInput>;
+  fullName?: InputMaybe<StringInput>;
+  shortName?: InputMaybe<OptionalStringInput>;
 };
 
 export type UpsertCustomerOutput = {
   __typename?: 'UpsertCustomerOutput';
-  customer: Maybe<Customer>;
-  error: Maybe<MutationError>;
-  result: Maybe<UpsertResult>;
+  customer?: Maybe<Customer>;
+  error?: Maybe<MutationError>;
+  result?: Maybe<UpsertResult>;
 };
 
 export enum UpsertResult {
@@ -3336,8 +3336,8 @@ export type User = {
   __typename?: 'User';
   createdAt: DateTime;
   createdBy: InternalActor;
-  deletedAt: Maybe<DateTime>;
-  deletedBy: Maybe<Actor>;
+  deletedAt?: Maybe<DateTime>;
+  deletedBy?: Maybe<Actor>;
   /** The email associated with this user. Email is unique per user. */
   email: Scalars['String'];
   /** The full name e.g. Grace Hopper. */
@@ -3434,13 +3434,13 @@ export enum UserStatus {
 }
 
 export type UsersFilter = {
-  isAssignableToCustomer: InputMaybe<Scalars['Boolean']>;
+  isAssignableToCustomer?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type VerifyWorkspaceEmailDnsSettingsOutput = {
   __typename?: 'VerifyWorkspaceEmailDnsSettingsOutput';
-  error: Maybe<MutationError>;
-  workspaceEmailDomainSettings: Maybe<WorkspaceEmailDomainSettings>;
+  error?: Maybe<MutationError>;
+  workspaceEmailDomainSettings?: Maybe<WorkspaceEmailDomainSettings>;
 };
 
 export type VerifyWorkspaceEmailForwardingSettingsInput = {
@@ -3449,8 +3449,8 @@ export type VerifyWorkspaceEmailForwardingSettingsInput = {
 
 export type VerifyWorkspaceEmailForwardingSettingsOutput = {
   __typename?: 'VerifyWorkspaceEmailForwardingSettingsOutput';
-  error: Maybe<MutationError>;
-  workspaceEmailDomainSettings: Maybe<WorkspaceEmailDomainSettings>;
+  error?: Maybe<MutationError>;
+  workspaceEmailDomainSettings?: Maybe<WorkspaceEmailDomainSettings>;
 };
 
 export type WebhookTarget = {
@@ -3601,9 +3601,9 @@ export type WorkspaceEmailDomainSettings = {
 
 export type WorkspaceEmailSettings = {
   __typename?: 'WorkspaceEmailSettings';
-  bccEmail: Maybe<Scalars['String']>;
+  bccEmail?: Maybe<Scalars['String']>;
   isEnabled: Scalars['Boolean'];
-  workspaceEmailDomainSettings: Maybe<WorkspaceEmailDomainSettings>;
+  workspaceEmailDomainSettings?: Maybe<WorkspaceEmailDomainSettings>;
 };
 
 export type WorkspaceInvite = {
@@ -3686,7 +3686,7 @@ export type CustomerGroupMembershipPartsFragment = { __typename?: 'CustomerGroup
 
 export type CustomerGroupPartsFragment = { __typename?: 'CustomerGroup', id: string, name: string, key: string, color: string };
 
-export type CustomerPartsFragment = { __typename: 'Customer', id: string, fullName: string, shortName: string | null, externalId: string | null, status: CustomerStatus, email: { __typename?: 'EmailAddress', email: string, isVerified: boolean, verifiedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null }, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, assignedToUser: { __typename: 'UserActor', userId: string } | null, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, lastIdleAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, markedAsSpamAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null };
+export type CustomerPartsFragment = { __typename: 'Customer', id: string, fullName: string, shortName?: string | null, externalId?: string | null, status: CustomerStatus, email: { __typename?: 'EmailAddress', email: string, isVerified: boolean, verifiedAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null }, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, assignedToUser?: { __typename: 'UserActor', userId: string } | null, assignedAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, lastIdleAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, markedAsSpamAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null };
 
 export type DateTimePartsFragment = { __typename: 'DateTime', iso8601: string, unixTimestamp: string };
 
@@ -3704,7 +3704,7 @@ type InternalActorParts_UserActor_Fragment = { __typename: 'UserActor', userId: 
 
 export type InternalActorPartsFragment = InternalActorParts_CustomerActor_Fragment | InternalActorParts_DeletedCustomerActor_Fragment | InternalActorParts_MachineUserActor_Fragment | InternalActorParts_SystemActor_Fragment | InternalActorParts_UserActor_Fragment;
 
-export type IssuePartsFragment = { __typename: 'Issue', id: string, issueKey: string, status: IssueStatus, customer: { __typename?: 'Customer', id: string }, priority: { __typename: 'IssuePriority', label: string, value: number }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, issueType: { __typename: 'IssueType', id: string, publicName: string, isArchived: boolean, defaultIssuePriority: { __typename: 'IssuePriority', label: string, value: number } }, deletedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null };
+export type IssuePartsFragment = { __typename: 'Issue', id: string, issueKey: string, status: IssueStatus, customer: { __typename?: 'Customer', id: string }, priority: { __typename: 'IssuePriority', label: string, value: number }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, issueType: { __typename: 'IssueType', id: string, publicName: string, isArchived: boolean, defaultIssuePriority: { __typename: 'IssuePriority', label: string, value: number } }, deletedAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null };
 
 export type IssuePriorityPartsFragment = { __typename: 'IssuePriority', label: string, value: number };
 
@@ -3725,42 +3725,42 @@ export type AddCustomerToCustomerGroupsMutationVariables = Exact<{
 }>;
 
 
-export type AddCustomerToCustomerGroupsMutation = { __typename?: 'Mutation', addCustomerToCustomerGroups: { __typename?: 'AddCustomerToCustomerGroupsOutput', customerGroupMemberships: Array<{ __typename?: 'CustomerGroupMembership', customerId: string, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, customerGroup: { __typename?: 'CustomerGroup', id: string, name: string, key: string, color: string } }> | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type AddCustomerToCustomerGroupsMutation = { __typename?: 'Mutation', addCustomerToCustomerGroups: { __typename?: 'AddCustomerToCustomerGroupsOutput', customerGroupMemberships?: Array<{ __typename?: 'CustomerGroupMembership', customerId: string, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, customerGroup: { __typename?: 'CustomerGroup', id: string, name: string, key: string, color: string } }> | null, error?: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type CreateIssueMutationVariables = Exact<{
   input: CreateIssueInput;
 }>;
 
 
-export type CreateIssueMutation = { __typename?: 'Mutation', createIssue: { __typename?: 'CreateIssueOutput', issue: { __typename: 'Issue', id: string, issueKey: string, status: IssueStatus, customer: { __typename?: 'Customer', id: string }, priority: { __typename: 'IssuePriority', label: string, value: number }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, issueType: { __typename: 'IssueType', id: string, publicName: string, isArchived: boolean, defaultIssuePriority: { __typename: 'IssuePriority', label: string, value: number } }, deletedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type CreateIssueMutation = { __typename?: 'Mutation', createIssue: { __typename?: 'CreateIssueOutput', issue?: { __typename: 'Issue', id: string, issueKey: string, status: IssueStatus, customer: { __typename?: 'Customer', id: string }, priority: { __typename: 'IssuePriority', label: string, value: number }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, issueType: { __typename: 'IssueType', id: string, publicName: string, isArchived: boolean, defaultIssuePriority: { __typename: 'IssuePriority', label: string, value: number } }, deletedAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null } | null, error?: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type RemoveCustomerFromCustomerGroupsMutationVariables = Exact<{
   input: RemoveCustomerFromCustomerGroupsInput;
 }>;
 
 
-export type RemoveCustomerFromCustomerGroupsMutation = { __typename?: 'Mutation', removeCustomerFromCustomerGroups: { __typename?: 'RemoveCustomerFromCustomerGroupsOutput', error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type RemoveCustomerFromCustomerGroupsMutation = { __typename?: 'Mutation', removeCustomerFromCustomerGroups: { __typename?: 'RemoveCustomerFromCustomerGroupsOutput', error?: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type UpsertCustomTimelineEntryMutationVariables = Exact<{
   input: UpsertCustomTimelineEntryInput;
 }>;
 
 
-export type UpsertCustomTimelineEntryMutation = { __typename?: 'Mutation', upsertCustomTimelineEntry: { __typename?: 'UpsertCustomTimelineEntryOutput', result: UpsertResult | null, timelineEntry: { __typename?: 'TimelineEntry', id: string, customerId: string, timestamp: { __typename?: 'DateTime', iso8601: string }, actor: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, entry: { __typename: 'ChatEntry' } | { __typename: 'CustomEntry' } | { __typename: 'CustomerAssignmentTransitionedEntry' } | { __typename: 'CustomerStatusTransitionedEntry' } | { __typename: 'EmailEntry' } | { __typename: 'IssueDeletedEntry' } | { __typename: 'IssueIssueTypeChangedEntry' } | { __typename: 'IssuePriorityChangedEntry' } | { __typename: 'IssueStatusTransitionedEntry' } | { __typename: 'LinearIssueLinkStateTransitionedEntry' } | { __typename: 'NoteEntry' } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type UpsertCustomTimelineEntryMutation = { __typename?: 'Mutation', upsertCustomTimelineEntry: { __typename?: 'UpsertCustomTimelineEntryOutput', result?: UpsertResult | null, timelineEntry?: { __typename?: 'TimelineEntry', id: string, customerId: string, timestamp: { __typename?: 'DateTime', iso8601: string }, actor: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, entry: { __typename: 'ChatEntry' } | { __typename: 'CustomEntry' } | { __typename: 'CustomerAssignmentTransitionedEntry' } | { __typename: 'CustomerStatusTransitionedEntry' } | { __typename: 'EmailEntry' } | { __typename: 'IssueDeletedEntry' } | { __typename: 'IssueIssueTypeChangedEntry' } | { __typename: 'IssuePriorityChangedEntry' } | { __typename: 'IssueStatusTransitionedEntry' } | { __typename: 'LinearIssueLinkStateTransitionedEntry' } | { __typename: 'NoteEntry' } } | null, error?: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type UpsertCustomerMutationVariables = Exact<{
   input: UpsertCustomerInput;
 }>;
 
 
-export type UpsertCustomerMutation = { __typename?: 'Mutation', upsertCustomer: { __typename?: 'UpsertCustomerOutput', customer: { __typename: 'Customer', id: string, fullName: string, shortName: string | null, externalId: string | null, status: CustomerStatus, email: { __typename?: 'EmailAddress', email: string, isVerified: boolean, verifiedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null }, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, assignedToUser: { __typename: 'UserActor', userId: string } | null, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, lastIdleAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, markedAsSpamAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type UpsertCustomerMutation = { __typename?: 'Mutation', upsertCustomer: { __typename?: 'UpsertCustomerOutput', customer?: { __typename: 'Customer', id: string, fullName: string, shortName?: string | null, externalId?: string | null, status: CustomerStatus, email: { __typename?: 'EmailAddress', email: string, isVerified: boolean, verifiedAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null }, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, assignedToUser?: { __typename: 'UserActor', userId: string } | null, assignedAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, lastIdleAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, markedAsSpamAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null } | null, error?: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type CustomerByIdQueryVariables = Exact<{
   customerId: Scalars['ID'];
 }>;
 
 
-export type CustomerByIdQuery = { __typename?: 'Query', customer: { __typename: 'Customer', id: string, fullName: string, shortName: string | null, externalId: string | null, status: CustomerStatus, email: { __typename?: 'EmailAddress', email: string, isVerified: boolean, verifiedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null }, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, assignedToUser: { __typename: 'UserActor', userId: string } | null, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, lastIdleAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, markedAsSpamAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null } | null };
+export type CustomerByIdQuery = { __typename?: 'Query', customer?: { __typename: 'Customer', id: string, fullName: string, shortName?: string | null, externalId?: string | null, status: CustomerStatus, email: { __typename?: 'EmailAddress', email: string, isVerified: boolean, verifiedAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null }, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, assignedToUser?: { __typename: 'UserActor', userId: string } | null, assignedAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, lastIdleAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, markedAsSpamAt?: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null } | null };
 
 export const DateTimePartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}}]} as unknown as DocumentNode<DateTimePartsFragment, unknown>;
 export const UserActorPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]} as unknown as DocumentNode<UserActorPartsFragment, unknown>;
