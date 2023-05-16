@@ -89,7 +89,7 @@ export class PlainSDKClient {
    * Allows you to create or update a customer. If you need to get the customer id
    * for a customer in Plain, this is typically your first step.
    */
-  async upsertCustomer(input: UpsertCustomerInput): SDKResult<CustomerPartsFragment | null> {
+  async upsertCustomer(input: UpsertCustomerInput): SDKResult<CustomerPartsFragment> {
     const res = await request(this.#ctx, {
       query: UpsertCustomerDocument,
       variables: {
