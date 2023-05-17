@@ -1,17 +1,17 @@
 fragment ActorParts on Actor {
-	... on UserActor {
-		...UserActorParts
-	}
-	... on CustomerActor {
-		...CustomerActorParts
-	}
-	... on SystemActor {
-		...SystemActorParts
-	}
-	... on MachineUserActor {
-		...MachineUserActorParts
-	}  
-	... on DeletedCustomerActor {
-		...DeletedCustomerActorParts
-	}  
+  ... on UserActor {
+    ...UserActorParts
+  }
+  ... on CustomerActor {
+    ...CustomerActorParts
+  }
+  ... on SystemActor {
+    ...SystemActorParts
+  }
+  ... on MachineUserActor {
+    ...MachineUserActorParts
+  }
+  ... on DeletedCustomerActor {
+    ...DeletedCustomerActorParts
+  }
 }

@@ -1,4 +1,4 @@
-fragment IssueParts on Issue { 
+fragment IssueParts on Issue {
   __typename
   id
   issueKey

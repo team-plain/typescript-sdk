@@ -1,4 +1,4 @@
 fragment UserActorParts on UserActor {
-    __typename
-    userId
+  __typename
+  userId
 }

@@ -1,5 +1,5 @@
-mutation addCustomerToCustomerGroups($input:AddCustomerToCustomerGroupsInput!) {
-  addCustomerToCustomerGroups(input:$input) {
+mutation addCustomerToCustomerGroups($input: AddCustomerToCustomerGroupsInput!) {
+  addCustomerToCustomerGroups(input: $input) {
     customerGroupMemberships {
       ...CustomerGroupMembershipParts
     }
