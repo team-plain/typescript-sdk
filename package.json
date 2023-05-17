@@ -4,7 +4,7 @@
   "description": "Typescript SDK for Plain's Core GraphQL API",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && rollup -c",
     "build:docs": "typedoc --plugin typedoc-plugin-missing-exports src/index.ts",
