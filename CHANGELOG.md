@@ -5,7 +5,7 @@
 ### Minor Changes
 
 - ae66dd3: Export useful graphql enums
-- ada8307: Export relevant graphql types to not have to rely on Paramaters in TS as much
+- ada8307: Export useful graphql types
 
 ## 1.0.0
 
