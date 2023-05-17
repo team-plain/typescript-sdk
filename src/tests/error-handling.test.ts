@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import nock from 'nock';
-import { PlainSDKClient } from '..';
+import { PlainClient } from '..';
 
 describe('error handling', () => {
   let interceptor: nock.Interceptor;
@@ -12,7 +12,7 @@ describe('error handling', () => {
   test('should return an unknown error when something unexpected is returned', async () => {
     const scope = interceptor.reply(500, '🌶️');
 
-    const client = new PlainSDKClient({ apiKey: '123' });
+    const client = new PlainClient({ apiKey: '123' });
 
     const result = await client.getCustomerById({ customerId: 'c_123' });
 
@@ -27,7 +27,7 @@ describe('error handling', () => {
   test('should return a forbidden error when API 401s', async () => {
     const scope = interceptor.matchHeader('Authorization', 'Bearer 123').reply(401, 'unauthorized');
 
-    const client = new PlainSDKClient({ apiKey: '123' });
+    const client = new PlainClient({ apiKey: '123' });
 
     const result = await client.getCustomerById({ customerId: 'c_123' });
 
@@ -42,7 +42,7 @@ describe('error handling', () => {
   test('should return a forbidden error when API 403s', async () => {
     const scope = interceptor.matchHeader('Authorization', 'Bearer 123').reply(403, 'forbidden');
 
-    const client = new PlainSDKClient({ apiKey: '123' });
+    const client = new PlainClient({ apiKey: '123' });
 
     const result = await client.getCustomerById({ customerId: 'c_123' });
 
@@ -70,7 +70,7 @@ describe('error handling', () => {
       },
     });
 
-    const client = new PlainSDKClient({ apiKey: '123' });
+    const client = new PlainClient({ apiKey: '123' });
 
     const result = await client.getCustomerById({ customerId: 'c_123' });
 

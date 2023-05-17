@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import nock from 'nock';
-import { PlainSDKClient } from '..';
+import { PlainClient } from '..';
 import { PlainSDKError } from '../error';
 import { PlainGraphQLError } from '../graphql-utlities';
 
@@ -25,7 +25,7 @@ describe('raw request', () => {
       .matchHeader('Authorization', `Bearer abc`)
       .reply(200, response);
 
-    const client = new PlainSDKClient({ apiKey: 'abc' });
+    const client = new PlainClient({ apiKey: 'abc' });
     const result = await client.rawRequest({
       query,
       variables,
@@ -59,7 +59,7 @@ describe('raw request', () => {
         errors: graphqlErrors,
       });
 
-    const client = new PlainSDKClient({ apiKey: 'abc' });
+    const client = new PlainClient({ apiKey: 'abc' });
     const result = await client.rawRequest({
       query,
       variables,
