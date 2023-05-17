@@ -1,3 +1,12 @@
+import { UpsertResult, UserStatus, IssuesSortField } from './graphql/types';
+import {
+  CustomerStatus,
+  CustomersSortField,
+  IssueStatus,
+  MutationErrorType,
+  MutationFieldError,
+  MutationFieldErrorType,
+} from './graphql/types';
 import {
   CustomerGroupMembershipPartsFragment,
   DateTimePartsFragment,
@@ -12,7 +21,17 @@ import {
   TimelineEntryPartsFragment,
   UserActorPartsFragment,
 } from './graphql/types';
-import { ActorPartsFragment, CustomerActorPartsFragment } from './graphql/types';
+import {
+  ActorPartsFragment,
+  CustomerActorPartsFragment,
+  ComponentSpacerSize,
+  ComponentTextSize,
+  ComponentBadgeColor,
+  ComponentDividerSpacingSize,
+  ComponentPlainTextSize,
+  ComponentPlainTextColor,
+  ComponentTextColor,
+} from './graphql/types';
 import {
   UpsertCustomerInput,
   UpsertCustomTimelineEntryInput,
@@ -41,4 +60,20 @@ export {
   SystemActorPartsFragment,
   TimelineEntryPartsFragment,
   UserActorPartsFragment,
+
+  // Enums
+  ComponentBadgeColor,
+  ComponentDividerSpacingSize,
+  ComponentPlainTextColor,
+  ComponentPlainTextSize,
+  ComponentSpacerSize,
+  ComponentTextColor,
+  ComponentTextSize,
+  CustomerStatus,
+  CustomersSortField,
+  IssueStatus,
+  MutationErrorType,
+  MutationFieldErrorType,
+  UpsertResult,
+  UserStatus,
 };
