@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 1.0.0
+
+### Major Changes
+
+- d70cbd4: Rename the exported client from `PlainSDKClient` to `PlainClient`
+
 ## 0.2.0
 
 ### Minor Changes
