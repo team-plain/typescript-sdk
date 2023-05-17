@@ -2,6 +2,7 @@
 .changeset
 .vscode
 dist
+docs
 
 # Files
 src/graphql/types.ts
