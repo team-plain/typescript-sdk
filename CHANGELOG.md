@@ -1,5 +1,12 @@
 # @team-plain/typescript-sdk
 
+## 1.1.0
+
+### Minor Changes
+
+- ae66dd3: Export useful graphql enums
+- ada8307: Export useful graphql types
+
 ## 1.0.0
 
 ### Major Changes
