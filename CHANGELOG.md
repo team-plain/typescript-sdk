@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 1.1.1
+
+### Patch Changes
+
+- d1404de: Conform [including TypeScript declarations for the npm package](https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html#including-declarations-in-your-npm-package), `typings` to `types`
+
 ## 1.1.0
 
 ### Minor Changes
