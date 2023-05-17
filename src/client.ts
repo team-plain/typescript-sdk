@@ -1,23 +1,23 @@
-import { VariablesOf } from '@graphql-typed-document-node/core';
-import { Context } from './context';
-import { PlainSDKError } from './error';
+import type { VariablesOf } from '@graphql-typed-document-node/core';
+import type { Context } from './context';
+import type { PlainSDKError } from './error';
 import {
   AddCustomerToCustomerGroupsDocument,
   CustomerByIdDocument,
-  CustomerGroupMembershipPartsFragment,
+  type CustomerGroupMembershipPartsFragment,
   RemoveCustomerFromCustomerGroupsDocument,
 } from './graphql/types';
 import {
   CreateIssueDocument,
-  CustomerPartsFragment,
-  IssuePartsFragment,
-  TimelineEntryPartsFragment,
+  type CustomerPartsFragment,
+  type IssuePartsFragment,
+  type TimelineEntryPartsFragment,
   UpsertCustomTimelineEntryDocument,
   UpsertCustomerDocument,
-  UpsertResult,
+  type UpsertResult,
 } from './graphql/types';
 import { request } from './request';
-import { Result } from './result';
+import type { Result } from './result';
 
 type SDKResult<T> = Promise<Result<T, PlainSDKError>>;
 

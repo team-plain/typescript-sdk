@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import {
-  MutationErrorPartsFragment,
+  type MutationErrorPartsFragment,
   MutationErrorType,
   MutationFieldErrorType,
 } from './graphql/types';

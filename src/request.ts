@@ -1,9 +1,9 @@
-import { TypedDocumentNode } from '@graphql-typed-document-node/core';
-import { Result } from './result';
+import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import type { Result } from './result';
 import { print } from 'graphql';
 import axios from 'axios';
-import { Context } from './context';
-import { PlainSDKError } from './error';
+import type { Context } from './context';
+import type { PlainSDKError } from './error';
 import { getMutationErrorFromResponse, isPlainGraphQLResponse } from './graphql-utlities';
 
 export async function request<Query, Variables>(

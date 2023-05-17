@@ -4,11 +4,11 @@ import { PlainClient } from '..';
 import { print } from 'graphql';
 import {
   CreateIssueDocument,
-  MutationErrorPartsFragment,
+  type MutationErrorPartsFragment,
   MutationErrorType,
   MutationFieldErrorType,
 } from '../graphql/types';
-import { PlainSDKError } from '../error';
+import type { PlainSDKError } from '../error';
 
 describe('mutation test - create an issue', () => {
   test('should handle an succesful mutation response', async () => {

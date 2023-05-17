@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import nock from 'nock';
 import { PlainClient } from '..';
-import { PlainSDKError } from '../error';
+import type { PlainSDKError } from '../error';
 import { PlainGraphQLError } from '../graphql-utlities';
 
 describe('raw request', () => {
