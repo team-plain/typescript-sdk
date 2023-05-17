@@ -1,4 +1,4 @@
 fragment MachineUserActorParts on MachineUserActor {
-    __typename
-    machineUserId
+  __typename
+  machineUserId
 }

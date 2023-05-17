@@ -1,6 +1,23 @@
-node_modules
+# build output
 dist
+
+# dependencies
+node_modules
+yarn.lock
+pnpm-lock.yaml
+
+# logs
+*.log
+
+# macOS-specific files
+.DS_Store
+
+# editors
 .vscode
+.devcontainer
 
 # These are generated and not commited
 docs
+
+# cache
+.eslintcache

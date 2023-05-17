@@ -1,4 +1,4 @@
 fragment DeletedCustomerActorParts on DeletedCustomerActor {
-    __typename
-    customerId
+  __typename
+  customerId
 }

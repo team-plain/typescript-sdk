@@ -8,6 +8,7 @@ const config: CodegenConfig = {
     avoidOptionals: {
       field: true,
     },
+    useTypeImports: true,
   },
   generates: {
     './src/graphql/types.ts': {

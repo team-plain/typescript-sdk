@@ -1,0 +1,11 @@
+# Directories
+.changeset
+.vscode
+dist
+docs
+
+# Files
+src/graphql/types.ts
+CHANGELOG.md
+package-lock.json
+package.json
