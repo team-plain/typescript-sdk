@@ -1,23 +1,3 @@
-import {
-  CustomerGroupMembershipPartsFragment,
-  DateTimePartsFragment,
-  DeletedCustomerActorPartsFragment,
-  InternalActorPartsFragment,
-  IssuePartsFragment,
-  IssuePriorityPartsFragment,
-  IssueTypePartsFragment,
-  MachineUserActorPartsFragment,
-  MutationErrorPartsFragment,
-  SystemActorPartsFragment,
-  TimelineEntryPartsFragment,
-  UserActorPartsFragment,
-} from './graphql/types';
-import { ActorPartsFragment, CustomerActorPartsFragment } from './graphql/types';
-import {
-  UpsertCustomerInput,
-  UpsertCustomTimelineEntryInput,
-  CreateIssueInput,
-} from './graphql/types';
 export { PlainClient } from './client';
 
 export {
@@ -26,7 +6,7 @@ export {
   UpsertCustomTimelineEntryInput,
   CreateIssueInput,
 
-  // Fragments:
+  // Fragments
   ActorPartsFragment,
   CustomerActorPartsFragment,
   CustomerGroupMembershipPartsFragment,
@@ -41,4 +21,20 @@ export {
   SystemActorPartsFragment,
   TimelineEntryPartsFragment,
   UserActorPartsFragment,
-};
+
+  // Enums
+  ComponentBadgeColor,
+  ComponentDividerSpacingSize,
+  ComponentPlainTextColor,
+  ComponentPlainTextSize,
+  ComponentSpacerSize,
+  ComponentTextColor,
+  ComponentTextSize,
+  CustomerStatus,
+  CustomersSortField,
+  IssueStatus,
+  MutationErrorType,
+  MutationFieldErrorType,
+  UpsertResult,
+  UserStatus,
+} from './graphql/types';
