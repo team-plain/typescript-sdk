@@ -21,3 +21,6 @@ jobs:
         run: npm ci
       - name: Test
         run: npm run test
+      - name: Build
+        # This checks that the package can be built
+        run: npm run build
