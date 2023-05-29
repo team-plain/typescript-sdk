@@ -6,6 +6,8 @@ import type { Context } from './context';
 import type { PlainSDKError } from './error';
 import { getMutationErrorFromResponse, isPlainGraphQLResponse } from './graphql-utlities';
 
+const defaultUrl = 'https://core-api.uk.plain.com/graphql/v1';
+
 export async function request<Query, Variables>(
   ctx: Context,
   args: {
@@ -20,7 +22,7 @@ export async function request<Query, Variables>(
       Authorization: `Bearer ${ctx.apiKey}`,
     };
 
-    const url = 'https://core-api.uk.plain.com/graphql/v1';
+    const url = ctx.apiUrl || defaultUrl;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { data: res } = await axios.post(
