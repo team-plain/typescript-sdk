@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 1.2.1
+
+### Patch Changes
+
+- be8a61d: Added a new 'requestId' field to all errors for better debugging and support when something unexpected happens.
+
 ## 1.2.0
 
 ### Minor Changes
