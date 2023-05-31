@@ -1,12 +1,20 @@
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import type { Result } from './result';
 import { print } from 'graphql';
-import axios from 'axios';
+import axios, { type AxiosResponseHeaders, type RawAxiosResponseHeaders } from 'axios';
 import type { Context } from './context';
 import type { PlainSDKError } from './error';
 import { getMutationErrorFromResponse, isPlainGraphQLResponse } from './graphql-utlities';
 
 const defaultUrl = 'https://core-api.uk.plain.com/graphql/v1';
+
+function getRequestId(headers: AxiosResponseHeaders | RawAxiosResponseHeaders): string | undefined {
+  const reqId: unknown = headers['apigw-requestid'];
+
+  if (reqId && typeof reqId === 'string') {
+    return reqId;
+  }
+}
 
 export async function request<Query, Variables>(
   ctx: Context,
@@ -25,7 +33,7 @@ export async function request<Query, Variables>(
     const url = ctx.apiUrl || defaultUrl;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const { data: res } = await axios.post(
+    const { data: res, headers: responseHeaders } = await axios.post(
       url,
       {
         query: query,
@@ -47,6 +55,7 @@ export async function request<Query, Variables>(
           error: {
             type: 'forbidden',
             message: mutationError.message,
+            requestId: getRequestId(responseHeaders),
           },
         };
       }
@@ -56,6 +65,7 @@ export async function request<Query, Variables>(
           type: 'mutation_error',
           message: mutationError.message,
           errorDetails: mutationError,
+          requestId: getRequestId(responseHeaders),
         },
       };
     }
@@ -72,6 +82,7 @@ export async function request<Query, Variables>(
             error: {
               type: 'forbidden',
               message: 'Authentication failed. Please check the provided API key.',
+              requestId: getRequestId(err.response.headers),
             },
           };
         }
@@ -82,6 +93,7 @@ export async function request<Query, Variables>(
               type: 'bad_request',
               message: 'Missing or invalid arguments provided.',
               graphqlErrors: err.response.data.errors || [],
+              requestId: getRequestId(err.response.headers),
             },
           };
         }
@@ -91,6 +103,7 @@ export async function request<Query, Variables>(
             error: {
               type: 'internal_server_error',
               message: 'Internal server error.',
+              requestId: getRequestId(err.response.headers),
             },
           };
         }

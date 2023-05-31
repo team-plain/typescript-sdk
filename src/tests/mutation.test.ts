@@ -112,7 +112,9 @@ describe('mutation test - create an issue', () => {
         },
       })
       .matchHeader('Authorization', `Bearer 123`)
-      .reply(200, response);
+      .reply(200, response, {
+        'APIGW-REQUESTID': 'req_3',
+      });
 
     const client = new PlainClient({ apiKey: '123' });
     const result = await client.createIssue({ customerId: '', issueTypeId: '', priorityValue: 1 });
@@ -121,6 +123,7 @@ describe('mutation test - create an issue', () => {
       type: 'mutation_error',
       message: 'There was a validation error.',
       errorDetails: graphqlError,
+      requestId: 'req_3',
     };
 
     expect(result.error).toEqual(err);

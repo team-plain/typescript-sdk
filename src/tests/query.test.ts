@@ -91,9 +91,15 @@ describe('query test - customer by id', () => {
         variables: {},
       })
       .matchHeader('Authorization', `Bearer 456`)
-      .reply(400, {
-        errors: graphqlErrors,
-      });
+      .reply(
+        400,
+        {
+          errors: graphqlErrors,
+        },
+        {
+          'Apigw-Requestid': 'req_1',
+        }
+      );
 
     const client = new PlainClient({ apiKey: '456' });
 
@@ -105,6 +111,7 @@ describe('query test - customer by id', () => {
       type: 'bad_request',
       message: 'Missing or invalid arguments provided.',
       graphqlErrors,
+      requestId: 'req_1',
     };
 
     expect(result.data).toBeUndefined();
