@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 1.2.0
+
+### Minor Changes
+
+- 4cda0b8: Support providing a custom API endpoint for testing internally at Plain against staging and other environments.
+
 ## 1.1.1
 
 ### Patch Changes
