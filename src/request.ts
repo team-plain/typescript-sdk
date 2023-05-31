@@ -9,7 +9,11 @@ import { getMutationErrorFromResponse, isPlainGraphQLResponse } from './graphql-
 const defaultUrl = 'https://core-api.uk.plain.com/graphql/v1';
 
 function getRequestId(headers: AxiosResponseHeaders | RawAxiosResponseHeaders): string | undefined {
-  return headers['apigw-requestid'];
+  const reqId: unknown = headers['apigw-requestid'];
+
+  if (reqId && typeof reqId === 'string') {
+    return reqId;
+  }
 }
 
 export async function request<Query, Variables>(
