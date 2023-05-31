@@ -47,9 +47,10 @@ function unwrapData<T, X>(
 export class PlainClient {
   #ctx: Context;
 
-  constructor(options: { apiKey: string }) {
+  constructor(options: { apiKey: string; apiUrl?: string }) {
     this.#ctx = {
       apiKey: options.apiKey,
+      apiUrl: options.apiUrl,
     };
   }
 

@@ -36,6 +36,29 @@ describe('raw request', () => {
     scope.done();
   });
 
+  test('uses custom url if provided', async () => {
+    const query = '';
+    const variables = {};
+    const scope = nock('https://core-api.uk.getresolve.io')
+      .post('/graphql/v1', {
+        query,
+        variables,
+      })
+      .reply(200, {});
+
+    const client = new PlainClient({
+      apiKey: 'abc',
+      apiUrl: 'https://core-api.uk.getresolve.io/graphql/v1',
+    });
+
+    await client.rawRequest({
+      query,
+      variables,
+    });
+
+    scope.done();
+  });
+
   test('handles graphql errors', async () => {
     const graphqlErrors: PlainGraphQLError[] = [
       {
