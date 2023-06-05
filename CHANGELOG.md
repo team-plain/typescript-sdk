@@ -1,5 +1,43 @@
 # @team-plain/typescript-sdk
 
+## 2.0.0
+
+### Major Changes
+
+- 39bc31b: Changed return type of upserting customer to include the upsert 'result' (e.g. if it the customer was created, updated or not modified). This means you will have to slight adjust your code to account for this.
+
+  For example in the below code this would be the change you now have to make:
+
+  ```diff
+    const client = new PlainClient({ apiKey: '' });
+
+    const res = await client.upsertCustomer({
+      identifier: {
+        email: 'foo@bar.com',
+      },
+      onCreate: {
+        fullName: 'Foo Bar',
+        email: {
+          email: 'foo@bar.com',
+          isVerified: true,
+        },
+      },
+      onUpdate: {},
+    });
+
+    if (res.error) {
+      console.error(res.error);
+      throw new Error(res.error.message);
+    }
+
+  -  console.log(`Created customer with id=${res.data.id}`);
+  +  console.log(`Created customer with id=${res.data.customer.id}`);
+  ```
+
+### Minor Changes
+
+- 39bc31b: Added a query to get the customer by their email (`getCustomerByEmail`) and the ability to send and reply to emails via `sendNewEmail` and `replyToEmail` respectively.
+
 ## 1.2.1
 
 ### Patch Changes
