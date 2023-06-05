@@ -13,13 +13,13 @@
 
     const res = await client.upsertCustomer({
       identifier: {
-        customerId: '',
+        email: 'foo@bar.com',
       },
       onCreate: {
-        fullName: '',
+        fullName: 'Foo Bar',
         email: {
-          email: '',
-          isVerified: false,
+          email: 'foo@bar.com',
+          isVerified: true,
         },
       },
       onUpdate: {},
