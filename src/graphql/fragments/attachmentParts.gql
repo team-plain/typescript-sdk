@@ -1,0 +1,12 @@
+fragment AttachmentParts on Attachment {
+  __typename
+  id
+  fileName
+  fileSize {
+    ...FileSizeParts
+  }
+  fileExtension
+  updatedAt {
+    ...DateTimeParts
+  }
+}

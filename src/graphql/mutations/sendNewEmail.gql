@@ -1,0 +1,10 @@
+mutation sendNewEmail($input: SendNewEmailInput!) {
+  sendNewEmail(input: $input) {
+    email {
+      ...EmailParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

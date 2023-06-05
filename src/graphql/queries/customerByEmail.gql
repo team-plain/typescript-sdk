@@ -1,0 +1,5 @@
+query customerByEmail($email: String!) {
+  customerByEmail(email: $email) {
+    ...CustomerParts
+  }
+}

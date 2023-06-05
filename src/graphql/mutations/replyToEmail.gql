@@ -1,0 +1,10 @@
+mutation replyToEmail($input: ReplyToEmailInput!) {
+  replyToEmail(input: $input) {
+    email {
+      ...EmailParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

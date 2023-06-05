@@ -1,0 +1,28 @@
+fragment EmailParts on Email {
+  id
+  inReplyToEmailId
+  from {
+    ...EmailParticipantParts
+  }
+  to {
+    ...EmailParticipantParts
+  }
+  additionalRecipients {
+    ...EmailParticipantParts
+  }
+  hiddenRecipients {
+    ...EmailParticipantParts
+  }
+  subject
+  textContent
+  markdownContent
+  createdAt {
+    ...DateTimeParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+  attachments {
+    ...AttachmentParts
+  }
+}

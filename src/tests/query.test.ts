@@ -1,9 +1,10 @@
-import { describe, expect, test } from 'vitest';
-import nock from 'nock';
-import { PlainClient } from '..';
 import { print } from 'graphql';
-import { CustomerByIdDocument } from '../graphql/types';
+import nock from 'nock';
+import { describe, expect, test } from 'vitest';
+
+import { PlainClient } from '..';
 import type { PlainSDKError } from '../error';
+import { CustomerByIdDocument } from '../graphql/types';
 import { PlainGraphQLError } from '../graphql-utlities';
 
 describe('query test - customer by id', () => {

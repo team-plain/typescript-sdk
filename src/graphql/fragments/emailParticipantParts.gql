@@ -1,0 +1,11 @@
+fragment EmailParticipantParts on EmailParticipant {
+  __typename
+  name
+  email
+
+  emailActor {
+    ...EmailActorParts
+  }
+  # We could expand this query in future to fetch the full
+  # email actor details.
+}

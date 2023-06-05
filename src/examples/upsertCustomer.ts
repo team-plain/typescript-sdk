@@ -27,5 +27,5 @@ export async function upsertCustomerExample() {
     throw new Error(res.error.message);
   }
 
-  console.log(`Created customer with ${res.data.id}`);
+  console.log(`Created customer with ${res.data.customer.id}`);
 }
