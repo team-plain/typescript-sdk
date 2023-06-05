@@ -1,14 +1,15 @@
-import { describe, expect, test } from 'vitest';
-import nock from 'nock';
-import { PlainClient } from '..';
 import { print } from 'graphql';
+import nock from 'nock';
+import { describe, expect, test } from 'vitest';
+
+import { PlainClient } from '..';
+import type { PlainSDKError } from '../error';
 import {
   CreateIssueDocument,
   type MutationErrorPartsFragment,
   MutationErrorType,
   MutationFieldErrorType,
 } from '../graphql/types';
-import type { PlainSDKError } from '../error';
 
 describe('mutation test - create an issue', () => {
   test('should handle an succesful mutation response', async () => {

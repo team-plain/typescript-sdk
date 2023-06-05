@@ -1,5 +1,6 @@
-import { describe, expect, test } from 'vitest';
 import nock from 'nock';
+import { describe, expect, test } from 'vitest';
+
 import { PlainClient } from '..';
 import type { PlainSDKError } from '../error';
 import { PlainGraphQLError } from '../graphql-utlities';

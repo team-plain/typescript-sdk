@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, test } from 'vitest';
 import nock from 'nock';
+import { beforeEach, describe, expect, test } from 'vitest';
+
 import { PlainClient } from '..';
 
 describe('error handling', () => {

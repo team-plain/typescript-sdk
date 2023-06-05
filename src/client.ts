@@ -1,19 +1,22 @@
 import type { VariablesOf } from '@graphql-typed-document-node/core';
+
 import type { Context } from './context';
 import type { PlainSDKError } from './error';
 import {
   AddCustomerToCustomerGroupsDocument,
+  CreateIssueDocument,
+  CustomerByEmailDocument,
   CustomerByIdDocument,
   type CustomerGroupMembershipPartsFragment,
-  RemoveCustomerFromCustomerGroupsDocument,
-} from './graphql/types';
-import {
-  CreateIssueDocument,
   type CustomerPartsFragment,
+  type EmailPartsFragment,
   type IssuePartsFragment,
+  RemoveCustomerFromCustomerGroupsDocument,
+  ReplyToEmailDocument,
+  SendNewEmailDocument,
   type TimelineEntryPartsFragment,
-  UpsertCustomTimelineEntryDocument,
   UpsertCustomerDocument,
+  UpsertCustomTimelineEntryDocument,
   type UpsertResult,
 } from './graphql/types';
 import { request } from './request';
@@ -82,12 +85,26 @@ export class PlainClient {
   }
 
   /**
+   * If the customer is not found this will return null.
+   */
+  async getCustomerByEmail(
+    variables: VariablesOf<typeof CustomerByEmailDocument>
+  ): SDKResult<CustomerPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: CustomerByEmailDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => q.customerByEmail);
+  }
+
+  /**
    * Allows you to create or update a customer. If you need to get the customer id
    * for a customer in Plain, this is typically your first step.
    */
   async upsertCustomer(
     input: VariablesOf<typeof UpsertCustomerDocument>['input']
-  ): SDKResult<CustomerPartsFragment> {
+  ): SDKResult<{ result: UpsertResult; customer: CustomerPartsFragment }> {
     const res = await request(this.#ctx, {
       query: UpsertCustomerDocument,
       variables: {
@@ -95,7 +112,12 @@ export class PlainClient {
       },
     });
 
-    return unwrapData(res, (q) => nonNullable(q.upsertCustomer.customer));
+    return unwrapData(res, (q) => {
+      return {
+        result: nonNullable(q.upsertCustomer.result),
+        customer: nonNullable(q.upsertCustomer.customer),
+      };
+    });
   }
 
   /**
@@ -169,6 +191,36 @@ export class PlainClient {
         result: nonNullable(q.upsertCustomTimelineEntry.result),
         timelineEntry: nonNullable(q.upsertCustomTimelineEntry.timelineEntry),
       };
+    });
+  }
+
+  async sendNewEmail(
+    input: VariablesOf<typeof SendNewEmailDocument>['input']
+  ): SDKResult<EmailPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: SendNewEmailDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => {
+      return nonNullable(q.sendNewEmail.email);
+    });
+  }
+
+  async replyToEmail(
+    input: VariablesOf<typeof ReplyToEmailDocument>['input']
+  ): SDKResult<EmailPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: ReplyToEmailDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => {
+      return nonNullable(q.replyToEmail.email);
     });
   }
 }

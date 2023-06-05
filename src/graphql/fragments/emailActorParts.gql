@@ -1,0 +1,18 @@
+fragment EmailActorParts on EmailActor {
+  ... on CustomerEmailActor {
+    __typename
+    customerId
+  }
+  ... on UserEmailActor {
+    __typename
+    userId
+  }
+  ... on SupportEmailAddressEmailActor {
+    __typename
+    supportEmailAddress
+  }
+  ... on DeletedCustomerEmailActor {
+    __typename
+    customerId
+  }
+}

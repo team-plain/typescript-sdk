@@ -1,5 +1,6 @@
 mutation upsertCustomer($input: UpsertCustomerInput!) {
   upsertCustomer(input: $input) {
+    result
     customer {
       ...CustomerParts
     }

@@ -1,3 +1,5 @@
+/* eslint-disable simple-import-sort/exports */
+
 export { PlainClient } from './client';
 
 export {
@@ -9,8 +11,8 @@ export {
   ComponentSpacerSize,
   ComponentTextColor,
   ComponentTextSize,
-  CustomerStatus,
   CustomersSortField,
+  CustomerStatus,
   IssueStatus,
   MutationErrorType,
   MutationFieldErrorType,
@@ -20,16 +22,25 @@ export {
 
 export type {
   // Input types
+  AddCustomerToCustomerGroupsInput,
+  CreateIssueInput,
+  RemoveCustomerFromCustomerGroupsInput,
+  ReplyToEmailInput,
+  SendNewEmailInput,
   UpsertCustomerInput,
   UpsertCustomTimelineEntryInput,
-  CreateIssueInput,
 
   // Fragment types
   ActorPartsFragment,
+  AttachmentPartsFragment,
   CustomerActorPartsFragment,
   CustomerGroupMembershipPartsFragment,
   DateTimePartsFragment,
   DeletedCustomerActorPartsFragment,
+  EmailActorPartsFragment,
+  EmailParticipantPartsFragment,
+  EmailPartsFragment,
+  FileSizePartsFragment,
   InternalActorPartsFragment,
   IssuePartsFragment,
   IssuePriorityPartsFragment,

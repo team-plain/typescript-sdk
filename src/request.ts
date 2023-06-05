@@ -1,10 +1,11 @@
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
-import type { Result } from './result';
-import { print } from 'graphql';
 import axios, { type AxiosResponseHeaders, type RawAxiosResponseHeaders } from 'axios';
+import { print } from 'graphql';
+
 import type { Context } from './context';
 import type { PlainSDKError } from './error';
 import { getMutationErrorFromResponse, isPlainGraphQLResponse } from './graphql-utlities';
+import type { Result } from './result';
 
 const defaultUrl = 'https://core-api.uk.plain.com/graphql/v1';
 

@@ -1,0 +1,5 @@
+fragment FileSizeParts on FileSize {
+  __typename
+  kiloBytes
+  megaBytes
+}
