@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- f55d303: Add support for creating attachment upload urls via the SDK
+- f55d303: Add support for creating attachment upload urls for use with custom timeline entries, emails and chat
 
 ## 2.0.0
 
