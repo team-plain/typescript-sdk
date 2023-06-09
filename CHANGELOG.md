@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.1.0
+
+### Minor Changes
+
+- f55d303: Add support for creating attachment upload urls for use with custom timeline entries, emails and chat
+
 ## 2.0.0
 
 ### Major Changes
