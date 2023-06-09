@@ -1,0 +1,10 @@
+mutation createAttachmentUploadUrl($input: CreateAttachmentUploadUrlInput!) {
+  createAttachmentUploadUrl(input: $input) {
+    attachmentUploadUrl {
+      ...AttachmentUploadUrlParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

@@ -4,6 +4,8 @@ import type { Context } from './context';
 import type { PlainSDKError } from './error';
 import {
   AddCustomerToCustomerGroupsDocument,
+  type AttachmentUploadUrlPartsFragment,
+  CreateAttachmentUploadUrlDocument,
   CreateIssueDocument,
   CustomerByEmailDocument,
   CustomerByIdDocument,
@@ -221,6 +223,21 @@ export class PlainClient {
 
     return unwrapData(res, (q) => {
       return nonNullable(q.replyToEmail.email);
+    });
+  }
+
+  async createAttachmentUploadUrl(
+    input: VariablesOf<typeof CreateAttachmentUploadUrlDocument>['input']
+  ): SDKResult<AttachmentUploadUrlPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: CreateAttachmentUploadUrlDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => {
+      return nonNullable(q.createAttachmentUploadUrl.attachmentUploadUrl);
     });
   }
 }

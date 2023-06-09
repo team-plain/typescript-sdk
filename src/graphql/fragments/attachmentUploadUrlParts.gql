@@ -1,0 +1,14 @@
+fragment AttachmentUploadUrlParts on AttachmentUploadUrl {
+  __typename
+  attachment {
+    ...AttachmentParts
+  }
+  uploadFormUrl
+  uploadFormData {
+    key
+    value
+  }
+  expiresAt {
+    ...DateTimeParts
+  }
+}

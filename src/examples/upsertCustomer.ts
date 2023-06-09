@@ -5,18 +5,18 @@
 
 import { PlainClient } from '../client';
 
-export async function upsertCustomerExample() {
-  const client = new PlainClient({ apiKey: '' });
+export async function createCustomer() {
+  const client = new PlainClient({ apiKey: 'XXX' });
 
   const res = await client.upsertCustomer({
     identifier: {
-      customerId: '',
+      emailAddress: 'jane@gmail.com',
     },
     onCreate: {
-      fullName: '',
+      fullName: 'Jane Fargate',
       email: {
-        email: '',
-        isVerified: false,
+        email: 'jane@gmail.com',
+        isVerified: true,
       },
     },
     onUpdate: {},
@@ -24,8 +24,7 @@ export async function upsertCustomerExample() {
 
   if (res.error) {
     console.error(res.error);
-    throw new Error(res.error.message);
+  } else {
+    console.log(`Created customer with id=${res.data.customer.id}`);
   }
-
-  console.log(`Created customer with id=${res.data.customer.id}`);
 }
