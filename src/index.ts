@@ -4,6 +4,7 @@ export { PlainClient } from './client';
 
 export {
   // Enums
+  AttachmentType,
   ComponentBadgeColor,
   ComponentDividerSpacingSize,
   ComponentPlainTextColor,
