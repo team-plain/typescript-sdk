@@ -8,9 +8,11 @@ import {
   CreateAttachmentUploadUrlDocument,
   CreateIssueDocument,
   CustomerByEmailDocument,
+  CustomerByExternalIdDocument,
   CustomerByIdDocument,
   type CustomerGroupMembershipPartsFragment,
   type CustomerPartsFragment,
+  DeleteCustomerDocument,
   type EmailPartsFragment,
   type IssuePartsFragment,
   RemoveCustomerFromCustomerGroupsDocument,
@@ -101,6 +103,20 @@ export class PlainClient {
   }
 
   /**
+   * If the customer is not found this will return null.
+   */
+  async getCustomerByExternalId(
+    variables: VariablesOf<typeof CustomerByExternalIdDocument>
+  ): SDKResult<CustomerPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: CustomerByExternalIdDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => q.customerByExternalId);
+  }
+
+  /**
    * Allows you to create or update a customer. If you need to get the customer id
    * for a customer in Plain, this is typically your first step.
    */
@@ -165,6 +181,22 @@ export class PlainClient {
   ): SDKResult<null> {
     const res = await request(this.#ctx, {
       query: RemoveCustomerFromCustomerGroupsDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
+  }
+
+  /**
+   * Deletes a customer and all of their data stored on Plain. This action cannot be reversed.
+   */
+  async deleteCustomer(
+    input: VariablesOf<typeof DeleteCustomerDocument>['input']
+  ): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: DeleteCustomerDocument,
       variables: {
         input,
       },

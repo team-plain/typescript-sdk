@@ -1,0 +1,5 @@
+query customerByExternalId($externalId: ID!) {
+  customerByExternalId(externalId: $externalId) {
+    ...CustomerParts
+  }
+}

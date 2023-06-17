@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint 'src/**/*.ts'",
     "test": "vitest",
+    "checks": "npm run typecheck && npm run lint && npm run test",
     "changeset": "changeset",
     "release": "npm whoami && npm run build && changeset publish"
   },
