@@ -22,6 +22,10 @@ export {
 } from './graphql/types';
 
 export type {
+  // Query arguments
+  CustomersFilter,
+  CustomersSort,
+
   // Input types
   AddCustomerToCustomerGroupsInput,
   CreateIssueInput,
@@ -30,11 +34,13 @@ export type {
   SendNewEmailInput,
   UpsertCustomerInput,
   UpsertCustomTimelineEntryInput,
+  CommunicationChannelInput,
 
   // Fragment types
   ActorPartsFragment,
   AttachmentPartsFragment,
   CustomerActorPartsFragment,
+  CustomerGroupPartsFragment,
   CustomerGroupMembershipPartsFragment,
   DateTimePartsFragment,
   DeletedCustomerActorPartsFragment,
@@ -48,6 +54,7 @@ export type {
   IssueTypePartsFragment,
   MachineUserActorPartsFragment,
   MutationErrorPartsFragment,
+  PageInfoPartsFragment,
   SystemActorPartsFragment,
   TimelineEntryPartsFragment,
   UserActorPartsFragment,

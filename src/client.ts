@@ -9,10 +9,13 @@ import {
   CreateIssueDocument,
   CustomerByEmailDocument,
   CustomerByIdDocument,
+  CustomerGroupByIdDocument,
   type CustomerGroupMembershipPartsFragment,
-  type CustomerPartsFragment,
+  type CustomerGroupPartsFragment, CustomerGroupsDocument,
+  type CustomerPartsFragment, CustomersDocument,
   type EmailPartsFragment,
   type IssuePartsFragment,
+  type PageInfo,
   RemoveCustomerFromCustomerGroupsDocument,
   ReplyToEmailDocument,
   SendNewEmailDocument,
@@ -71,6 +74,25 @@ export class PlainClient {
       variables: args.variables,
     });
   }
+
+  /**
+   * Get a paginated list of customers.
+   */
+  async getCustomers(
+    variables: VariablesOf<typeof CustomersDocument>
+  ): SDKResult<{ customers: CustomerPartsFragment[], pageInfo: PageInfo, totalCount: number }> {
+    const res = await request(this.#ctx, {
+      query: CustomersDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      pageInfo: q.customers.pageInfo,
+      customers: q.customers.edges.map((edge) => edge.node),
+      totalCount: q.customers.totalCount,
+    }));
+  }
+
 
   /**
    * If the customer is not found this will return null.
@@ -137,6 +159,37 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.createIssue.issue));
+  }
+
+  /**
+   * If the customer group is not found this will return null.
+   */
+  async getCustomerGroupById(
+    variables: VariablesOf<typeof CustomerGroupByIdDocument>
+  ): SDKResult<CustomerGroupPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: CustomerGroupByIdDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => q.customerGroup);
+  }
+
+  /**
+   * Get a paginated list of customer groups.
+   */
+  async getCustomerGroups(
+    variables: VariablesOf<typeof CustomerGroupsDocument>
+  ): SDKResult<{ customerGroups: CustomerGroupPartsFragment[], pageInfo: PageInfo }> {
+    const res = await request(this.#ctx, {
+      query: CustomerGroupsDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      pageInfo: q.customerGroups.pageInfo,
+      customerGroups: q.customerGroups.edges.map((edge) => edge.node),
+    }));
   }
 
   /**
