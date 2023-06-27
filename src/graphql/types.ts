@@ -110,6 +110,17 @@ export type AssignRolesToUserOutput = {
   error: Maybe<MutationError>;
 };
 
+export type AssignThreadToUserInput = {
+  threadId: Scalars['ID'];
+  userId?: InputMaybe<Scalars['ID']>;
+};
+
+export type AssignThreadToUserOutput = {
+  __typename?: 'AssignThreadToUserOutput';
+  error: Maybe<MutationError>;
+  thread: Maybe<Thread>;
+};
+
 export type Attachment = {
   __typename?: 'Attachment';
   createdAt: DateTime;
@@ -643,6 +654,21 @@ export type CreateSnippetOutput = {
   __typename?: 'CreateSnippetOutput';
   error: Maybe<MutationError>;
   snippet: Maybe<Snippet>;
+};
+
+export type CreateThreadInput = {
+  assignedToUserId?: InputMaybe<Scalars['ID']>;
+  attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
+  components: Array<ComponentInput>;
+  customerId: Scalars['ID'];
+  externalId?: InputMaybe<Scalars['ID']>;
+  title: Scalars['String'];
+};
+
+export type CreateThreadOutput = {
+  __typename?: 'CreateThreadOutput';
+  error: Maybe<MutationError>;
+  thread: Maybe<Thread>;
 };
 
 export type CreateUserAccountInput = {
@@ -1822,6 +1848,16 @@ export type MarkCustomerAsSpamOutput = {
   error: Maybe<MutationError>;
 };
 
+export type MarkThreadAsDoneInput = {
+  threadId: Scalars['ID'];
+};
+
+export type MarkThreadAsDoneOutput = {
+  __typename?: 'MarkThreadAsDoneOutput';
+  error: Maybe<MutationError>;
+  thread: Maybe<Thread>;
+};
+
 export type MarkTimelineAsReadInput = {
   customerId: Scalars['ID'];
   lastTimelineEntryId: Scalars['ID'];
@@ -1846,6 +1882,7 @@ export type Mutation = {
   archiveIssueType: ArchiveIssueTypeOutput;
   assignCustomerToUser: AssignCustomerToUserOutput;
   assignRolesToUser: AssignRolesToUserOutput;
+  assignThreadToUser: AssignThreadToUserOutput;
   /** Changes a customer's status to the provided status. */
   changeCustomerStatus: ChangeCustomerStatusOutput;
   /**
@@ -1872,6 +1909,7 @@ export type Mutation = {
   createMySlackIntegration: CreateMySlackIntegrationOutput;
   createNote: CreateNoteOutput;
   createSnippet: CreateSnippetOutput;
+  createThread: CreateThreadOutput;
   createUserAccount: CreateUserAccountOutput;
   /** Creates a webhook target. */
   createWebhookTarget: CreateWebhookTargetOutput;
@@ -1907,6 +1945,7 @@ export type Mutation = {
   inviteUserToWorkspace: InviteUserToWorkspaceOutput;
   /** Marks a customer as spam. */
   markCustomerAsSpam: MarkCustomerAsSpamOutput;
+  markThreadAsDone: MarkThreadAsDoneOutput;
   markTimelineAsRead: MarkTimelineAsReadOutput;
   /**
    * Reloads a customer card for a customer.
@@ -1931,6 +1970,7 @@ export type Mutation = {
   resolveIssue: ResolveIssueOutput;
   sendChat: SendChatOutput;
   sendNewEmail: SendNewEmailOutput;
+  snoozeThread: SnoozeThreadOutput;
   unarchiveIssueType: UnarchiveIssueTypeOutput;
   unassignAllCustomers: UnassignAllCustomersOutput;
   /** Removes the spam mark from a customer. */
@@ -1983,6 +2023,11 @@ export type MutationAssignCustomerToUserArgs = {
 
 export type MutationAssignRolesToUserArgs = {
   input: AssignRolesToUserInput;
+};
+
+
+export type MutationAssignThreadToUserArgs = {
+  input: AssignThreadToUserInput;
 };
 
 
@@ -2073,6 +2118,11 @@ export type MutationCreateNoteArgs = {
 
 export type MutationCreateSnippetArgs = {
   input: CreateSnippetInput;
+};
+
+
+export type MutationCreateThreadArgs = {
+  input: CreateThreadInput;
 };
 
 
@@ -2206,6 +2256,11 @@ export type MutationMarkCustomerAsSpamArgs = {
 };
 
 
+export type MutationMarkThreadAsDoneArgs = {
+  input: MarkThreadAsDoneInput;
+};
+
+
 export type MutationMarkTimelineAsReadArgs = {
   input: MarkTimelineAsReadInput;
 };
@@ -2253,6 +2308,11 @@ export type MutationSendChatArgs = {
 
 export type MutationSendNewEmailArgs = {
   input: SendNewEmailInput;
+};
+
+
+export type MutationSnoozeThreadArgs = {
+  input: SnoozeThreadInput;
 };
 
 
@@ -2481,6 +2541,9 @@ export type Query = {
   snippets: SnippetConnection;
   /** List all the events types you can subscribe to. */
   subscriptionEventTypes: Array<SubscriptionEventType>;
+  /** Get a thread by ID. */
+  thread: Maybe<Thread>;
+  threads: ThreadConnection;
   timelineEntries: TimelineEntryConnection;
   timelineEntry: Maybe<TimelineEntry>;
   user: Maybe<User>;
@@ -2664,6 +2727,21 @@ export type QuerySnippetsArgs = {
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryThreadArgs = {
+  threadId: Scalars['ID'];
+};
+
+
+export type QueryThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<ThreadsFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<ThreadsSort>;
 };
 
 
@@ -3005,6 +3083,17 @@ export type SnippetEdge = {
   node: Snippet;
 };
 
+export type SnoozeThreadInput = {
+  durationSeconds: Scalars['Int'];
+  threadId: Scalars['ID'];
+};
+
+export type SnoozeThreadOutput = {
+  __typename?: 'SnoozeThreadOutput';
+  error: Maybe<MutationError>;
+  thread: Maybe<Thread>;
+};
+
 export enum SortDirection {
   Asc = 'ASC',
   Desc = 'DESC'
@@ -3067,6 +3156,93 @@ export type SystemActor = {
   __typename?: 'SystemActor';
   systemId: Scalars['ID'];
 };
+
+/** A thread represents a conversation with a customer, around a specific topic. */
+export type Thread = {
+  __typename?: 'Thread';
+  /** The datetime when this thread was last assigned to someone or something. */
+  assignedAt: Maybe<DateTime>;
+  /** Who or what this thread is assigned to. */
+  assignedTo: Maybe<InternalActor>;
+  /** The datetime when this thread was created. */
+  createdAt: DateTime;
+  /** The actor who created this thread. */
+  createdBy: Actor;
+  /** The customer involved in this thread. */
+  customer: Customer;
+  /** The external ID of this thread. You can use this field to store your own unique identifier for this thread. */
+  externalId: Maybe<Scalars['ID']>;
+  /** The unique identifier of the thread. */
+  id: Scalars['ID'];
+  /** The status of this thread. */
+  status: ThreadStatus;
+  /** The datetime when the status of this thread was last changed. */
+  statusChangedAt: DateTime;
+  /** The actor who last changed the status of this thread. */
+  statusChangedBy: Actor;
+  /** Additional details about the current thread status. For instance, how long it will be snoozed for. */
+  statusDetail: Maybe<ThreadStatusDetail>;
+  /** All of the timeline entries in this thread. */
+  timelineEntries: TimelineEntryConnection;
+  /** The title of this thread, which allows to quickly identify what it is about. */
+  title: Scalars['String'];
+  /** The datetime when this thread was last updated. */
+  updatedAt: DateTime;
+  /** The actor who last updated this thread. */
+  updatedBy: Actor;
+};
+
+
+/** A thread represents a conversation with a customer, around a specific topic. */
+export type ThreadTimelineEntriesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+export type ThreadConnection = {
+  __typename?: 'ThreadConnection';
+  edges: Array<ThreadEdge>;
+  pageInfo: PageInfo;
+};
+
+export type ThreadEdge = {
+  __typename?: 'ThreadEdge';
+  cursor: Scalars['String'];
+  node: Thread;
+};
+
+export enum ThreadStatus {
+  Done = 'DONE',
+  Snoozed = 'SNOOZED',
+  Todo = 'TODO'
+}
+
+export type ThreadStatusDetail = ThreadStatusDetailSnoozed;
+
+export type ThreadStatusDetailSnoozed = {
+  __typename?: 'ThreadStatusDetailSnoozed';
+  snoozedAt: DateTime;
+  snoozedUntil: DateTime;
+};
+
+export type ThreadsFilter = {
+  assignedToUser?: InputMaybe<Array<Scalars['ID']>>;
+  customerIds?: InputMaybe<Array<Scalars['ID']>>;
+  isAssigned?: InputMaybe<Scalars['Boolean']>;
+  status?: InputMaybe<ThreadStatus>;
+  threadIds?: InputMaybe<Array<Scalars['ID']>>;
+};
+
+export type ThreadsSort = {
+  direction: SortDirection;
+  field: ThreadsSortField;
+};
+
+export enum ThreadsSortField {
+  StatusUpdatedAt = 'STATUS_UPDATED_AT'
+}
 
 export type TimelineEntry = {
   __typename?: 'TimelineEntry';

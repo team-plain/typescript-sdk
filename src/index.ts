@@ -13,8 +13,6 @@ export {
   ComponentTextColor,
   ComponentTextSize,
   CustomersSortField,
-  CustomersFilter,
-  CustomersSort,
   CustomerStatus,
   IssueStatus,
   MutationErrorType,
@@ -24,6 +22,10 @@ export {
 } from './graphql/types';
 
 export type {
+  // Query arguments
+  CustomersFilter,
+  CustomersSort,
+
   // Input types
   AddCustomerToCustomerGroupsInput,
   CreateIssueInput,
