@@ -13,6 +13,8 @@ export {
   ComponentTextColor,
   ComponentTextSize,
   CustomersSortField,
+  CustomersFilter,
+  CustomersSort,
   CustomerStatus,
   IssueStatus,
   MutationErrorType,
@@ -30,6 +32,7 @@ export type {
   SendNewEmailInput,
   UpsertCustomerInput,
   UpsertCustomTimelineEntryInput,
+  CommunicationChannelInput,
 
   // Fragment types
   ActorPartsFragment,
