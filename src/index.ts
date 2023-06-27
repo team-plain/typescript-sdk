@@ -40,6 +40,7 @@ export type {
   ActorPartsFragment,
   AttachmentPartsFragment,
   CustomerActorPartsFragment,
+  CustomerPartsFragment,
   CustomerGroupPartsFragment,
   CustomerGroupMembershipPartsFragment,
   DateTimePartsFragment,
