@@ -1,5 +1,18 @@
 # @team-plain/typescript-sdk
 
+## 2.3.0
+
+### Minor Changes
+
+- 0d1add7: Adds support for querying customer groups:
+
+  - `getCustomerGroupById` - returns a single customer group by ID
+  - `getCustomerGroups` - returns a pagniated list of customer groups
+
+  Adds support for querying customers:
+
+  - `getCustomers` - returns a paginated list of customers that can be filtered and sorted
+
 ## 2.2.0
 
 ### Minor Changes
