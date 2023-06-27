@@ -49,6 +49,7 @@ export type {
   IssueTypePartsFragment,
   MachineUserActorPartsFragment,
   MutationErrorPartsFragment,
+  PageInfoPartsFragment,
   SystemActorPartsFragment,
   TimelineEntryPartsFragment,
   UserActorPartsFragment,
