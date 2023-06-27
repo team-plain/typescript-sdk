@@ -8,7 +8,6 @@ query customers($filters: CustomersFilter, $sortBy: CustomersSort, $first: Int, 
         before: $before
     ) {
         edges {
-            cursor
             node {
                 ...CustomerParts
             }

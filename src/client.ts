@@ -28,7 +28,6 @@ import { request } from './request';
 import type { Result } from './result';
 
 type SDKResult<T> = Promise<Result<T, PlainSDKError>>;
-type PaginatedResult<T> = { data: { node: T, cursor: string }[], pageInfo: PageInfo };
 
 function nonNullable<T>(x: T | null | undefined): T {
   if (x === null || x === undefined) {
@@ -81,7 +80,7 @@ export class PlainClient {
    */
   async getCustomers(
     variables: VariablesOf<typeof CustomersDocument>
-  ): SDKResult<PaginatedResult<CustomerPartsFragment>> {
+  ): SDKResult<{ customers: CustomerPartsFragment[], pageInfo: PageInfo, totalCount: number }> {
     const res = await request(this.#ctx, {
       query: CustomersDocument,
       variables,
@@ -89,7 +88,8 @@ export class PlainClient {
 
     return unwrapData(res, (q) => ({
       pageInfo: q.customers.pageInfo,
-      data: q.customers.edges,
+      customers: q.customers.edges.map((edge) => edge.node),
+      totalCount: q.customers.totalCount,
     }));
   }
 
@@ -180,7 +180,7 @@ export class PlainClient {
    */
   async getCustomerGroups(
     variables: VariablesOf<typeof CustomerGroupsDocument>
-  ): SDKResult<PaginatedResult<CustomerGroupPartsFragment>> {
+  ): SDKResult<{ customerGroups: CustomerGroupPartsFragment[], pageInfo: PageInfo }> {
     const res = await request(this.#ctx, {
       query: CustomerGroupsDocument,
       variables,
@@ -188,7 +188,7 @@ export class PlainClient {
 
     return unwrapData(res, (q) => ({
       pageInfo: q.customerGroups.pageInfo,
-      data: q.customerGroups.edges,
+      customerGroups: q.customerGroups.edges.map((edge) => edge.node),
     }));
   }
 
