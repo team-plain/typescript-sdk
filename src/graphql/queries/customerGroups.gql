@@ -1,0 +1,13 @@
+query customerGroups($first: Int, $after: String, $before: String, $last: Int) {
+    customerGroups(first: $first, after: $after, before: $before, last: $last) {
+        edges {
+            cursor
+            node {
+                ...CustomerGroupParts,
+            }
+        }
+        pageInfo {
+            ...PageInfoParts
+        }
+    }
+}
