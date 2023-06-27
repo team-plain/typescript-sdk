@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.4.0
+
+### Minor Changes
+
+- cc82b7f: Export CustomerPartsFragment type
+
 ## 2.3.0
 
 ### Minor Changes
