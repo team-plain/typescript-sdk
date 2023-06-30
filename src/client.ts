@@ -11,10 +11,13 @@ import {
   CustomerByIdDocument,
   CustomerGroupByIdDocument,
   type CustomerGroupMembershipPartsFragment,
-  type CustomerGroupPartsFragment, CustomerGroupsDocument,
-  type CustomerPartsFragment, CustomersDocument,
+  type CustomerGroupPartsFragment,
+  CustomerGroupsDocument,
+  type CustomerPartsFragment,
+  CustomersDocument,
   type EmailPartsFragment,
   type IssuePartsFragment,
+  MyWorkspaceDocument,
   type PageInfo,
   RemoveCustomerFromCustomerGroupsDocument,
   ReplyToEmailDocument,
@@ -23,6 +26,7 @@ import {
   UpsertCustomerDocument,
   UpsertCustomTimelineEntryDocument,
   type UpsertResult,
+  type WorkspacePartsFragment
 } from './graphql/types';
 import { request } from './request';
 import type { Result } from './result';
@@ -291,6 +295,19 @@ export class PlainClient {
 
     return unwrapData(res, (q) => {
       return nonNullable(q.createAttachmentUploadUrl.attachmentUploadUrl);
+    });
+  }
+
+  /**
+   * Fetch the workspace for the authenticated API key.
+   */
+  async getMyWorkspace(): SDKResult<WorkspacePartsFragment> {
+    const res = await request(this.#ctx, {
+      query: MyWorkspaceDocument,
+    });
+
+    return unwrapData(res, (q) => {
+      return nonNullable(q.myWorkspace);
     });
   }
 }

@@ -59,4 +59,5 @@ export type {
   SystemActorPartsFragment,
   TimelineEntryPartsFragment,
   UserActorPartsFragment,
+  WorkspacePartsFragment,
 } from './graphql/types';
