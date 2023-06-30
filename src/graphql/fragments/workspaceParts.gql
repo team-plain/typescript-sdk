@@ -1,0 +1,20 @@
+fragment WorkspaceParts on Workspace {
+    __typename
+    id
+    name
+    publicName
+    isDemoWorkspace
+    createdBy {
+        ...ActorParts
+    }
+    createdAt {
+        ...DateTimeParts
+    }
+    updatedBy  {
+        ...ActorParts
+    }
+    updatedAt {
+        ...DateTimeParts
+
+    }
+}
