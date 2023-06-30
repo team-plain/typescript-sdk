@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.5.0
+
+### Minor Changes
+
+- 2974363: Adds getMyWorkspace to fetch the workspace of the authenticated API key
+
 ## 2.4.0
 
 ### Minor Changes
