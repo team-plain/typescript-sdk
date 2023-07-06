@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.5.1
+
+### Patch Changes
+
+- d6f94d6: Expose error types: `PlainSDKError`, `ForbiddenError`, `BadRequestError`, `InternalServerError`, `MutationError` and `UnknownError`
+
 ## 2.5.0
 
 ### Minor Changes
