@@ -1,0 +1,19 @@
+fragment CustomerCardConfigParts on CustomerCardConfig {
+  id
+  title
+  key
+  defaultTimeToLiveSeconds
+  apiUrl
+  order
+  apiHeaders {
+    name
+    value
+  }
+  isEnabled
+  createdAt {
+    ...DateTimeParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+}

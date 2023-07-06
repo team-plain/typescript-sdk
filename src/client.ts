@@ -6,9 +6,11 @@ import {
   AddCustomerToCustomerGroupsDocument,
   type AttachmentUploadUrlPartsFragment,
   CreateAttachmentUploadUrlDocument,
+  CreateCustomerCardConfigDocument,
   CreateIssueDocument,
   CustomerByEmailDocument,
   CustomerByIdDocument,
+  type CustomerCardConfigPartsFragment,
   CustomerGroupByIdDocument,
   type CustomerGroupMembershipPartsFragment,
   type CustomerGroupPartsFragment,
@@ -26,7 +28,7 @@ import {
   UpsertCustomerDocument,
   UpsertCustomTimelineEntryDocument,
   type UpsertResult,
-  type WorkspacePartsFragment
+  type WorkspacePartsFragment,
 } from './graphql/types';
 import { request } from './request';
 import type { Result } from './result';
@@ -84,7 +86,7 @@ export class PlainClient {
    */
   async getCustomers(
     variables: VariablesOf<typeof CustomersDocument>
-  ): SDKResult<{ customers: CustomerPartsFragment[], pageInfo: PageInfo, totalCount: number }> {
+  ): SDKResult<{ customers: CustomerPartsFragment[]; pageInfo: PageInfo; totalCount: number }> {
     const res = await request(this.#ctx, {
       query: CustomersDocument,
       variables,
@@ -96,7 +98,6 @@ export class PlainClient {
       totalCount: q.customers.totalCount,
     }));
   }
-
 
   /**
    * If the customer is not found this will return null.
@@ -184,7 +185,7 @@ export class PlainClient {
    */
   async getCustomerGroups(
     variables: VariablesOf<typeof CustomerGroupsDocument>
-  ): SDKResult<{ customerGroups: CustomerGroupPartsFragment[], pageInfo: PageInfo }> {
+  ): SDKResult<{ customerGroups: CustomerGroupPartsFragment[]; pageInfo: PageInfo }> {
     const res = await request(this.#ctx, {
       query: CustomerGroupsDocument,
       variables,
@@ -308,6 +309,25 @@ export class PlainClient {
 
     return unwrapData(res, (q) => {
       return nonNullable(q.myWorkspace);
+    });
+  }
+
+  /**
+   * Creates the configuration for a Customer Card. Useful if you want
+   * to programatically set up a customer card vs using the settings UI
+   */
+  async createCustomerCardConfig(
+    input: VariablesOf<typeof CreateCustomerCardConfigDocument>['input']
+  ): SDKResult<CustomerCardConfigPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: CreateCustomerCardConfigDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => {
+      return nonNullable(q.createCustomerCardConfig.customerCardConfig);
     });
   }
 }
