@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.7.0
+
+### Minor Changes
+
+- 40c0f50: Add ability to delete Customer Card configs.
+
 ## 2.6.0
 
 ### Minor Changes
