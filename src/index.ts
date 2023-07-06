@@ -37,6 +37,7 @@ export type {
   CommunicationChannelInput,
   CreateCustomerCardConfigInput,
   UpdateCustomerCardConfigInput,
+  DeleteCustomerCardConfigInput,
 
   // Fragment types
   ActorPartsFragment,

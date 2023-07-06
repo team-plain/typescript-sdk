@@ -1,0 +1,7 @@
+mutation deleteCustomerCardConfig($input: DeleteCustomerCardConfigInput!) {
+  deleteCustomerCardConfig(input: $input) {
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
