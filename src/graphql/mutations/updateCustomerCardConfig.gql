@@ -1,0 +1,10 @@
+mutation updateCustomerCardConfig($input: UpdateCustomerCardConfigInput!) {
+  updateCustomerCardConfig(input: $input) {
+    customerCardConfig {
+      ...CustomerCardConfigParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

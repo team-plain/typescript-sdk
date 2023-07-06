@@ -35,6 +35,8 @@ export type {
   UpsertCustomerInput,
   UpsertCustomTimelineEntryInput,
   CommunicationChannelInput,
+  CreateCustomerCardConfigInput,
+  UpdateCustomerCardConfigInput,
 
   // Fragment types
   ActorPartsFragment,
