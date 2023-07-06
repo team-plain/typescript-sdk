@@ -17,6 +17,7 @@ import {
   CustomerGroupsDocument,
   type CustomerPartsFragment,
   CustomersDocument,
+  DeleteCustomerCardConfigDocument,
   type EmailPartsFragment,
   type IssuePartsFragment,
   MyWorkspaceDocument,
@@ -348,5 +349,21 @@ export class PlainClient {
     return unwrapData(res, (q) => {
       return nonNullable(q.updateCustomerCardConfig.customerCardConfig);
     });
+  }
+
+  /**
+   * Delete the configuration for a Customer Card.
+   */
+  async deleteCustomerCardConfig(
+    input: VariablesOf<typeof DeleteCustomerCardConfigDocument>['input']
+  ): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: DeleteCustomerCardConfigDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
   }
 }
