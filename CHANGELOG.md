@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.6.0
+
+### Minor Changes
+
+- 910fe46: Add support for creating and updating Customer Card configurations. Useful if you want to programatically set up Customer Cards.
+
 ## 2.5.1
 
 ### Patch Changes
