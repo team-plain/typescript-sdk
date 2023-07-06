@@ -61,3 +61,12 @@ export type {
   UserActorPartsFragment,
   WorkspacePartsFragment,
 } from './graphql/types';
+
+export type {
+  PlainSDKError,
+  ForbiddenError,
+  BadRequestError,
+  InternalServerError,
+  MutationError,
+  UnknownError,
+} from './error';
