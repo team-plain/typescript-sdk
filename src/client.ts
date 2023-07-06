@@ -25,6 +25,7 @@ import {
   ReplyToEmailDocument,
   SendNewEmailDocument,
   type TimelineEntryPartsFragment,
+  UpdateCustomerCardConfigDocument,
   UpsertCustomerDocument,
   UpsertCustomTimelineEntryDocument,
   type UpsertResult,
@@ -328,6 +329,24 @@ export class PlainClient {
 
     return unwrapData(res, (q) => {
       return nonNullable(q.createCustomerCardConfig.customerCardConfig);
+    });
+  }
+
+  /**
+   * Updates the configuration for a Customer Card.
+   */
+  async updateCustomerCardConfig(
+    input: VariablesOf<typeof UpdateCustomerCardConfigDocument>['input']
+  ): SDKResult<CustomerCardConfigPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: UpdateCustomerCardConfigDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => {
+      return nonNullable(q.updateCustomerCardConfig.customerCardConfig);
     });
   }
 }
