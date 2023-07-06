@@ -2,7 +2,7 @@ import type { MutationErrorPartsFragment } from './graphql/types';
 import type { PlainGraphQLError } from './graphql-utlities';
 
 /* 400 */
-type BadRequestError = {
+export type BadRequestError = {
   type: 'bad_request';
   message: string;
   graphqlErrors: PlainGraphQLError[];
@@ -10,21 +10,21 @@ type BadRequestError = {
 };
 
 /* 401 */
-type ForbiddenError = {
+export type ForbiddenError = {
   type: 'forbidden';
   message: string;
   requestId?: string;
 };
 
 /* 500 */
-type InternalServerError = {
+export type InternalServerError = {
   type: 'internal_server_error';
   message: string;
   requestId?: string;
 };
 
 /* Unhandled/unexpected errors */
-type UnknownError = {
+export type UnknownError = {
   type: 'unknown';
   message: string;
   err?: unknown;
@@ -32,7 +32,7 @@ type UnknownError = {
 };
 
 /* Handled mutation errors */
-type MutationError = {
+export type MutationError = {
   type: 'mutation_error';
   message: string;
   errorDetails: MutationErrorPartsFragment;
