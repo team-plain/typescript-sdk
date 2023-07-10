@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.9.0
+
+### Minor Changes
+
+- 79b99b3: Add ability to change customer status via `client.changeCustomerStatus()`
+
 ## 2.8.0
 
 ### Minor Changes
