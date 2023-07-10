@@ -25,10 +25,13 @@ export type {
   // Query arguments
   CustomersFilter,
   CustomersSort,
+  IssuesFilter,
+  IssuesSort,
 
   // Input types
   AddCustomerToCustomerGroupsInput,
   CreateIssueInput,
+  ResolveIssueInput,
   RemoveCustomerFromCustomerGroupsInput,
   ReplyToEmailInput,
   SendNewEmailInput,
