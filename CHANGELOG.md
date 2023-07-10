@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.8.0
+
+### Minor Changes
+
+- 34c06ba: Add ability to get issues (`client.getIssues()`) and resolve issues (`client.resolveIssue()`)
+
 ## 2.7.0
 
 ### Minor Changes
