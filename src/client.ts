@@ -5,6 +5,7 @@ import type { PlainSDKError } from './error';
 import {
   AddCustomerToCustomerGroupsDocument,
   type AttachmentUploadUrlPartsFragment,
+  ChangeCustomerStatusDocument,
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
   CreateIssueDocument,
@@ -152,6 +153,23 @@ export class PlainClient {
       return {
         result: nonNullable(q.upsertCustomer.result),
         customer: nonNullable(q.upsertCustomer.customer),
+      };
+    });
+  }
+
+  async changeCustomerStatus(
+    input: VariablesOf<typeof ChangeCustomerStatusDocument>['input']
+  ): SDKResult<{ customer: CustomerPartsFragment }> {
+    const res = await request(this.#ctx, {
+      query: ChangeCustomerStatusDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => {
+      return {
+        customer: nonNullable(q.changeCustomerStatus.customer),
       };
     });
   }
