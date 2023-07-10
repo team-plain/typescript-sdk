@@ -12,15 +12,23 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
         with:
-          node-version: '16'
+          version: 8
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install
       - name: Lint
-        run: npm run lint
+        run: pnpm run lint
       - name: GraphQL Mutation Filenames
         uses: batista/lint-filenames@v1.0.1
         with:

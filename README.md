@@ -93,3 +93,8 @@ Equivalent to a 401 or 403 response. Normally means your API key doesn't exist o
 
 [(view source)](./src/error.ts)
 Equivalent to a 500 response. If this happens something unexpected within Plain happened.
+
+### UnknownError
+
+[(view source)](./src/error.ts)
+Fallback error type when something unexpected happens.

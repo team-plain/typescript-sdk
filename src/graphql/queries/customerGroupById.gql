@@ -1,5 +1,5 @@
 query customerGroupById($customerGroupId: ID!) {
-    customerGroup(customerGroupId: $customerGroupId) {
-        ...CustomerGroupParts
-    }
+  customerGroup(customerGroupId: $customerGroupId) {
+    ...CustomerGroupParts
+  }
 }
