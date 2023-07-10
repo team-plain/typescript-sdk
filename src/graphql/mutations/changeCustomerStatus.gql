@@ -1,0 +1,10 @@
+mutation changeCustomerStatus($input: ChangeCustomerStatusInput!) {
+  changeCustomerStatus(input: $input) {
+    customer {
+      ...CustomerParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

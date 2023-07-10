@@ -30,25 +30,26 @@ export type {
 
   // Input types
   AddCustomerToCustomerGroupsInput,
-  CreateIssueInput,
-  ResolveIssueInput,
-  RemoveCustomerFromCustomerGroupsInput,
-  ReplyToEmailInput,
-  SendNewEmailInput,
-  UpsertCustomerInput,
-  UpsertCustomTimelineEntryInput,
+  ChangeCustomerStatusInput,
   CommunicationChannelInput,
   CreateCustomerCardConfigInput,
-  UpdateCustomerCardConfigInput,
+  CreateIssueInput,
   DeleteCustomerCardConfigInput,
+  RemoveCustomerFromCustomerGroupsInput,
+  ReplyToEmailInput,
+  ResolveIssueInput,
+  SendNewEmailInput,
+  UpdateCustomerCardConfigInput,
+  UpsertCustomerInput,
+  UpsertCustomTimelineEntryInput,
 
   // Fragment types
   ActorPartsFragment,
   AttachmentPartsFragment,
   CustomerActorPartsFragment,
-  CustomerPartsFragment,
-  CustomerGroupPartsFragment,
   CustomerGroupMembershipPartsFragment,
+  CustomerGroupPartsFragment,
+  CustomerPartsFragment,
   DateTimePartsFragment,
   DeletedCustomerActorPartsFragment,
   EmailActorPartsFragment,
@@ -69,10 +70,10 @@ export type {
 } from './graphql/types';
 
 export type {
-  PlainSDKError,
-  ForbiddenError,
   BadRequestError,
+  ForbiddenError,
   InternalServerError,
   MutationError,
+  PlainSDKError,
   UnknownError,
 } from './error';
