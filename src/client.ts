@@ -20,10 +20,13 @@ import {
   DeleteCustomerCardConfigDocument,
   type EmailPartsFragment,
   type IssuePartsFragment,
+  IssuesDocument,
   MyWorkspaceDocument,
   type PageInfo,
+  type PageInfoPartsFragment,
   RemoveCustomerFromCustomerGroupsDocument,
   ReplyToEmailDocument,
+  ResolveIssueDocument,
   SendNewEmailDocument,
   type TimelineEntryPartsFragment,
   UpdateCustomerCardConfigDocument,
@@ -86,9 +89,11 @@ export class PlainClient {
   /**
    * Get a paginated list of customers.
    */
-  async getCustomers(
-    variables: VariablesOf<typeof CustomersDocument>
-  ): SDKResult<{ customers: CustomerPartsFragment[]; pageInfo: PageInfo; totalCount: number }> {
+  async getCustomers(variables: VariablesOf<typeof CustomersDocument>): SDKResult<{
+    customers: CustomerPartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+    totalCount: number;
+  }> {
     const res = await request(this.#ctx, {
       query: CustomersDocument,
       variables,
@@ -166,6 +171,37 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.createIssue.issue));
+  }
+
+  /**
+   * Resolve an issue for a customer.
+   */
+  async resolveIssue(
+    input: VariablesOf<typeof ResolveIssueDocument>['input']
+  ): SDKResult<IssuePartsFragment> {
+    const res = await request(this.#ctx, {
+      query: ResolveIssueDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.resolveIssue.issue));
+  }
+
+  async getIssues(variables: VariablesOf<typeof IssuesDocument>): SDKResult<{
+    issues: IssuePartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+  }> {
+    const res = await request(this.#ctx, {
+      query: IssuesDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      pageInfo: q.issues.pageInfo,
+      issues: q.issues.edges.map((edge) => edge.node),
+    }));
   }
 
   /**

@@ -10,10 +10,13 @@
     "build:docs": "typedoc --plugin typedoc-plugin-missing-exports src/index.ts",
     "codegen": "graphql-codegen",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint 'src/**/*.ts'",
+    "lint": "pnpm run lint:eslint && pnpm run lint:prettier",
+    "lint:eslint": "eslint 'src/**/*.ts'",
+    "lint:prettier": "prettier --config=.prettierrc --ignore-path=.prettierignore --check '**/*.{ts,tsx,gql,js}'",
     "test": "vitest",
     "changeset": "changeset",
-    "release": "npm whoami && npm run build && changeset publish"
+    "release": "npm whoami && npm run build && changeset publish",
+    "preinstall": "npx only-allow pnpm"
   },
   "license": "MIT",
   "devDependencies": {
@@ -37,6 +40,7 @@
     "rollup-plugin-esbuild": "^5.0.0",
     "typedoc": "^0.24.7",
     "typedoc-plugin-missing-exports": "^2.0.0",
+    "typescript": "^5.1.6",
     "vitest": "^0.31.0"
   },
   "dependencies": {

@@ -1,12 +1,12 @@
-query customers(
-  $filters: CustomersFilter
-  $sortBy: CustomersSort
+query issues(
+  $filters: IssuesFilter
+  $sortBy: IssuesSort
   $first: Int
   $after: String
   $last: Int
   $before: String
 ) {
-  customers(
+  issues(
     filters: $filters
     sortBy: $sortBy
     first: $first
@@ -16,12 +16,11 @@ query customers(
   ) {
     edges {
       node {
-        ...CustomerParts
+        ...IssueParts
       }
     }
     pageInfo {
       ...PageInfoParts
     }
-    totalCount
   }
 }

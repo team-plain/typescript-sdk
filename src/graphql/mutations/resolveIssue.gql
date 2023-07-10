@@ -1,0 +1,10 @@
+mutation resolveIssue($input: ResolveIssueInput!) {
+  resolveIssue(input: $input) {
+    issue {
+      ...IssueParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
