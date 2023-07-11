@@ -38,6 +38,7 @@ export type {
   RemoveCustomerFromCustomerGroupsInput,
   ReplyToEmailInput,
   ResolveIssueInput,
+  SendChatInput,
   SendNewEmailInput,
   UpdateCustomerCardConfigInput,
   UpsertCustomerInput,
