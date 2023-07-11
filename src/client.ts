@@ -6,6 +6,7 @@ import {
   AddCustomerToCustomerGroupsDocument,
   type AttachmentUploadUrlPartsFragment,
   ChangeCustomerStatusDocument,
+  type ChatPartsFragment,
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
   CreateIssueDocument,
@@ -28,6 +29,7 @@ import {
   RemoveCustomerFromCustomerGroupsDocument,
   ReplyToEmailDocument,
   ResolveIssueDocument,
+  SendChatDocument,
   SendNewEmailDocument,
   type TimelineEntryPartsFragment,
   UpdateCustomerCardConfigDocument,
@@ -337,6 +339,21 @@ export class PlainClient {
 
     return unwrapData(res, (q) => {
       return nonNullable(q.replyToEmail.email);
+    });
+  }
+
+  async sendChat(
+    input: VariablesOf<typeof SendChatDocument>['input']
+  ): SDKResult<ChatPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: SendChatDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => {
+      return nonNullable(q.sendChat.chat);
     });
   }
 
