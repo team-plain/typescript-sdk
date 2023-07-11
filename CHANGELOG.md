@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.10.0
+
+### Minor Changes
+
+- 6cbf990: Add ability to send chat via `client.sendChat()`
+
 ## 2.9.0
 
 ### Minor Changes
