@@ -1,0 +1,10 @@
+mutation deleteIssue($input: DeleteIssueInput!) {
+  deleteIssue(input: $input) {
+    issue {
+      ...IssueParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

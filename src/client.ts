@@ -20,6 +20,7 @@ import {
   type CustomerPartsFragment,
   CustomersDocument,
   DeleteCustomerCardConfigDocument,
+  DeleteIssueDocument,
   type EmailPartsFragment,
   type IssuePartsFragment,
   IssuesDocument,
@@ -207,6 +208,19 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.resolveIssue.issue));
+  }
+
+  async deleteIssue(
+    input: VariablesOf<typeof DeleteIssueDocument>['input']
+  ): SDKResult<IssuePartsFragment> {
+    const res = await request(this.#ctx, {
+      query: DeleteIssueDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.deleteIssue.issue));
   }
 
   async getIssues(variables: VariablesOf<typeof IssuesDocument>): SDKResult<{
