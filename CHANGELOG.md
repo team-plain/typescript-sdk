@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.11.0
+
+### Minor Changes
+
+- 19c4c30: Add support for deleting issues via `client.deleteIssue()`
+
 ## 2.10.0
 
 ### Minor Changes
