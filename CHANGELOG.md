@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.11.1
+
+### Patch Changes
+
+- 4e55386: Allow other package managers besides pnpm
+
 ## 2.11.0
 
 ### Minor Changes
