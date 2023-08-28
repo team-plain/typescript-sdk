@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.13.0
+
+### Minor Changes
+
+- 18ae5a5: Add support for changing thread priority. Expose ThreadStatus and other useful enums and types
+
 ## 2.12.0
 
 ### Minor Changes
