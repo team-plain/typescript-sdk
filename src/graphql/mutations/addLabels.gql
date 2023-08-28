@@ -1,0 +1,10 @@
+mutation addLabels($input: AddLabelsInput!) {
+  addLabels(input: $input) {
+    labels {
+      ...LabelParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

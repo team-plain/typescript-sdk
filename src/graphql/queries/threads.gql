@@ -1,0 +1,27 @@
+query threads(
+  $filters: ThreadsFilter
+  $sortBy: ThreadsSort
+  $first: Int
+  $after: String
+  $last: Int
+  $before: String
+) {
+  threads(
+    filters: $filters
+    sortBy: $sortBy
+    first: $first
+    after: $after
+    last: $last
+    before: $before
+  ) {
+    edges {
+      cursor
+      node {
+        ...ThreadParts
+      }
+    }
+    pageInfo {
+      ...PageInfoParts
+    }
+  }
+}

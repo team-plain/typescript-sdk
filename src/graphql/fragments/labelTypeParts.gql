@@ -1,0 +1,28 @@
+fragment LabelTypeParts on LabelType {
+  __typename
+  id
+  name
+  icon
+
+  isArchived
+  archivedAt {
+    ...DateTimeParts
+  }
+  archivedBy {
+    ...ActorParts
+  }
+
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...ActorParts
+  }
+
+  updatedAt {
+    ...DateTimeParts
+  }
+  updatedBy {
+    ...ActorParts
+  }
+}

@@ -1,0 +1,5 @@
+query labelType($labelTypeId: ID!) {
+  labelType(labelTypeId: $labelTypeId) {
+    ...LabelTypeParts
+  }
+}
