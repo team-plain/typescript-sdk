@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.12.0
+
+### Minor Changes
+
+- dcf4068: Add initial queries and mutations for threads, label types and labels.
+
 ## 2.11.1
 
 ### Patch Changes
