@@ -18,6 +18,8 @@ export {
   MutationErrorType,
   MutationFieldErrorType,
   UpsertResult,
+  ThreadStatus,
+  ThreadsSortField,
   UserStatus,
 } from './graphql/types';
 
@@ -43,6 +45,8 @@ export type {
   UpdateCustomerCardConfigInput,
   UpsertCustomerInput,
   UpsertCustomTimelineEntryInput,
+  CreateThreadInput,
+  ChangeThreadPriorityInput,
 
   // Fragment types
   ActorPartsFragment,
@@ -68,6 +72,9 @@ export type {
   TimelineEntryPartsFragment,
   UserActorPartsFragment,
   WorkspacePartsFragment,
+  ThreadPartsFragment,
+  LabelTypePartsFragment,
+  LabelPartsFragment,
 } from './graphql/types';
 
 export type {

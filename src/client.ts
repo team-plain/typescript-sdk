@@ -520,6 +520,27 @@ export class PlainClient {
    * WARNING: This is experimental and subject to change at any time without
    * a major version bump.
    */
+  async changeThreadPriority(input: VariablesOf<typeof CreateThreadDocument>['input']): SDKResult<{
+    thread: ThreadPartsFragment;
+  }> {
+    const res = await request(this.#ctx, {
+      query: CreateThreadDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => {
+      return {
+        thread: nonNullable(q.createThread.thread),
+      };
+    });
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
   async getLabelTypes(variables: VariablesOf<typeof LabelTypesDocument>): SDKResult<{
     labelTypes: LabelTypePartsFragment[];
     pageInfo: PageInfoPartsFragment;
