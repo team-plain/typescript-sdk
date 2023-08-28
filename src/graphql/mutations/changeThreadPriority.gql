@@ -1,0 +1,10 @@
+mutation changeThreadPriority($input: ChangeThreadPriorityInput!) {
+  changeThreadPriority(input: $input) {
+    thread {
+      ...ThreadParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
