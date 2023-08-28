@@ -7,6 +7,7 @@ import {
   AddLabelsDocument,
   type AttachmentUploadUrlPartsFragment,
   ChangeCustomerStatusDocument,
+  ChangeThreadPriorityDocument,
   type ChatPartsFragment,
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
@@ -520,11 +521,13 @@ export class PlainClient {
    * WARNING: This is experimental and subject to change at any time without
    * a major version bump.
    */
-  async changeThreadPriority(input: VariablesOf<typeof CreateThreadDocument>['input']): SDKResult<{
+  async changeThreadPriority(
+    input: VariablesOf<typeof ChangeThreadPriorityDocument>['input']
+  ): SDKResult<{
     thread: ThreadPartsFragment;
   }> {
     const res = await request(this.#ctx, {
-      query: CreateThreadDocument,
+      query: ChangeThreadPriorityDocument,
       variables: {
         input,
       },
@@ -532,7 +535,7 @@ export class PlainClient {
 
     return unwrapData(res, (q) => {
       return {
-        thread: nonNullable(q.createThread.thread),
+        thread: nonNullable(q.changeThreadPriority.thread),
       };
     });
   }
