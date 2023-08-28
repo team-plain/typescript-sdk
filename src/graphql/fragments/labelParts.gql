@@ -1,0 +1,22 @@
+fragment LabelParts on Label {
+  __typename
+  id
+
+  labelType {
+    ...LabelTypeParts
+  }
+
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...ActorParts
+  }
+
+  updatedAt {
+    ...DateTimeParts
+  }
+  updatedBy {
+    ...ActorParts
+  }
+}

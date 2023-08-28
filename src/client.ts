@@ -4,12 +4,14 @@ import type { Context } from './context';
 import type { PlainSDKError } from './error';
 import {
   AddCustomerToCustomerGroupsDocument,
+  AddLabelsDocument,
   type AttachmentUploadUrlPartsFragment,
   ChangeCustomerStatusDocument,
   type ChatPartsFragment,
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
   CreateIssueDocument,
+  CreateThreadDocument,
   CustomerByEmailDocument,
   CustomerByIdDocument,
   type CustomerCardConfigPartsFragment,
@@ -24,6 +26,10 @@ import {
   type EmailPartsFragment,
   type IssuePartsFragment,
   IssuesDocument,
+  type LabelPartsFragment,
+  LabelTypeDocument,
+  type LabelTypePartsFragment,
+  LabelTypesDocument,
   MyWorkspaceDocument,
   type PageInfo,
   type PageInfoPartsFragment,
@@ -32,6 +38,9 @@ import {
   ResolveIssueDocument,
   SendChatDocument,
   SendNewEmailDocument,
+  ThreadDocument,
+  type ThreadPartsFragment,
+  ThreadsDocument,
   type TimelineEntryPartsFragment,
   UpdateCustomerCardConfigDocument,
   UpsertCustomerDocument,
@@ -450,5 +459,115 @@ export class PlainClient {
     });
 
     return unwrapData(res, () => null);
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async getThreads(variables: VariablesOf<typeof ThreadsDocument>): SDKResult<{
+    threads: ThreadPartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+  }> {
+    const res = await request(this.#ctx, {
+      query: ThreadsDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      threads: q.threads.edges.map((edge) => edge.node),
+      pageInfo: q.threads.pageInfo,
+    }));
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async getThread(
+    variables: VariablesOf<typeof ThreadDocument>
+  ): SDKResult<ThreadPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: ThreadDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => q.thread);
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async createThread(input: VariablesOf<typeof CreateThreadDocument>['input']): SDKResult<{
+    thread: ThreadPartsFragment;
+  }> {
+    const res = await request(this.#ctx, {
+      query: CreateThreadDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => {
+      return {
+        thread: nonNullable(q.createThread.thread),
+      };
+    });
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async getLabelTypes(variables: VariablesOf<typeof LabelTypesDocument>): SDKResult<{
+    labelTypes: LabelTypePartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+  }> {
+    const res = await request(this.#ctx, {
+      query: LabelTypesDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      labelTypes: q.labelTypes.edges.map((edge) => edge.node),
+      pageInfo: q.labelTypes.pageInfo,
+    }));
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async getLabelType(
+    variables: VariablesOf<typeof LabelTypeDocument>
+  ): SDKResult<LabelTypePartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: LabelTypeDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => q.labelType);
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async addLabels(input: VariablesOf<typeof AddLabelsDocument>['input']): SDKResult<{
+    labels: LabelPartsFragment[];
+  }> {
+    const res = await request(this.#ctx, {
+      query: AddLabelsDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => {
+      return {
+        labels: q.addLabels.labels,
+      };
+    });
   }
 }

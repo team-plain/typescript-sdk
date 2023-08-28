@@ -1,0 +1,42 @@
+fragment ThreadParts on Thread {
+  __typename
+  id
+  externalId
+  customer {
+    id
+  }
+
+  status
+  statusChangedAt {
+    ...DateTimeParts
+  }
+
+  title
+  previewText
+  priority
+
+  labels {
+    ...LabelParts
+  }
+
+  assignedAt {
+    ...DateTimeParts
+  }
+  assignedTo {
+    ...ActorParts
+  }
+
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...ActorParts
+  }
+
+  updatedAt {
+    ...DateTimeParts
+  }
+  updatedBy {
+    ...ActorParts
+  }
+}

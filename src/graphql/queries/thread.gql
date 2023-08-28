@@ -1,0 +1,5 @@
+query thread($threadId: ID!) {
+  thread(threadId: $threadId) {
+    ...ThreadParts
+  }
+}
