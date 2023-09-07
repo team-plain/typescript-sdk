@@ -4,7 +4,11 @@ import { print } from 'graphql';
 
 import type { Context } from './context';
 import type { PlainSDKError } from './error';
-import { getMutationErrorFromResponse, isPlainGraphQLResponse } from './graphql-utlities';
+import {
+  getMutationErrorFromResponse,
+  isPlainFailedGraphQLResponse,
+  isPlainSuccessfulGraphQLResponse,
+} from './graphql-utlities';
 import type { Result } from './result';
 
 const defaultUrl = 'https://core-api.uk.plain.com/graphql/v1';
@@ -45,7 +49,7 @@ export async function request<Query, Variables>(
       }
     );
 
-    if (!isPlainGraphQLResponse(res)) {
+    if (!isPlainSuccessfulGraphQLResponse(res)) {
       throw new Error('Unexpected response received');
     }
 
@@ -88,11 +92,11 @@ export async function request<Query, Variables>(
           };
         }
 
-        if (err.response.status === 400 && isPlainGraphQLResponse(err.response.data)) {
+        if (err.response.status === 400 && isPlainFailedGraphQLResponse(err.response.data)) {
           return {
             error: {
               type: 'bad_request',
-              message: 'Missing or invalid arguments provided.',
+              message: 'Malformed query, missing or invalid arguments provided.',
               graphqlErrors: err.response.data.errors || [],
               requestId: getRequestId(err.response.headers),
             },

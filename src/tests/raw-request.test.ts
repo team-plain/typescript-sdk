@@ -3,7 +3,6 @@ import { describe, expect, test } from 'vitest';
 
 import { PlainClient } from '..';
 import type { PlainSDKError } from '../error';
-import { PlainGraphQLError } from '../graphql-utlities';
 
 describe('raw request', () => {
   test('make a request as defined', async () => {
@@ -60,16 +59,34 @@ describe('raw request', () => {
     scope.done();
   });
 
-  test('handles graphql errors', async () => {
-    const graphqlErrors: PlainGraphQLError[] = [
+  test.each([
+    [
       {
-        message: 'Variable "$customerId" of required type "ID!" was not provided.',
-        locations: [{ line: 1, column: 20 }],
-        extensions: { code: 'BAD_USER_INPUT' },
-        path: ['a', 1],
+        name: 'with path',
+        errors: [
+          {
+            message: 'Variable "$customerId" of required type "ID!" was not provided.',
+            locations: [{ line: 1, column: 20 }],
+            extensions: { code: 'BAD_USER_INPUT' },
+            path: ['a', 1],
+          },
+        ],
       },
-    ];
-
+    ],
+    [
+      {
+        name: 'without path',
+        errors: [
+          {
+            message: 'Variable "$customerId" of required type "ID!" was not provided.',
+            locations: [{ line: 1, column: 20 }],
+            extensions: { code: 'BAD_USER_INPUT' },
+          },
+        ],
+      },
+    ],
+  ])('handles graphql errors ($testCase.name)', async (testCase) => {
+    const { errors } = testCase;
     const query = 'query customer { customer() { id }}';
     const variables = {};
 
@@ -82,7 +99,7 @@ describe('raw request', () => {
       .reply(
         400,
         {
-          errors: graphqlErrors,
+          errors,
         },
         {
           'apigw-requestid': 'req_2',
@@ -97,8 +114,8 @@ describe('raw request', () => {
 
     const err: PlainSDKError = {
       type: 'bad_request',
-      message: 'Missing or invalid arguments provided.',
-      graphqlErrors,
+      message: 'Malformed query, missing or invalid arguments provided.',
+      graphqlErrors: errors,
       requestId: 'req_2',
     };
 

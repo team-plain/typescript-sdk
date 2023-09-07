@@ -9,19 +9,29 @@ import {
 export const PlainGraphQLError = z.object({
   message: z.string(),
   locations: z.array(z.object({ line: z.number(), column: z.number() })),
-  path: z.array(z.union([z.string(), z.number()])),
+  path: z.array(z.union([z.string(), z.number()])).optional(),
   extensions: z.object({ code: z.string() }),
 });
 export type PlainGraphQLError = z.infer<typeof PlainGraphQLError>;
 
-export const PlainGraphQLResponse = z.object({
+const PlainSuccessfulGraphQLResponse = z.object({
   data: z.unknown(),
-  errors: z.array(PlainGraphQLError).optional(),
 });
-export type PlainGraphQLResponse = z.infer<typeof PlainGraphQLResponse>;
 
-export function isPlainGraphQLResponse(x: unknown): x is PlainGraphQLResponse {
-  return PlainGraphQLResponse.safeParse(x).success;
+export function isPlainSuccessfulGraphQLResponse(
+  x: unknown
+): x is z.infer<typeof PlainSuccessfulGraphQLResponse> {
+  return PlainSuccessfulGraphQLResponse.safeParse(x).success;
+}
+
+const PlainFailedGraphQLResponse = z.object({
+  errors: z.array(PlainGraphQLError),
+});
+
+export function isPlainFailedGraphQLResponse(
+  x: unknown
+): x is z.infer<typeof PlainFailedGraphQLResponse> {
+  return PlainFailedGraphQLResponse.safeParse(x).success;
 }
 
 const PlainMutationResponse = z.record(
@@ -42,9 +52,8 @@ const PlainMutationResponse = z.record(
     }),
   })
 );
-type PlainMutationResponse = z.infer<typeof PlainMutationResponse>;
 
-function isPlainMutationResponse(x: unknown): x is PlainMutationResponse {
+function isPlainMutationResponse(x: unknown): x is z.infer<typeof PlainMutationResponse> {
   return PlainMutationResponse.safeParse(x).success;
 }
 
