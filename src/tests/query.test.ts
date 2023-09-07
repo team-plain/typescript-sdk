@@ -110,7 +110,7 @@ describe('query test - customer by id', () => {
 
     const err: PlainSDKError = {
       type: 'bad_request',
-      message: 'Missing or invalid arguments provided.',
+      message: 'Malformed query, missing or invalid arguments provided.',
       graphqlErrors,
       requestId: 'req_1',
     };
