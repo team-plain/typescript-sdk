@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.13.1
+
+### Patch Changes
+
+- bb1ea6a: Updated error handling to avoid ignoring bad input errors
+
 ## 2.13.0
 
 ### Minor Changes
