@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.14.0
+
+### Minor Changes
+
+- 1a69fa8: Add `uiComponent` builder so you can more easily create ui components for use with the API.
+
 ## 2.13.1
 
 ### Patch Changes
