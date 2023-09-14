@@ -2,6 +2,8 @@
 
 export { PlainClient } from './client';
 
+export { uiComponent } from './ui-components';
+
 export {
   // Enums
   AttachmentType,
