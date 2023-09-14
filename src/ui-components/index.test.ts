@@ -1,7 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { ComponentTextColor, ComponentTextSize } from '../../dist';
-import { ComponentBadgeColor } from '../graphql/types';
+import { ComponentBadgeColor, ComponentTextColor, ComponentTextSize } from '../graphql/types';
 import { uiComponent } from '.';
 
 describe('ui components builder', () => {
