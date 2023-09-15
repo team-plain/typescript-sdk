@@ -34,7 +34,7 @@ export async function createThreadA() {
   if (res.error) {
     console.error(res.error);
   } else {
-    console.log(`Thread created with id=${res.data.thread.id}`);
+    console.log(`Thread created with id=${res.data.id}`);
   }
 }
 
@@ -56,6 +56,6 @@ export async function createThreadB() {
   if (res.error) {
     console.error(res.error);
   } else {
-    console.log(`Thread created with id=${res.data.thread.id}`);
+    console.log(`Thread created with id=${res.data.id}`);
   }
 }

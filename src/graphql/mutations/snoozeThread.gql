@@ -1,0 +1,10 @@
+mutation snoozeThread($input: SnoozeThreadInput!) {
+  snoozeThread(input: $input) {
+    thread {
+      ...ThreadParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

@@ -1,0 +1,3583 @@
+type User {
+  id: ID!
+
+  """The full name e.g. Grace Hopper."""
+  fullName: String!
+
+  """A short name for use in UI e.g. Grace."""
+  publicName: String!
+
+  """The email associated with this user. Email is unique per user."""
+  email: String!
+
+  """Retrieve roles for a specific workspace + user."""
+  roles: [Role!]!
+  status: UserStatus!
+  statusChangedAt: DateTime!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+  isDeleted: Boolean!
+  deletedAt: DateTime
+  deletedBy: Actor
+}
+
+type UserAccount {
+  id: ID!
+
+  """The full name e.g. Grace Hopper."""
+  fullName: String!
+
+  """A short name for use in UI e.g. Grace."""
+  publicName: String!
+
+  """The email associated with this user. Email is unique per user."""
+  email: String!
+}
+
+enum UserStatus {
+  ONLINE
+  OFFLINE
+  BREAK
+}
+
+type Workspace {
+  id: ID!
+  name: String!
+  publicName: String!
+  isDemoWorkspace: Boolean!
+  createdBy: InternalActor!
+  createdAt: DateTime!
+  updatedBy: InternalActor!
+  updatedAt: DateTime!
+  workspaceEmailSettings: WorkspaceEmailSettings!
+  workspaceChatSettings: WorkspaceChatSettings!
+}
+
+type WorkspaceInvite {
+  id: ID!
+
+  """Who sent this invite."""
+  createdBy: InternalActor!
+
+  """When the invite was created."""
+  createdAt: DateTime!
+
+  """The email that is being invited."""
+  email: String!
+
+  """The workspace they are being invited to."""
+  workspace: Workspace!
+
+  """Whether the person has accepted the invite."""
+  isAccepted: Boolean!
+
+  """The roles that the invite will assign on workspace joining."""
+  roles: [Role!]!
+
+  """Who updated this invite."""
+  updatedBy: InternalActor!
+
+  """When the invite was updated."""
+  updatedAt: DateTime!
+}
+
+type WorkspaceApp {
+  id: ID!
+  appKey: String!
+  name: String!
+  publicName: String!
+  createdBy: InternalActor!
+  createdAt: DateTime!
+  updatedBy: InternalActor!
+  updatedAt: DateTime!
+}
+
+type WorkspaceAppPublicKey {
+  id: ID!
+  name: String!
+  fingerprint: String!
+  createdBy: InternalActor!
+  createdAt: DateTime!
+  updatedBy: InternalActor!
+  updatedAt: DateTime!
+}
+
+type Role {
+  id: ID!
+  name: String!
+  description: String
+  permissions: [String!]!
+  isAssignableToCustomer: Boolean!
+  isAssignableToThread: Boolean!
+}
+
+"""The priority of an issue."""
+type IssuePriority {
+  """The display name of the priority."""
+  label: String!
+
+  """
+  The value of the priority. Lower values are higher priority.
+  
+  Valid values are 0, 1, 2 and 3. 0 is the highest priority.
+  """
+  value: Int!
+}
+
+type IssueType {
+  id: ID!
+  publicName: String!
+  isArchived: Boolean!
+  archivedBy: InternalActor
+  archivedAt: DateTime
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+
+  """The default priority for issues of this type."""
+  defaultIssuePriority: IssuePriority!
+
+  """The icon for this issue type."""
+  icon: String
+}
+
+type Issue {
+  id: ID!
+  issueType: IssueType!
+  customer: Customer!
+  status: IssueStatus!
+  issueKey: String!
+  links(first: Int, after: String, last: Int, before: String): IssueLinkConnection!
+  isDeleted: Boolean!
+  deletedAt: DateTime
+  deletedBy: Actor
+  createdAt: DateTime!
+  createdBy: Actor!
+  updatedAt: DateTime!
+  updatedBy: Actor!
+
+  """
+  The priority of the issue. May be different to the default priority of the issue type.
+  """
+  priority: IssuePriority!
+}
+
+type LabelType {
+  id: ID!
+  name: String!
+  icon: String
+  isArchived: Boolean!
+  archivedBy: InternalActor
+  archivedAt: DateTime
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+type Label {
+  id: ID!
+  labelType: LabelType!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+"""The core customer life cycle."""
+enum CustomerStatus {
+  """
+  The default status of a customer when they don't have any open issues. Any activity on their timeline will move them into `ACTIVE`.
+  """
+  IDLE
+
+  """
+  The customer is currently either waiting for help or being helped, depending on if they're assigned to a user or not.
+  """
+  ACTIVE
+
+  """
+  Indicates that a user is waiting for a customer to get back. Any activity on their timeline will move them into `ACTIVE`.
+  """
+  SNOOZED
+}
+
+"""An object modelling an email address and if it's been verified."""
+type EmailAddress {
+  """The email address."""
+  email: String!
+
+  """
+  If the email address ownership has been verified (e.g. via sending an email with a code). If the email is not verified, Plain may not email this address.
+  """
+  isVerified: Boolean!
+
+  """When the email became verified in Plain."""
+  verifiedAt: DateTime
+}
+
+"""
+The core customer entity. A customer only exists (ideally) once.
+Uniqueness is guaranteed on both of these fields:
+1. `externalId` if provided
+2. `email`
+"""
+type Customer {
+  """Uniquely identifies a customer in Plain."""
+  id: ID!
+
+  """Your system's ID for this customer."""
+  externalId: ID
+
+  """The full name of the customer."""
+  fullName: String!
+
+  """An optional short name of the customer, typically their first name."""
+  shortName: String
+
+  """The customer's email address."""
+  email: EmailAddress!
+
+  """The customer's status."""
+  status: CustomerStatus!
+
+  """When the customer's status was last changed."""
+  statusChangedAt: DateTime!
+
+  """The user the customer is assigned to."""
+  assignedToUser: UserActor
+
+  """When the customer was assigned to a user."""
+  assignedAt: DateTime
+
+  """When the customer was last in the `IDLE` status."""
+  lastIdleAt: DateTime
+
+  """
+  Metadata about the customer's timeline. This is eventually consistent with the timeline.
+  """
+  timelineInfo: TimelineInfo!
+
+  """A subquery to fetch the customer's issues."""
+  issues(filters: CustomerIssuesFilter, sortBy: IssuesSort, first: Int, after: String, last: Int, before: String): IssueConnection!
+
+  """A subquery to fetch the customer's group memberships."""
+  customerGroupMemberships(first: Int, after: String, last: Int, before: String): CustomerGroupMembershipConnection!
+  createdAt: DateTime!
+  createdBy: Actor!
+  updatedAt: DateTime!
+  updatedBy: Actor!
+  markedAsSpamAt: DateTime
+  markedAsSpamBy: InternalActor
+}
+
+enum CommunicationChannel {
+  CHAT
+  EMAIL
+}
+
+enum CommunicationChannelInput {
+  CHAT
+  EMAIL
+  NONE
+}
+
+type TimelineInfoCommunication {
+  communicationChannel: CommunicationChannel!
+  previewText: String
+  actor: Actor!
+  timestamp: DateTime!
+}
+
+type TimelineInfoEmailCommunicationDetail {
+  subject: String
+  emailId: ID!
+  additionalRecipients: [EmailParticipant!]!
+  to: EmailParticipant!
+  from: EmailParticipant!
+}
+
+type TimelineInfoCustomEntryCommunicationDetail {
+  title: String!
+}
+
+union TimelineInfoLastCommunicationDetail = TimelineInfoEmailCommunicationDetail | TimelineInfoCustomEntryCommunicationDetail
+
+type TimelineEntryPreview {
+  previewText: String
+  actor: Actor!
+  timestamp: DateTime!
+}
+
+type TimelineInfo {
+  assignedUserUnreadCount: Int!
+  lastCommunication: TimelineInfoCommunication
+  lastCommunicationDetail: TimelineInfoLastCommunicationDetail
+  lastTimelineEntryPreview: TimelineEntryPreview
+  customerWaitingForReplySince: DateTime
+  createdAt: DateTime!
+  createdBy: Actor!
+  updatedAt: DateTime!
+  updatedBy: Actor!
+}
+
+type CustomerGroup {
+  id: ID!
+  name: String!
+  key: String!
+  color: String!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+type CustomerGroupMembership {
+  customerId: ID!
+  customerGroup: CustomerGroup!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+type CustomerGroupEdge {
+  cursor: String!
+  node: CustomerGroup!
+}
+
+type CustomerGroupConnection {
+  edges: [CustomerGroupEdge!]!
+  pageInfo: PageInfo!
+}
+
+type CustomerGroupMembershipEdge {
+  cursor: String!
+  node: CustomerGroupMembership!
+}
+
+type CustomerGroupMembershipConnection {
+  edges: [CustomerGroupMembershipEdge!]!
+  pageInfo: PageInfo!
+}
+
+type Note {
+  id: ID!
+  text: String!
+  markdown: String
+  customer: Customer!
+  isDeleted: Boolean!
+  createdAt: DateTime!
+  createdBy: Actor!
+  deletedAt: DateTime
+  deletedBy: Actor
+  updatedAt: DateTime!
+  updatedBy: Actor!
+}
+
+type Snippet {
+  id: ID!
+  name: String!
+  text: String!
+  markdown: String
+  isDeleted: Boolean!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+  deletedAt: DateTime
+  deletedBy: InternalActor
+}
+
+type EmailSignature {
+  text: String!
+  markdown: String
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+type Chat {
+  id: ID!
+  text: String
+  customerReadAt: DateTime
+  attachments: [Attachment!]!
+  createdAt: DateTime!
+  createdBy: Actor!
+  updatedAt: DateTime!
+  updatedBy: Actor!
+}
+
+type PageInfo {
+  hasPreviousPage: Boolean!
+  hasNextPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type DateTime {
+  unixTimestamp: String!
+  iso8601: String!
+}
+
+enum SortDirection {
+  ASC
+  DESC
+}
+
+type WorkspaceEdge {
+  cursor: String!
+  node: Workspace!
+}
+
+type WorkspaceConnection {
+  edges: [WorkspaceEdge!]!
+  pageInfo: PageInfo!
+}
+
+type WorkspaceInviteEdge {
+  cursor: String!
+  node: WorkspaceInvite!
+}
+
+type WorkspaceInviteConnection {
+  edges: [WorkspaceInviteEdge!]!
+  pageInfo: PageInfo!
+}
+
+type WorkspaceAppEdge {
+  cursor: String!
+  node: WorkspaceApp!
+}
+
+type WorkspaceAppConnection {
+  edges: [WorkspaceAppEdge!]!
+  pageInfo: PageInfo!
+}
+
+type WorkspaceAppPublicKeyEdge {
+  cursor: String!
+  node: WorkspaceAppPublicKey!
+}
+
+type WorkspaceAppPublicKeyConnection {
+  edges: [WorkspaceAppPublicKeyEdge!]!
+  pageInfo: PageInfo!
+}
+
+input UsersFilter {
+  isAssignableToCustomer: Boolean
+  isAssignableToThread: Boolean
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+type UserConnection {
+  edges: [UserEdge!]!
+  pageInfo: PageInfo!
+}
+
+type RoleEdge {
+  cursor: String!
+  node: Role!
+}
+
+type RoleConnection {
+  edges: [RoleEdge!]!
+  pageInfo: PageInfo!
+}
+
+type IssueTypeEdge {
+  cursor: String!
+  node: IssueType!
+}
+
+type IssueTypeConnection {
+  edges: [IssueTypeEdge!]!
+  pageInfo: PageInfo!
+}
+
+input IssueTypeFilter {
+  isArchived: Boolean
+}
+
+type LabelTypeEdge {
+  cursor: String!
+  node: LabelType!
+}
+
+type LabelTypeConnection {
+  edges: [LabelTypeEdge!]!
+  pageInfo: PageInfo!
+}
+
+input LabelTypeFilter {
+  isArchived: Boolean
+}
+
+input IssuesFilter {
+  customerId: ID
+  statuses: [IssueStatus!]
+  issueTypeIds: [ID!]
+
+  """Filters issues to those with the given issue priority values."""
+  priorityValues: [Int!]
+}
+
+input CustomerIssuesFilter {
+  statuses: [IssueStatus!]
+}
+
+enum IssuesSortField {
+  """Sort by the issue's priority value."""
+  PRIORITY_VALUE
+}
+
+input IssuesSort {
+  field: IssuesSortField!
+  direction: SortDirection!
+}
+
+type IssueEdge {
+  cursor: String!
+  node: Issue!
+}
+
+type IssueConnection {
+  edges: [IssueEdge!]!
+  pageInfo: PageInfo!
+}
+
+input CustomersFilter {
+  statuses: [CustomerStatus!]
+  isAssigned: Boolean
+  assignedToUser: [ID!]
+  lastCommunicationChannels: [CommunicationChannelInput!]
+
+  """
+  Filters customers to those with at least one issue of the given issue statuses (OPEN or RESOLVED).
+  Customers with no issues will not be included.
+  Can be combined with other issue filters.
+  """
+  issueStatuses: [IssueStatus!]
+
+  """
+  Filters customers to those with at least one issue of the given issue type IDs.
+  Customers with no issues will not be included.
+  Can be combined with other issue filters.
+  """
+  issueTypeIds: [ID!]
+
+  """
+  Filters customers to those with at least one issue of the given issue priority values.
+  Customers with no issues will not be included.
+  Can be combined with other issue filters.
+  """
+  issuePriorityValues: [Int!]
+
+  """
+  When true, filters customers to those with at least one open issue. If false, only customers
+  who have not been marked as spam will be included.
+  """
+  isMarkedAsSpam: Boolean
+
+  """
+  Filters customers to those with at least one of the given customer group IDs.
+  Customers with no groups will not be included.
+  Can be combined with other group filters.
+  """
+  customerGroupIds: [ID!]
+
+  """
+  Filters customers to those with at least one of the given customer group keys.
+  Customers with no groups will not be included.
+  Can be combined with other group filters.
+  """
+  customerGroupKeys: [String!]
+}
+
+enum CustomersSortField {
+  FULL_NAME
+  STATUS_CHANGED_AT
+  TIMELINE_INFO_CUSTOMER_WAITING_FOR_REPLY_SINCE
+  LAST_IDLE_AT
+
+  """
+  Sort based on the minimum value amongst all the customer's open issues' priorities.
+  
+  When sorting ascending, most urgent issues will be first. Otherwise, last.
+  """
+  OPEN_ISSUES_PRIORITIES_MIN_VALUE
+}
+
+input CustomersSort {
+  field: CustomersSortField!
+  direction: SortDirection!
+}
+
+type CustomerEdge {
+  cursor: String!
+  node: Customer!
+}
+
+type CustomerConnection {
+  edges: [CustomerEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type SnippetEdge {
+  cursor: String!
+  node: Snippet!
+}
+
+type SnippetConnection {
+  edges: [SnippetEdge!]!
+  pageInfo: PageInfo!
+}
+
+type UserActor {
+  userId: ID!
+  user: User!
+}
+
+type CustomerActor {
+  customerId: ID!
+  customer: Customer!
+}
+
+type DeletedCustomerActor {
+  customerId: ID!
+}
+
+type SystemActor {
+  systemId: ID!
+}
+
+type MachineUserActor {
+  machineUserId: ID!
+  machineUser: MachineUser!
+}
+
+enum IssueStatus {
+  OPEN
+  RESOLVED
+}
+
+type IssueStatusTransitionedEntry {
+  issueId: ID!
+  issueKey: String!
+  issueTypeId: ID!
+  issueTypePublicName: String!
+  issueTypeIcon: String
+  previousStatus: IssueStatus
+  nextStatus: IssueStatus!
+  priority: IssuePriority!
+}
+
+type IssueIssueTypeChangedEntry {
+  issueId: ID!
+  issueKey: String!
+  previousIssueTypePublicName: String!
+  previousIssueTypeId: ID!
+  previousIssueTypeIcon: String
+  nextIssueTypePublicName: String!
+  nextIssueTypeId: ID!
+  nextIssueTypeIcon: String
+  status: IssueStatus!
+  priority: IssuePriority!
+}
+
+type IssueDeletedEntry {
+  issueId: ID!
+  issueKey: String!
+  issueTypeId: ID!
+  issueTypePublicName: String!
+  issueTypeIcon: String
+  status: IssueStatus!
+  priority: IssuePriority!
+}
+
+type NoteEntry {
+  noteId: ID!
+  text: String!
+  markdown: String
+}
+
+type ChatEntry {
+  chatId: ID!
+  text: String
+  customerReadAt: DateTime
+  attachments: [Attachment!]!
+}
+
+type FileSize {
+  bytes: Int!
+  kiloBytes: Float!
+  megaBytes: Float!
+}
+
+type Attachment {
+  id: ID!
+  fileName: String!
+  fileSize: FileSize!
+  fileExtension: String
+  fileMimeType: String!
+  type: AttachmentType!
+  createdAt: DateTime!
+  createdBy: Actor!
+  updatedAt: DateTime!
+  updatedBy: Actor!
+}
+
+type CustomerAssignmentTransitionedEntry {
+  previousUserId: ID
+  previousUser: User
+  nextUserId: ID
+  nextUser: User
+}
+
+type CustomerStatusTransitionedEntry {
+  previousStatus: CustomerStatus
+  nextStatus: CustomerStatus
+}
+
+type CustomerEmailActor {
+  customerId: ID!
+  customer: Customer!
+}
+
+type DeletedCustomerEmailActor {
+  customerId: ID!
+}
+
+type UserEmailActor {
+  userId: ID!
+  user: User!
+}
+
+type SupportEmailAddressEmailActor {
+  supportEmailAddress: String!
+}
+
+union EmailActor = CustomerEmailActor | DeletedCustomerEmailActor | UserEmailActor | SupportEmailAddressEmailActor
+
+type EmailParticipant {
+  name: String
+  email: String!
+  emailActor: EmailActor
+}
+
+enum EmailAuthenticity {
+  PASS
+  FAIL
+  UNKNOWN
+}
+
+type EmailEntry {
+  emailId: ID!
+  to: EmailParticipant!
+  from: EmailParticipant!
+  additionalRecipients: [EmailParticipant!]!
+  hiddenRecipients: [EmailParticipant!]!
+  subject: String
+
+  """The most recent email's text content."""
+  textContent: String
+
+  """
+  Boolean indicating whether there is more text content available that can be resolved via the `fullTextContent` field.
+  """
+  hasMoreTextContent: Boolean!
+
+  """The full email's text content, including all replies."""
+  fullTextContent: String
+
+  """The most recent email's markdown content."""
+  markdownContent: String
+
+  """
+  Boolean indicating whether there is more markdown content available that can be resolved via the `fullMarkdownContent` field.
+  """
+  hasMoreMarkdownContent: Boolean!
+
+  """The full email's markdown content, including all replies."""
+  fullMarkdownContent: String
+  authenticity: EmailAuthenticity!
+
+  """
+  When the email was sent. Initially set to null while the email is being processed.
+  """
+  sentAt: DateTime
+
+  """When the email was received by Plain."""
+  receivedAt: DateTime
+  attachments: [Attachment!]!
+
+  """
+  Whether this email entry is the start of a new thread in Plain. Can be used to show the full email content.
+  """
+  isStartOfThread: Boolean!
+}
+
+enum ComponentTextSize {
+  S
+  M
+  L
+}
+
+enum ComponentTextColor {
+  NORMAL
+  MUTED
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+enum ComponentPlainTextSize {
+  S
+  M
+  L
+}
+
+enum ComponentPlainTextColor {
+  NORMAL
+  MUTED
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+enum ComponentBadgeColor {
+  GREY
+  GREEN
+  YELLOW
+  RED
+  BLUE
+}
+
+type ComponentText {
+  textSize: ComponentTextSize
+  textColor: ComponentTextColor
+  text: String!
+  color: ComponentTextColor @deprecated(reason: "Use textColor instead, which has the same type")
+  size: ComponentTextSize @deprecated(reason: "Use textSize instead, which has the same type")
+}
+
+type ComponentPlainText {
+  plainTextSize: ComponentPlainTextSize
+  plainTextColor: ComponentPlainTextColor
+  plainText: String!
+}
+
+enum ComponentSpacerSize {
+  XS
+  S
+  M
+  L
+  XL
+}
+
+type ComponentSpacer {
+  spacerSize: ComponentSpacerSize!
+  size: ComponentSpacerSize! @deprecated(reason: "Use spacerSize instead, which has the same type")
+}
+
+enum ComponentDividerSpacingSize {
+  XS
+  S
+  M
+  L
+  XL
+}
+
+type ComponentDivider {
+  dividerSpacingSize: ComponentDividerSpacingSize
+  spacingSize: ComponentDividerSpacingSize @deprecated(reason: "use dividerSpacingSize instead")
+}
+
+type ComponentLinkButton {
+  linkButtonUrl: String!
+  linkButtonLabel: String!
+  url: String! @deprecated(reason: "use linkButtonUrl instead")
+  label: String! @deprecated(reason: "use linkButtonLabel instead")
+}
+
+type ComponentCopyButton {
+  copyButtonValue: String!
+  copyButtonTooltipLabel: String
+}
+
+type ComponentBadge {
+  badgeLabel: String!
+  badgeColor: ComponentBadgeColor
+}
+
+type ComponentRow {
+  rowMainContent: [ComponentRowContent!]!
+  rowAsideContent: [ComponentRowContent!]!
+}
+
+type ComponentContainer {
+  containerContent: [ComponentContainerContent!]!
+}
+
+union ComponentContainerContent = ComponentText | ComponentPlainText | ComponentSpacer | ComponentDivider | ComponentLinkButton | ComponentBadge | ComponentCopyButton | ComponentRow
+
+union ComponentRowContent = ComponentText | ComponentPlainText | ComponentSpacer | ComponentDivider | ComponentLinkButton | ComponentBadge | ComponentCopyButton
+
+union CustomTimelineEntryComponent = ComponentText | ComponentPlainText | ComponentSpacer | ComponentDivider | ComponentLinkButton | ComponentRow | ComponentContainer | ComponentBadge | ComponentCopyButton
+
+union CustomerCardComponent = ComponentText | ComponentPlainText | ComponentSpacer | ComponentDivider | ComponentLinkButton | ComponentRow | ComponentContainer | ComponentBadge | ComponentCopyButton
+
+type CustomEntry {
+  externalId: ID
+  title: String!
+  type: String
+  components: [CustomTimelineEntryComponent!]!
+  attachments: [Attachment!]!
+}
+
+"""Added to the timeline when an issue's priority changes."""
+type IssuePriorityChangedEntry {
+  """The ID of the issue that changed priority."""
+  issueId: ID!
+
+  """The key of the issue that changed priority."""
+  issueKey: String!
+
+  """The ID of the issue type of the issue that changed priority."""
+  issueTypeId: ID!
+
+  """The public name of the issue type of the issue that changed priority."""
+  issueTypePublicName: String!
+
+  """The icon of the issue type of the issue that changed priority."""
+  issueTypeIcon: String
+
+  """The current issue status."""
+  status: IssueStatus!
+
+  """The previous issue priority."""
+  previousPriority: IssuePriority!
+
+  """The current issue priority."""
+  nextPriority: IssuePriority!
+}
+
+union Actor = UserActor | CustomerActor | DeletedCustomerActor | SystemActor | MachineUserActor
+
+union InternalActor = UserActor | SystemActor | MachineUserActor
+
+"""A union of all possible entries that can appear in a timeline."""
+union Entry = IssueStatusTransitionedEntry | IssueIssueTypeChangedEntry | IssueDeletedEntry | NoteEntry | CustomerAssignmentTransitionedEntry | ChatEntry | CustomerStatusTransitionedEntry | EmailEntry | CustomEntry | LinearIssueLinkStateTransitionedEntry | LinearIssueThreadLinkStateTransitionedEntry | IssuePriorityChangedEntry
+
+type LinearIssueLinkStateTransitionedEntry {
+  issueId: ID!
+  issueKey: String!
+  issueTypeId: ID!
+  issueTypePublicName: String!
+  issueTypeIcon: String
+  linearIssueId: ID!
+  previousLinearStateId: ID!
+  nextLinearStateId: ID!
+}
+
+type LinearIssueThreadLinkStateTransitionedEntry {
+  threadId: ID!
+  linearIssueId: ID!
+  previousLinearStateId: ID!
+  nextLinearStateId: ID!
+}
+
+type TimelineEntry {
+  id: ID!
+  customerId: ID!
+  threadId: ID
+  timestamp: DateTime!
+  entry: Entry!
+  actor: Actor!
+}
+
+type TimelineEntryEdge {
+  cursor: String!
+  node: TimelineEntry!
+}
+
+type TimelineEntryConnection {
+  edges: [TimelineEntryEdge!]!
+  pageInfo: PageInfo!
+}
+
+type MachineUser {
+  id: ID!
+  fullName: String!
+  publicName: String!
+  description: String
+  apiKey(apiKeyId: ID!): ApiKey
+  apiKeys(first: Int, after: String, last: Int, before: String): ApiKeyConnection!
+  createdBy: InternalActor!
+  createdAt: DateTime!
+  updatedBy: InternalActor!
+  updatedAt: DateTime!
+  isDeleted: Boolean!
+  deletedAt: DateTime
+  deletedBy: Actor
+}
+
+type MachineUserEdge {
+  cursor: String!
+  node: MachineUser!
+}
+
+type MachineUserConnection {
+  edges: [MachineUserEdge!]!
+  pageInfo: PageInfo!
+}
+
+type ApiKey {
+  id: ID!
+  description: String
+  permissions: [String!]!
+  createdBy: InternalActor!
+  createdAt: DateTime!
+  updatedBy: InternalActor!
+  updatedAt: DateTime!
+  isDeleted: Boolean!
+  deletedAt: DateTime
+  deletedBy: Actor
+}
+
+type ApiKeyEdge {
+  cursor: String!
+  node: ApiKey!
+}
+
+type ApiKeyConnection {
+  edges: [ApiKeyEdge!]!
+  pageInfo: PageInfo!
+}
+
+type Permissions {
+  permissions: [String!]!
+}
+
+type UserSlackInstallationInfo {
+  installationUrl: String!
+}
+
+type WorkspaceSlackInstallationInfo {
+  installationUrl: String!
+}
+
+type UserSlackIntegration {
+  integrationId: ID!
+  slackTeamName: String!
+  isReinstallRequired: Boolean!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+type WorkspaceSlackIntegration {
+  integrationId: ID!
+  slackChannelName: String!
+  slackTeamName: String!
+  isReinstallRequired: Boolean!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+type WorkspaceSlackIntegrationEdge {
+  cursor: String!
+  node: WorkspaceSlackIntegration!
+}
+
+type WorkspaceSlackIntegrationConnection {
+  edges: [WorkspaceSlackIntegrationEdge!]!
+  pageInfo: PageInfo!
+}
+
+type WorkspaceDiscordIntegration {
+  integrationId: ID!
+  name: String!
+  webhookUrl: String!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+type WorkspaceDiscordIntegrationEdge {
+  cursor: String!
+  node: WorkspaceDiscordIntegration!
+}
+
+type WorkspaceDiscordIntegrationConnection {
+  edges: [WorkspaceDiscordIntegrationEdge!]!
+  pageInfo: PageInfo!
+}
+
+type UserLinearInstallationInfo {
+  installationUrl: String!
+}
+
+type LinearIntegrationToken {
+  token: String!
+}
+
+type UserLinearIntegration {
+  integrationId: ID!
+  linearOrganisationName: String!
+  linearOrganisationId: ID!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+"""An API header that will be sent to the configured API URL."""
+type CustomerCardConfigApiHeader {
+  """
+  The name of the header, trimmed and treated case insensitively for deduplication purposes (min length: 1, max length: 100). Not all header names are allowed.
+  """
+  name: String!
+
+  """
+  The value of the header, treated case sensitively for deduplication purposes (min length: 1, max length: 500).
+  """
+  value: String!
+}
+
+"""
+The configuration of a customer card that defines four important things:
+
+- The title of the card
+- The key of the card, which will be used in the request payload to the API URL
+- The order in which the cards should appear
+- Which API the card should be loaded from (and the required authentication headers)
+
+Configs that have the same API URL and API Headers will be loaded in batch. API header names are treated case insensitively.
+
+A maximum of 25 customer cards can be configured.
+"""
+type CustomerCardConfig {
+  """The ID of the customer card config."""
+  id: ID!
+
+  """
+  The order in which this customer card config should be shown.
+  
+  Duplicate order numbers are allowed, in case the order is the same they will be sorted based on `id`. The minimum is 0 and the maximum is 100000.
+  """
+  order: Int!
+
+  """The title of the card (max length: 500 characters)."""
+  title: String!
+
+  """
+  The key of the card (must be unique in a workspace, max length: 500 characters, must match regex: `[a-zA-Z0-9_-]+`).
+  """
+  key: String!
+
+  """
+  The default time the card should be cached for if no TTL is provided in the card response. (minimum: 15 seconds, maximum: 1 year or  31,536,000 seconds).
+  """
+  defaultTimeToLiveSeconds: Int!
+
+  """
+  The URL from which this card should be loaded (must start with `https://` and be a valid URL, max length: 600 characters). Requires the `customerCardConfigApiDetails:read` permission.
+  """
+  apiUrl: String!
+
+  """
+  An array of headers name-value pairs (maximum length of array: 20). Requires the `customerCardConfigApiDetails:read` permission.
+  """
+  apiHeaders: [CustomerCardConfigApiHeader!]!
+
+  """
+  Indicates if the customer card is enabled or not. Disabled customer card configs are not loaded or displayed for customers.
+  """
+  isEnabled: Boolean!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+type SettingScope {
+  id: ID
+  scopeType: SettingScopeType!
+}
+
+"""A boolean setting"""
+type BooleanSetting {
+  """The setting code."""
+  code: String!
+
+  """
+  The value of the setting. This is named uniquely (instead of just `value`) so that the union has unique fields.
+  """
+  booleanValue: Boolean!
+
+  """The scope of the setting."""
+  scope: SettingScope!
+}
+
+"""A union of different types of settings."""
+union Setting = BooleanSetting
+
+"""An enum to describe the type of scope the setting is for."""
+enum SettingScopeType {
+  """
+  Scope for any user level settings
+  An `id` is not needed as it will implicitly be the authenticated user's id.
+  """
+  USER
+
+  """
+  Scope for the authenticated user's email notification settings.
+  An `id` is not needed as it will implicitly be the authenticated user's id.
+  """
+  USER_EMAIL_NOTIFICATIONS
+
+  """
+  Scope for the authenticated user's slack notification settings.
+  An `id` is not needed as it will implicitly be the authenticated user's id.
+  """
+  USER_SLACK_NOTIFICATIONS
+
+  """
+  Scope for slack notifications configured for the whole workspace.
+  An `id` is mandatory and should be a workspace slack integration id (`wsSlackInt_123`)
+  """
+  WORKSPACE_SLACK_NOTIFICATIONS
+
+  """
+  Scope for discord notifications configured for the whole workspace.
+  An `id` is mandatory and should be a workspace discord integration id (`wsDiscordInt_123`)
+  """
+  WORKSPACE_DISCORD_NOTIFICATIONS
+
+  """
+  Scope for workspace level settings for the whole workspace.
+  An `id` is not needed as it will implicitly be the current workspace id.
+  """
+  WORKSPACE
+}
+
+"""
+The different ways in which a string is matched.
+Exactly one of these must be provided in a single search expression.
+"""
+input StringSearchExpression {
+  """Case-insensitive match values containing the provided string."""
+  caseInsensitiveContains: String
+}
+
+"""
+The customer attributes available for search, each of them mapped to a search expression.
+Exactly one of them must be provided in a single search condition.
+"""
+input CustomerSearchCondition {
+  """Search expression on the customer's full name."""
+  fullName: StringSearchExpression
+
+  """Search expression on the customer's short name."""
+  shortName: StringSearchExpression
+
+  """Search expression on the customer's email address."""
+  email: StringSearchExpression
+
+  """Search expression on the customer's external id."""
+  externalId: StringSearchExpression
+
+  """
+  Search expression on specific timeline entries' text (email, chat) sent or received by the customer.
+  Common English stop-words will be removed from the text to search.
+  """
+  timelineEntryText: StringSearchExpression
+}
+
+"""
+A query to search for customers. Search queries are combinations of search conditions, as defined
+below. At least one search condition must be provided.
+"""
+input CustomersSearchQuery {
+  """
+  An array of search conditions that will be combined using a 'logical OR' to search for customers.
+  """
+  or: [CustomerSearchCondition!]
+}
+
+type CustomerSearchEdge {
+  cursor: String!
+  node: Customer!
+}
+
+type CustomerSearchConnection {
+  edges: [CustomerSearchEdge!]!
+  pageInfo: PageInfo!
+}
+
+type MonthlyUsage {
+  activeUniqueCustomerCount: Int!
+}
+
+"""
+A shared interface for all common properties customer card instances can have.
+A customer can only have one customer card instance for each customer card config at any point in time.
+
+Has 3 implementations:
+- `CustomerCardInstanceLoading`
+- `CustomerCardInstanceLoaded`
+- `CustomerCardInstanceError`
+"""
+interface CustomerCardInstance {
+  """
+  The ID of the customer card instance. A new ID is generated for each load.
+  """
+  id: ID!
+
+  """The customer the instance is for."""
+  customerId: ID!
+
+  """The customer card config this instance is for."""
+  customerCardConfig: CustomerCardConfig!
+  createdAt: DateTime!
+  createdBy: Actor!
+  updatedAt: DateTime!
+  updatedBy: Actor!
+}
+
+"""
+A loading customer card. The createdAt timestamp indicates when the load was started.
+Will be updated to be a CustomerCardInstanceLoaded or CustomerCardInstanceError.
+"""
+type CustomerCardInstanceLoading implements CustomerCardInstance {
+  """
+  The ID of the customer card instance. A new ID is generated for each load.
+  """
+  id: ID!
+
+  """The customer the instance is for."""
+  customerId: ID!
+
+  """The customer card config this instance is for."""
+  customerCardConfig: CustomerCardConfig!
+  createdAt: DateTime!
+  createdBy: Actor!
+  updatedAt: DateTime!
+  updatedBy: Actor!
+}
+
+"""A loaded customer card."""
+type CustomerCardInstanceLoaded implements CustomerCardInstance {
+  """
+  The ID of the customer card instance. A new ID is generated for each load.
+  """
+  id: ID!
+
+  """The customer the instance is for."""
+  customerId: ID!
+
+  """The customer card config this instance is for."""
+  customerCardConfig: CustomerCardConfig!
+
+  """
+  The list of components of the customer card. If this is null it means the customer card was returned on the API, but the components array was empty.
+  """
+  components: [CustomerCardComponent!]
+
+  """When the customer card was received from the API."""
+  loadedAt: DateTime!
+  expiresAt: DateTime!
+  createdAt: DateTime!
+  createdBy: Actor!
+  updatedAt: DateTime!
+  updatedBy: Actor!
+}
+
+"""The configured API URL didn't return a requested card key."""
+type CustomerCardInstanceMissingCardErrorDetail {
+  message: String!
+  cardKey: String!
+}
+
+"""An invalid response body was returned from the configured API URL."""
+type CustomerCardInstanceResponseBodyErrorDetail {
+  message: String!
+  responseBody: String!
+}
+
+"""A non-200 status code was returned from the configured API URL."""
+type CustomerCardInstanceStatusCodeErrorDetail {
+  message: String!
+  statusCode: Int!
+  responseBody: String!
+}
+
+"""Plain failed to make the request to the configured API URL."""
+type CustomerCardInstanceRequestErrorDetail {
+  message: String!
+  errorCode: String!
+}
+
+"""
+An unknown error occurred. If this error is persistent, please contact our support.
+"""
+type CustomerCardInstanceUnknownErrorDetail {
+  message: String!
+}
+
+"""The card failed to load within the timeout."""
+type CustomerCardInstanceTimeoutErrorDetail {
+  message: String!
+  timeoutSeconds: Int!
+}
+
+"""Details for the reasons why the customer card failed to load."""
+union CustomerCardInstanceErrorDetail = CustomerCardInstanceMissingCardErrorDetail | CustomerCardInstanceResponseBodyErrorDetail | CustomerCardInstanceStatusCodeErrorDetail | CustomerCardInstanceRequestErrorDetail | CustomerCardInstanceUnknownErrorDetail | CustomerCardInstanceTimeoutErrorDetail
+
+type CustomerCardInstanceError implements CustomerCardInstance {
+  """
+  The ID of the customer card instance. A new ID is generated for each load.
+  """
+  id: ID!
+
+  """The customer the instance is for."""
+  customerId: ID!
+
+  """The customer card config this instance is for."""
+  customerCardConfig: CustomerCardConfig!
+
+  """The details of the customer card load error."""
+  errorDetail: CustomerCardInstanceErrorDetail!
+  createdAt: DateTime!
+  createdBy: Actor!
+  updatedAt: DateTime!
+  updatedBy: Actor!
+}
+
+type Query {
+  myUserAccount: UserAccount
+  myUser: User
+  myMachineUser: MachineUser
+  myWorkspace: Workspace
+  myPermissions: Permissions!
+  myWorkspaces(first: Int, after: String, last: Int, before: String): WorkspaceConnection!
+  myWorkspaceInvites(first: Int, after: String, last: Int, before: String): WorkspaceInviteConnection!
+  mySlackIntegration: UserSlackIntegration
+  mySlackInstallationInfo(redirectUrl: String!): UserSlackInstallationInfo!
+  myLinearIntegration: UserLinearIntegration
+  myLinearInstallationInfo(redirectUrl: String!): UserLinearInstallationInfo!
+  myLinearIntegrationToken: LinearIntegrationToken
+  myEmailSignature: EmailSignature
+  issue(issueId: ID!): Issue
+  issueTypes(filters: IssueTypeFilter, first: Int, after: String, last: Int, before: String): IssueTypeConnection!
+
+  """
+  Returns an issue type by ID or null if the issue type is not found.
+  
+  Archived issue types are also returned, see isArchived, archivedAt and archivedBy fields on the IssueType type.
+  """
+  issueType(issueTypeId: ID!): IssueType
+  labelTypes(filters: LabelTypeFilter, first: Int, after: String, last: Int, before: String): LabelTypeConnection!
+  labelType(labelTypeId: ID!): LabelType
+  roles(first: Int, after: String, last: Int, before: String): RoleConnection!
+  timelineEntries(customerId: ID!, first: Int, after: String, last: Int, before: String): TimelineEntryConnection!
+  timelineEntry(customerId: ID!, timelineEntryId: ID!): TimelineEntry
+  workspace(workspaceId: ID!): Workspace
+  user(userId: ID!): User
+
+  """
+  Returns a user by email or null if the user is not found.
+  
+  Deleted users are also returned, see isDeleted, deletedAt and deletedBy fields on the User type.
+  """
+  userByEmail(email: String!): User
+  users(filters: UsersFilter, first: Int, after: String, last: Int, before: String): UserConnection!
+  workspaceInvites(first: Int, after: String, last: Int, before: String): WorkspaceInviteConnection!
+  workspaceApp(workspaceAppId: ID!): WorkspaceApp
+  workspaceApps(first: Int, after: String, last: Int, before: String): WorkspaceAppConnection!
+  workspaceAppPublicKeys(workspaceAppId: ID!, first: Int, after: String, last: Int, before: String): WorkspaceAppPublicKeyConnection!
+  customer(customerId: ID!): Customer
+  customers(filters: CustomersFilter, sortBy: CustomersSort, first: Int, after: String, last: Int, before: String): CustomerConnection!
+  customerByEmail(email: String!): Customer
+  customerByExternalId(externalId: ID!): Customer
+
+  """Get a customer group by ID."""
+  customerGroup(customerGroupId: ID!): CustomerGroup
+
+  """Get a paginated list of customer groups."""
+  customerGroups(first: Int, after: String, last: Int, before: String): CustomerGroupConnection!
+
+  """
+  Loads the customer's card instances.
+  
+  This query will return any cards that are loaded and within their expiry time.
+  For cards that are past their expiry or are errored it will request a load of the cards and
+  return a `CustomerCardInstanceLoading`.
+  
+  A maximum of 25 card instances will be returned, due to only allowing 25 customer card configs.
+  """
+  customerCardInstances(customerId: ID!): [CustomerCardInstance!]!
+  issues(filters: IssuesFilter, sortBy: IssuesSort, first: Int, after: String, last: Int, before: String): IssueConnection!
+
+  """
+  Search for customers based on the provided query. Returned customers are sorted by how recently
+  they changed status (most recent first).
+  """
+  searchCustomers(searchQuery: CustomersSearchQuery!, first: Int, after: String, last: Int, before: String): CustomerSearchConnection!
+  snippets(first: Int, after: String, last: Int, before: String): SnippetConnection!
+  snippet(snippetId: ID!): Snippet
+  workspaceEmailSettings: WorkspaceEmailSettings!
+  workspaceChatSettings: WorkspaceChatSettings!
+  machineUser(machineUserId: ID!): MachineUser
+  machineUsers(first: Int, after: String, last: Int, before: String): MachineUserConnection!
+  permissions: Permissions!
+  workspaceSlackInstallationInfo(redirectUrl: String!): WorkspaceSlackInstallationInfo!
+  workspaceSlackIntegrations(first: Int, after: String, last: Int, before: String): WorkspaceSlackIntegrationConnection!
+  workspaceSlackIntegration(integrationId: ID!): WorkspaceSlackIntegration
+  workspaceDiscordIntegrations(first: Int, after: String, last: Int, before: String): WorkspaceDiscordIntegrationConnection!
+  workspaceDiscordIntegration(integrationId: ID!): WorkspaceDiscordIntegration
+  customerCardConfigs: [CustomerCardConfig!]!
+  customerCardConfig(customerCardConfigId: ID!): CustomerCardConfig
+
+  """Gets a single setting based on the code and the scope."""
+  setting(code: String!, scope: SettingScopeInput!): Setting
+
+  """
+  **Deprecated**: This field is deprecated and the result will always return 0. This query will be removed in a future release.
+  
+  Gets usage for a given month for the current workspace.
+  """
+  monthlyUsage(month: String!): MonthlyUsage! @deprecated(reason: "This query is deprecated and will be removed in a future release")
+
+  """Gets a webhook target."""
+  webhookTarget(webhookTargetId: ID!): WebhookTarget
+
+  """List webhook targets."""
+  webhookTargets(first: Int, after: String, last: Int, before: String): WebhookTargetConnection!
+
+  """List all the events types you can subscribe to."""
+  subscriptionEventTypes: [SubscriptionEventType!]!
+
+  """Get a thread by ID."""
+  thread(threadId: ID!): Thread
+  threads(filters: ThreadsFilter, sortBy: ThreadsSort, first: Int, after: String, last: Int, before: String): ThreadConnection!
+  searchThreads(searchQuery: ThreadsSearchQuery!, first: Int, after: String, last: Int, before: String): ThreadSearchResultConnection!
+}
+
+input ThreadsFilter {
+  statuses: [ThreadStatus!]
+  threadIds: [ID!]
+  labelTypeIds: [ID!]
+  priorities: [Int!]
+  customerIds: [ID!]
+  isAssigned: Boolean
+  assignedToUser: [ID!]
+  isMarkedAsSpam: Boolean
+  supportEmailAddresses: [String!]
+  customerGroupIdentifiers: [CustomerGroupIdentifier!]
+}
+
+enum ThreadsSortField {
+  STATUS_CHANGED_AT
+}
+
+input ThreadsSort {
+  field: ThreadsSortField!
+  direction: SortDirection!
+}
+
+type ThreadConnection {
+  pageInfo: PageInfo!
+  edges: [ThreadEdge!]!
+}
+
+type ThreadEdge {
+  cursor: String!
+  node: Thread!
+}
+
+"""An enum for why the mutation failed overall."""
+enum MutationErrorType {
+  """
+  Input validation failed, see the `fields` for details on why the input was invalid.
+  """
+  VALIDATION
+
+  """
+  The user is not authorized to do this mutation. See `message` for details on which permissions are missing.
+  """
+  FORBIDDEN
+
+  """
+  An unknown internal server error occurred. Retry the mutation and if it persists, please email help@plain.com
+  """
+  INTERNAL
+}
+
+"""An enum specific to each field, explaining why validation failed."""
+enum MutationFieldErrorType {
+  """
+  The field was provided, but didn't pass the requirements of the field. See `message` for details on why.
+  """
+  VALIDATION
+
+  """
+  The field is required to be provided. String inputs may be trimmed and checked for emptiness.
+  """
+  REQUIRED
+
+  """The input field referenced an entity that wasn't found."""
+  NOT_FOUND
+}
+
+"""
+A type indicating an error has occurred with a specific field in the input.
+"""
+type MutationFieldError {
+  """The name of the field for which the error happened."""
+  field: String!
+
+  """
+  An English technical description of the error. This error is usually meant to be read by a developer and not an end user.
+  """
+  message: String!
+
+  """
+  The type of the error. Can be used to display a user friendly error message.
+  """
+  type: MutationFieldErrorType!
+}
+
+"""A type indicating an error has occurred while making a mutation."""
+type MutationError {
+  """
+  An English technical description of the error. This error is usually meant to be read by a developer and not an end user.
+  """
+  message: String!
+
+  """
+  The type of error. Can be used to display a user friendly error message.
+  """
+  type: MutationErrorType!
+
+  """
+  A fixed error code that can be used to handle this error, see https://www.plain.com/docs/graphql-api/error-codes for a description of each code.
+  """
+  code: String!
+
+  """The array of fields that are impacted by this error."""
+  fields: [MutationFieldError!]!
+}
+
+input StringInput {
+  value: String!
+}
+
+input IntInput {
+  value: Int!
+}
+
+input BooleanInput {
+  value: Boolean!
+}
+
+input OptionalStringInput {
+  value: String
+}
+
+input CreateUserAccountInput {
+  fullName: String!
+  publicName: String!
+}
+
+type CreateUserAccountOutput {
+  userAccount: UserAccount
+  error: MutationError
+}
+
+input CreateWorkspaceInput {
+  name: String!
+  publicName: String!
+}
+
+type CreateWorkspaceOutput {
+  workspace: Workspace
+  error: MutationError
+}
+
+input InviteUserToWorkspaceInput {
+  email: String!
+  roleIds: [ID!]!
+}
+
+type InviteUserToWorkspaceOutput {
+  invite: WorkspaceInvite
+  error: MutationError
+}
+
+input AcceptWorkspaceInviteInput {
+  inviteId: ID!
+}
+
+type AcceptWorkspaceInviteOutput {
+  invite: WorkspaceInvite
+  error: MutationError
+}
+
+input DeleteWorkspaceInviteInput {
+  inviteId: ID!
+}
+
+type DeleteWorkspaceInviteOutput {
+  invite: WorkspaceInvite
+  error: MutationError
+}
+
+input CreateWorkspaceAppInput {
+  name: String!
+  publicName: String!
+}
+
+type CreateWorkspaceAppOutput {
+  workspaceApp: WorkspaceApp
+  error: MutationError
+}
+
+input DeleteWorkspaceAppInput {
+  workspaceAppId: ID!
+}
+
+type DeleteWorkspaceAppOutput {
+  workspaceApp: WorkspaceApp
+  error: MutationError
+}
+
+input CreateWorkspaceAppPublicKeyInput {
+  workspaceAppId: ID!
+  name: String!
+  value: String!
+}
+
+type CreateWorkspaceAppPublicKeyOutput {
+  workspaceAppPublicKey: WorkspaceAppPublicKey
+  error: MutationError
+}
+
+input DeleteWorkspaceAppPublicKeyInput {
+  workspaceAppPublicKeyId: ID!
+}
+
+type DeleteWorkspaceAppPublicKeyOutput {
+  workspaceAppPublicKey: WorkspaceAppPublicKey
+  error: MutationError
+}
+
+input AssignRolesToUserInput {
+  userId: ID!
+  roleIds: [ID!]!
+}
+
+type AssignRolesToUserOutput {
+  error: MutationError
+}
+
+input CreateIssueTypeInput {
+  publicName: String!
+
+  """
+  The priority value for issues created with this issue type.
+  
+  Valid values are 0, 1, 2 and 3.
+  """
+  defaultIssuePriorityValue: Int
+
+  """
+  The icon to use for this issue type. The maximum length is 50 characters.
+  
+  Only lowercase alphanumeric characters, '-' and '_' are allowed.
+  """
+  icon: String
+}
+
+type CreateIssueTypeOutput {
+  issueType: IssueType
+  error: MutationError
+}
+
+input ArchiveIssueTypeInput {
+  issueTypeId: ID!
+}
+
+type ArchiveIssueTypeOutput {
+  issueType: IssueType
+  error: MutationError
+}
+
+input UnarchiveIssueTypeInput {
+  issueTypeId: ID!
+}
+
+type UnarchiveIssueTypeOutput {
+  issueType: IssueType
+  error: MutationError
+}
+
+input UpdateIssueTypeInput {
+  issueTypeId: ID!
+  publicName: StringInput
+
+  """
+  The priority value for issues created with this issue type.
+  
+  Valid values are 0, 1, 2 and 3.
+  """
+  defaultIssuePriorityValue: IntInput
+
+  """
+  The icon to use for this issue type. The maximum length is 50 characters.
+  
+  Only lowercase alphanumeric characters, '-' and '_' are allowed.
+  """
+  icon: StringInput
+}
+
+type UpdateIssueTypeOutput {
+  issueType: IssueType
+  error: MutationError
+}
+
+input CreateIssueInput {
+  issueTypeId: ID!
+  customerId: ID!
+
+  """
+  The priority value for this issue. Overrides the issue's issue type's default priority value.
+  
+  Valid values are 0, 1, 2 and 3.
+  """
+  priorityValue: Int
+}
+
+type CreateIssueOutput {
+  issue: Issue
+  error: MutationError
+}
+
+input ResolveIssueInput {
+  issueId: ID!
+}
+
+type ResolveIssueOutput {
+  issue: Issue
+  error: MutationError
+}
+
+input ReopenIssueInput {
+  issueId: ID!
+}
+
+type ReopenIssueOutput {
+  issue: Issue
+  error: MutationError
+}
+
+input ChangeIssueIssueTypeInput {
+  issueId: ID!
+  issueTypeId: ID!
+}
+
+type ChangeIssueIssueTypeOutput {
+  issue: Issue
+  error: MutationError
+}
+
+input ChangeIssuePriorityInput {
+  issueId: ID!
+  priorityValue: Int!
+}
+
+type ChangeIssuePriorityOutput {
+  issue: Issue
+  error: MutationError
+}
+
+input DeleteIssueInput {
+  issueId: ID!
+}
+
+type DeleteIssueOutput {
+  issue: Issue
+  error: MutationError
+}
+
+input CreateLabelTypeInput {
+  name: String!
+  icon: String
+}
+
+type CreateLabelTypeOutput {
+  labelType: LabelType
+  error: MutationError
+}
+
+input ArchiveLabelTypeInput {
+  labelTypeId: ID!
+}
+
+type ArchiveLabelTypeOutput {
+  labelType: LabelType
+  error: MutationError
+}
+
+input UnarchiveLabelTypeInput {
+  labelTypeId: ID!
+}
+
+type UnarchiveLabelTypeOutput {
+  labelType: LabelType
+  error: MutationError
+}
+
+input UpdateLabelTypeInput {
+  labelTypeId: ID!
+  name: StringInput
+  icon: OptionalStringInput
+}
+
+type UpdateLabelTypeOutput {
+  labelType: LabelType
+  error: MutationError
+}
+
+input AddLabelsInput {
+  labelTypeIds: [ID!]!
+  threadId: ID!
+}
+
+type AddLabelsOutput {
+  labels: [Label!]!
+  error: MutationError
+}
+
+input DeleteLabelsInput {
+  labelIds: [ID!]!
+}
+
+type DeleteLabelsOutput {
+  error: MutationError
+}
+
+interface ThreadLink {
+  id: ID!
+  threadId: ID!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+type LinearIssueThreadLink implements ThreadLink {
+  id: ID!
+  threadId: ID!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+  linearIssueId: ID!
+  linearIssueUrl: String!
+}
+
+input LinearIssueThreadLinkInput {
+  linearIssueId: ID!
+  linearIssueUrl: String!
+}
+
+input CreateThreadLinkInput {
+  threadId: ID!
+  linearIssue: LinearIssueThreadLinkInput
+}
+
+type CreateThreadLinkOutput {
+  threadLink: ThreadLink
+  error: MutationError
+}
+
+input DeleteThreadLinkInput {
+  threadLinkId: ID!
+}
+
+type DeleteThreadLinkOutput {
+  error: MutationError
+}
+
+type ThreadLinkEdge {
+  cursor: String!
+  node: ThreadLink!
+}
+
+type ThreadLinkConnection {
+  edges: [ThreadLinkEdge!]!
+  pageInfo: PageInfo!
+}
+
+interface IssueLink {
+  id: ID!
+  issue: Issue!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+type LinearIssueIssueLink implements IssueLink {
+  id: ID!
+  issue: Issue!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+  linearIssueId: ID!
+  linearIssueUrl: String!
+}
+
+input LinearIssueIssueLinkInput {
+  linearIssueId: ID!
+  linearIssueUrl: String!
+}
+
+input CreateIssueLinkInput {
+  issueId: ID!
+  linearIssue: LinearIssueIssueLinkInput
+}
+
+type CreateIssueLinkOutput {
+  issueLink: IssueLink
+  error: MutationError
+}
+
+type IssueLinkEdge {
+  cursor: String!
+  node: IssueLink!
+}
+
+type IssueLinkConnection {
+  edges: [IssueLinkEdge!]!
+  pageInfo: PageInfo!
+}
+
+input DeleteIssueLinkInput {
+  issueLinkId: ID!
+}
+
+type DeleteIssueLinkOutput {
+  issueLink: IssueLink
+  error: MutationError
+}
+
+input CreateNoteInput {
+  customerId: ID!
+  text: String!
+  markdown: String
+}
+
+type CreateNoteOutput {
+  note: Note
+  error: MutationError
+}
+
+input DeleteNoteInput {
+  noteId: ID!
+}
+
+type DeleteNoteOutput {
+  note: Note
+  error: MutationError
+}
+
+input CreateSnippetInput {
+  name: String!
+  text: String!
+  markdown: String
+}
+
+type CreateSnippetOutput {
+  snippet: Snippet
+  error: MutationError
+}
+
+input DeleteSnippetInput {
+  snippetId: ID!
+}
+
+type DeleteSnippetOutput {
+  snippet: Snippet
+  error: MutationError
+}
+
+input UpdateSnippetInput {
+  snippetId: ID!
+  name: StringInput
+  text: StringInput
+  markdown: StringInput
+}
+
+type UpdateSnippetOutput {
+  snippet: Snippet
+  error: MutationError
+}
+
+input AssignCustomerToUserInput {
+  customerId: ID!
+  userId: ID
+
+  """
+  Should the mutation change the customer's status to Active.
+  
+  Defaults to true.
+  """
+  changeCustomerStatusToActive: Boolean
+}
+
+type AssignCustomerToUserOutput {
+  customer: Customer
+  error: MutationError
+}
+
+input UnassignAllCustomersInput {
+  userId: ID!
+}
+
+type UnassignAllCustomersOutput {
+  error: MutationError
+  unassignedCustomerCount: Int
+}
+
+input SendChatInput {
+  customerId: ID!
+  text: String
+  attachmentIds: [ID!]
+}
+
+type SendChatOutput {
+  chat: Chat
+  error: MutationError
+}
+
+input ChangeCustomerStatusAsyncInput {
+  customerId: ID!
+  status: CustomerStatus!
+}
+
+type ChangeCustomerStatusAsyncOutput {
+  error: MutationError
+}
+
+input ChangeCustomerStatusInput {
+  customerId: ID!
+  status: CustomerStatus!
+}
+
+type ChangeCustomerStatusOutput {
+  error: MutationError
+  customer: Customer
+}
+
+input ChangeUserStatusInput {
+  userId: ID!
+  status: UserStatus!
+}
+
+type ChangeUserStatusOutput {
+  user: User
+  error: MutationError
+}
+
+input MarkTimelineAsReadInput {
+  customerId: ID!
+  lastTimelineEntryId: ID!
+}
+
+type MarkTimelineAsReadOutput {
+  error: MutationError
+}
+
+input UpdateWorkspaceInput {
+  publicName: StringInput
+  name: StringInput
+}
+
+type UpdateWorkspaceOutput {
+  workspace: Workspace
+  error: MutationError
+}
+
+input DeleteUserInput {
+  userId: ID!
+}
+
+type DeleteUserOutput {
+  error: MutationError
+}
+
+type DnsRecord {
+  type: String!
+  name: String!
+  value: String!
+  isVerified: Boolean!
+  verifiedAt: DateTime
+  lastCheckedAt: DateTime
+}
+
+type WorkspaceEmailDomainSettings {
+  domainName: String!
+  supportEmailAddress: String!
+
+  """
+  The list of alternate email addresses that can be used to send emails to and from the workspace.
+  Limited to 5.
+  
+  e.g. [info@plain.com, help@plain.com].
+  """
+  alternateSupportEmailAddresses: [String!]!
+  isForwardingConfigured: Boolean!
+  inboundForwardingEmail: String!
+  isDomainConfigured: Boolean!
+  dkimDnsRecord: DnsRecord!
+  returnPathDnsRecord: DnsRecord!
+}
+
+type WorkspaceEmailSettings {
+  isEnabled: Boolean!
+  workspaceEmailDomainSettings: WorkspaceEmailDomainSettings
+  bccEmail: String
+}
+
+input AddWorkspaceAlternateSupportEmailAddressInput {
+  alternateSupportEmailAddress: String!
+}
+
+type AddWorkspaceAlternateSupportEmailAddressOutput {
+  workspaceEmailDomainSettings: WorkspaceEmailDomainSettings
+  error: MutationError
+}
+
+input RemoveWorkspaceAlternateSupportEmailAddressInput {
+  alternateSupportEmailAddress: String!
+}
+
+type RemoveWorkspaceAlternateSupportEmailAddressOutput {
+  workspaceEmailDomainSettings: WorkspaceEmailDomainSettings
+  error: MutationError
+}
+
+input CreateWorkspaceEmailDomainSettingsInput {
+  supportEmailAddress: String!
+}
+
+type CreateWorkspaceEmailDomainSettingsOutput {
+  workspaceEmailDomainSettings: WorkspaceEmailDomainSettings
+  error: MutationError
+}
+
+type DeleteWorkspaceEmailDomainSettingsOutput {
+  error: MutationError
+}
+
+input VerifyWorkspaceEmailForwardingSettingsInput {
+  isForwardingConfigured: Boolean!
+}
+
+type VerifyWorkspaceEmailForwardingSettingsOutput {
+  workspaceEmailDomainSettings: WorkspaceEmailDomainSettings
+  error: MutationError
+}
+
+type VerifyWorkspaceEmailDnsSettingsOutput {
+  workspaceEmailDomainSettings: WorkspaceEmailDomainSettings
+  error: MutationError
+}
+
+input UpdateWorkspaceEmailSettingsInput {
+  isEnabled: Boolean!
+}
+
+type UpdateWorkspaceEmailSettingsOutput {
+  workspaceEmailSettings: WorkspaceEmailSettings
+  error: MutationError
+}
+
+type WorkspaceChatSettings {
+  isEnabled: Boolean!
+}
+
+input UpdateWorkspaceChatSettingsInput {
+  isEnabled: Boolean!
+}
+
+type UpdateWorkspaceChatSettingsOutput {
+  workspaceChatSettings: WorkspaceChatSettings
+  error: MutationError
+}
+
+input EmailParticipantInput {
+  name: String
+  email: String!
+}
+
+input SendNewEmailInput {
+  customerId: ID!
+  subject: String!
+  textContent: String!
+  markdownContent: String
+  attachmentIds: [ID!]
+  additionalRecipients: [EmailParticipantInput!]
+  hiddenRecipients: [EmailParticipantInput!]
+
+  """
+  Optional field for alternate from email address. If provided, it will be used as the from address in the email.
+  It must match one of the workspace support email addresses (default or alternate).
+  """
+  fromAlternateSupportEmail: EmailParticipantInput
+}
+
+input SendBulkEmailInput {
+  threadIds: [ID!]!
+  textContent: String!
+  markdownContent: String
+}
+
+input ReplyToEmailInput {
+  customerId: ID!
+  inReplyToEmailId: ID!
+  textContent: String!
+  markdownContent: String
+  attachmentIds: [ID!]
+  additionalRecipients: [EmailParticipantInput!]
+  hiddenRecipients: [EmailParticipantInput!]
+
+  """
+  Optional field for alternate from email address. If provided, it will be used as the from address in the email.
+  It must match one of the workspace support email addresses (default or alternate).
+  """
+  fromAlternateSupportEmail: EmailParticipantInput
+}
+
+type Email {
+  id: ID!
+  customer: Customer!
+  inReplyToEmailId: ID
+  from: EmailParticipant!
+  to: EmailParticipant!
+  subject: String
+  textContent: String
+  markdownContent: String
+  attachments: [Attachment!]!
+  additionalRecipients: [EmailParticipant!]!
+  hiddenRecipients: [EmailParticipant!]!
+  createdAt: DateTime!
+  createdBy: Actor!
+  updatedAt: DateTime!
+  updatedBy: Actor!
+}
+
+type SendNewEmailOutput {
+  email: Email
+  error: MutationError
+}
+
+type ReplyToEmailOutput {
+  email: Email
+  error: MutationError
+}
+
+type SendBulkEmailOutput {
+  error: MutationError
+}
+
+input CreateEmailPreviewUrlInput {
+  emailId: ID!
+  customerId: ID!
+}
+
+type EmailPreviewUrl {
+  previewUrl: String!
+  expiresAt: DateTime!
+}
+
+type CreateEmailPreviewUrlOutput {
+  emailPreviewUrl: EmailPreviewUrl
+  error: MutationError
+}
+
+input CreateAttachmentDownloadUrlInput {
+  attachmentId: ID!
+}
+
+type AttachmentDownloadUrl {
+  attachment: Attachment!
+  downloadUrl: String!
+  expiresAt: DateTime!
+}
+
+type CreateAttachmentDownloadUrlOutput {
+  attachmentDownloadUrl: AttachmentDownloadUrl
+  error: MutationError
+}
+
+enum AttachmentType {
+  EMAIL
+  CUSTOM_TIMELINE_ENTRY
+  CHAT
+}
+
+input CreateAttachmentUploadUrlInput {
+  customerId: ID!
+  fileName: String!
+  fileSizeBytes: Int!
+  attachmentType: AttachmentType!
+}
+
+type UploadFormData {
+  key: String!
+  value: String!
+}
+
+type AttachmentUploadUrl {
+  attachment: Attachment!
+  uploadFormUrl: String!
+  uploadFormData: [UploadFormData!]!
+  expiresAt: DateTime!
+}
+
+type CreateAttachmentUploadUrlOutput {
+  attachmentUploadUrl: AttachmentUploadUrl
+  error: MutationError
+}
+
+input ComponentCopyButtonInput {
+  copyButtonValue: String!
+  copyButtonTooltipLabel: String
+}
+
+input ComponentBadgeInput {
+  badgeLabel: String!
+  badgeColor: ComponentBadgeColor
+}
+
+input ComponentRowInput {
+  rowMainContent: [ComponentRowContentInput!]!
+  rowAsideContent: [ComponentRowContentInput!]!
+}
+
+input ComponentContainerInput {
+  containerContent: [ComponentContainerContentInput!]!
+}
+
+input ComponentContainerContentInput {
+  componentText: ComponentTextInput
+  componentPlainText: ComponentPlainTextInput
+  componentDivider: ComponentDividerInput
+  componentLinkButton: ComponentLinkButtonInput
+  componentSpacer: ComponentSpacerInput
+  componentBadge: ComponentBadgeInput
+  componentCopyButton: ComponentCopyButtonInput
+  componentRow: ComponentRowInput
+}
+
+input ComponentRowContentInput {
+  componentText: ComponentTextInput
+  componentPlainText: ComponentPlainTextInput
+  componentDivider: ComponentDividerInput
+  componentLinkButton: ComponentLinkButtonInput
+  componentSpacer: ComponentSpacerInput
+  componentBadge: ComponentBadgeInput
+  componentCopyButton: ComponentCopyButtonInput
+}
+
+input ComponentTextInput {
+  textSize: ComponentTextSize
+  textColor: ComponentTextColor
+  text: String!
+  color: ComponentTextColor @deprecated(reason: "use textColor instead")
+  size: ComponentTextSize @deprecated(reason: "use textSize instead")
+}
+
+input ComponentPlainTextInput {
+  plainTextSize: ComponentPlainTextSize
+  plainTextColor: ComponentPlainTextColor
+  plainText: String!
+}
+
+input ComponentDividerInput {
+  dividerSpacingSize: ComponentDividerSpacingSize
+  spacingSize: ComponentDividerSpacingSize @deprecated(reason: "use dividerSpacingSize instead")
+}
+
+input ComponentLinkButtonInput {
+  """
+  Required input, will be made required after deprecated fields are removed.
+  """
+  linkButtonUrl: String
+
+  """
+  Required input, will be made required after deprecated fields are removed.
+  """
+  linkButtonLabel: String
+  url: String @deprecated(reason: "use linkButtonUrl instead")
+  label: String @deprecated(reason: "use linkButtonLabel instead")
+}
+
+input ComponentSpacerInput {
+  """
+  Required input, will be made required after deprecated fields are removed.
+  """
+  spacerSize: ComponentSpacerSize
+  size: ComponentSpacerSize @deprecated(reason: "user spacerSize instead")
+}
+
+input ComponentInput {
+  componentText: ComponentTextInput
+  componentPlainText: ComponentPlainTextInput
+  componentDivider: ComponentDividerInput
+  componentLinkButton: ComponentLinkButtonInput
+  componentSpacer: ComponentSpacerInput
+  componentBadge: ComponentBadgeInput
+  componentCopyButton: ComponentCopyButtonInput
+  componentRow: ComponentRowInput
+  componentContainer: ComponentContainerInput
+}
+
+input UpsertCustomTimelineEntryInput {
+  customerId: ID!
+  externalId: ID
+  type: String
+  expiresAt: String
+  timestamp: String
+  title: String!
+  components: [ComponentInput!]!
+  attachmentIds: [ID!]
+
+  """
+  When true, this will change the customer's status to "Active". This is useful if you are using custom timeline
+  entries for contact form submissions or other events which require some attention.
+  
+  Defaults to false.
+  """
+  changeCustomerStatusToActive: Boolean
+
+  """
+  When true, this will send a notification for the customer when the custom timeline entry is created. It will only
+  send the notification if the user has enabled the matching notification setting.
+  
+  Defaults to false.
+  """
+  sendCustomTimelineEntryCreatedNotification: Boolean
+}
+
+type UpsertCustomTimelineEntryOutput {
+  timelineEntry: TimelineEntry
+  result: UpsertResult
+  error: MutationError
+}
+
+enum UpsertResult {
+  UPDATED
+  CREATED
+  NOOP
+}
+
+input EmailAddressInput {
+  email: String!
+  isVerified: Boolean!
+}
+
+input UpsertCustomerIdentifierInput {
+  externalId: ID
+  emailAddress: String
+  customerId: ID
+}
+
+input UpsertCustomerOnCreateInput {
+  externalId: ID
+  fullName: String!
+  shortName: String
+  email: EmailAddressInput!
+  customerGroupIdentifiers: [CustomerGroupIdentifier!]
+}
+
+input UpsertCustomerOnUpdateInput {
+  externalId: OptionalStringInput
+  fullName: StringInput
+  shortName: OptionalStringInput
+  email: EmailAddressInput
+}
+
+input UpsertCustomerInput {
+  identifier: UpsertCustomerIdentifierInput!
+  onCreate: UpsertCustomerOnCreateInput!
+  onUpdate: UpsertCustomerOnUpdateInput!
+}
+
+type UpsertCustomerOutput {
+  result: UpsertResult
+  customer: Customer
+  error: MutationError
+}
+
+input CreateMachineUserInput {
+  publicName: String!
+  fullName: String!
+  description: String
+}
+
+type CreateMachineUserOutput {
+  machineUser: MachineUser
+  error: MutationError
+}
+
+input DeleteMachineUserInput {
+  machineUserId: ID!
+}
+
+type DeleteMachineUserOutput {
+  machineUser: MachineUser
+  error: MutationError
+}
+
+input UpdateMachineUserInput {
+  machineUserId: ID!
+  fullName: StringInput
+  publicName: StringInput
+  description: StringInput
+}
+
+type UpdateMachineUserOutput {
+  machineUser: MachineUser
+  error: MutationError
+}
+
+input CreateApiKeyInput {
+  machineUserId: ID!
+  description: String
+  permissions: [String!]!
+}
+
+type CreateApiKeyOutput {
+  apiKey: ApiKey
+  apiKeySecret: String
+  error: MutationError
+}
+
+input DeleteApiKeyInput {
+  apiKeyId: ID!
+}
+
+type DeleteApiKeyOutput {
+  apiKey: ApiKey
+  error: MutationError
+}
+
+input DeleteCustomerInput {
+  customerId: ID!
+}
+
+type DeleteCustomerOutput {
+  error: MutationError
+}
+
+type Mutation {
+  createUserAccount(input: CreateUserAccountInput!): CreateUserAccountOutput!
+  changeUserStatus(input: ChangeUserStatusInput!): ChangeUserStatusOutput!
+  markTimelineAsRead(input: MarkTimelineAsReadInput!): MarkTimelineAsReadOutput!
+  createWorkspace(input: CreateWorkspaceInput!): CreateWorkspaceOutput!
+  updateWorkspace(input: UpdateWorkspaceInput!): UpdateWorkspaceOutput!
+  inviteUserToWorkspace(input: InviteUserToWorkspaceInput!): InviteUserToWorkspaceOutput!
+  acceptWorkspaceInvite(input: AcceptWorkspaceInviteInput!): AcceptWorkspaceInviteOutput!
+  deleteWorkspaceInvite(input: DeleteWorkspaceInviteInput!): DeleteWorkspaceInviteOutput!
+  createWorkspaceApp(input: CreateWorkspaceAppInput!): CreateWorkspaceAppOutput!
+  deleteWorkspaceApp(input: DeleteWorkspaceAppInput!): DeleteWorkspaceAppOutput!
+  createWorkspaceAppPublicKey(input: CreateWorkspaceAppPublicKeyInput!): CreateWorkspaceAppPublicKeyOutput!
+  deleteWorkspaceAppPublicKey(input: DeleteWorkspaceAppPublicKeyInput!): DeleteWorkspaceAppPublicKeyOutput!
+  deleteUser(input: DeleteUserInput!): DeleteUserOutput!
+  assignRolesToUser(input: AssignRolesToUserInput!): AssignRolesToUserOutput!
+  createIssueType(input: CreateIssueTypeInput!): CreateIssueTypeOutput!
+  archiveIssueType(input: ArchiveIssueTypeInput!): ArchiveIssueTypeOutput!
+  unarchiveIssueType(input: UnarchiveIssueTypeInput!): UnarchiveIssueTypeOutput!
+  updateIssueType(input: UpdateIssueTypeInput!): UpdateIssueTypeOutput!
+  createIssue(input: CreateIssueInput!): CreateIssueOutput!
+  resolveIssue(input: ResolveIssueInput!): ResolveIssueOutput!
+  reopenIssue(input: ReopenIssueInput!): ReopenIssueOutput!
+  changeIssueIssueType(input: ChangeIssueIssueTypeInput!): ChangeIssueIssueTypeOutput!
+  changeIssuePriority(input: ChangeIssuePriorityInput!): ChangeIssuePriorityOutput!
+  deleteIssue(input: DeleteIssueInput!): DeleteIssueOutput!
+  createLabelType(input: CreateLabelTypeInput!): CreateLabelTypeOutput!
+  archiveLabelType(input: ArchiveLabelTypeInput!): ArchiveLabelTypeOutput!
+  unarchiveLabelType(input: UnarchiveLabelTypeInput!): UnarchiveLabelTypeOutput!
+  updateLabelType(input: UpdateLabelTypeInput!): UpdateLabelTypeOutput!
+  addLabels(input: AddLabelsInput!): AddLabelsOutput!
+  deleteLabels(input: DeleteLabelsInput!): DeleteLabelsOutput!
+  createIssueLink(input: CreateIssueLinkInput!): CreateIssueLinkOutput!
+  deleteIssueLink(input: DeleteIssueLinkInput!): DeleteIssueLinkOutput!
+  createThreadLink(input: CreateThreadLinkInput!): CreateThreadLinkOutput!
+  deleteThreadLink(input: DeleteThreadLinkInput!): DeleteThreadLinkOutput!
+  createNote(input: CreateNoteInput!): CreateNoteOutput!
+  deleteNote(input: DeleteNoteInput!): DeleteNoteOutput!
+  createSnippet(input: CreateSnippetInput!): CreateSnippetOutput!
+  deleteSnippet(input: DeleteSnippetInput!): DeleteSnippetOutput!
+  updateSnippet(input: UpdateSnippetInput!): UpdateSnippetOutput!
+  assignCustomerToUser(input: AssignCustomerToUserInput!): AssignCustomerToUserOutput!
+  unassignAllCustomers(input: UnassignAllCustomersInput!): UnassignAllCustomersOutput!
+
+  """
+  Changes a customer's status to the provided status asynchronously.
+  
+  Note: This mutation fires events that will eventually cause the customers status to update if applicable. See changeCustomerStatus for a sync version of this mutation.
+  """
+  changeCustomerStatusAsync(input: ChangeCustomerStatusAsyncInput!): ChangeCustomerStatusAsyncOutput! @deprecated(reason: "Endpoint is being phased out and deleted in the future. Please use changeCustomerStatus instead.")
+
+  """Changes a customer's status to the provided status."""
+  changeCustomerStatus(input: ChangeCustomerStatusInput!): ChangeCustomerStatusOutput!
+  upsertCustomer(input: UpsertCustomerInput!): UpsertCustomerOutput!
+
+  """
+  Deletes a customer and all of their data stored on Plain. This action cannot be reversed.
+  """
+  deleteCustomer(input: DeleteCustomerInput!): DeleteCustomerOutput!
+
+  """Marks a customer as spam."""
+  markCustomerAsSpam(input: MarkCustomerAsSpamInput!): MarkCustomerAsSpamOutput!
+
+  """Removes the spam mark from a customer."""
+  unmarkCustomerAsSpam(input: UnmarkCustomerAsSpamInput!): UnmarkCustomerAsSpamOutput!
+
+  """Create a new customer group."""
+  createCustomerGroup(input: CreateCustomerGroupInput!): CreateCustomerGroupOutput!
+
+  """Update a customer group."""
+  updateCustomerGroup(input: UpdateCustomerGroupInput!): UpdateCustomerGroupOutput!
+
+  """Delete a customer group by ID."""
+  deleteCustomerGroup(input: DeleteCustomerGroupInput!): DeleteCustomerGroupOutput!
+
+  """Add a customer to a customer group."""
+  addCustomerToCustomerGroups(input: AddCustomerToCustomerGroupsInput!): AddCustomerToCustomerGroupsOutput!
+
+  """Remove a customer from a customer group."""
+  removeCustomerFromCustomerGroups(input: RemoveCustomerFromCustomerGroupsInput!): RemoveCustomerFromCustomerGroupsOutput!
+  sendChat(input: SendChatInput!): SendChatOutput!
+  createWorkspaceEmailDomainSettings(input: CreateWorkspaceEmailDomainSettingsInput!): CreateWorkspaceEmailDomainSettingsOutput!
+  deleteWorkspaceEmailDomainSettings: DeleteWorkspaceEmailDomainSettingsOutput!
+  verifyWorkspaceEmailForwardingSettings(input: VerifyWorkspaceEmailForwardingSettingsInput!): VerifyWorkspaceEmailForwardingSettingsOutput!
+  verifyWorkspaceEmailDnsSettings: VerifyWorkspaceEmailDnsSettingsOutput!
+  updateWorkspaceEmailSettings(input: UpdateWorkspaceEmailSettingsInput!): UpdateWorkspaceEmailSettingsOutput!
+  updateWorkspaceChatSettings(input: UpdateWorkspaceChatSettingsInput!): UpdateWorkspaceChatSettingsOutput!
+  addWorkspaceAlternateSupportEmailAddress(input: AddWorkspaceAlternateSupportEmailAddressInput!): AddWorkspaceAlternateSupportEmailAddressOutput!
+  removeWorkspaceAlternateSupportEmailAddress(input: RemoveWorkspaceAlternateSupportEmailAddressInput!): RemoveWorkspaceAlternateSupportEmailAddressOutput!
+  sendNewEmail(input: SendNewEmailInput!): SendNewEmailOutput!
+  replyToEmail(input: ReplyToEmailInput!): ReplyToEmailOutput!
+  createEmailPreviewUrl(input: CreateEmailPreviewUrlInput!): CreateEmailPreviewUrlOutput!
+  sendBulkEmail(input: SendBulkEmailInput!): SendBulkEmailOutput!
+  createAttachmentDownloadUrl(input: CreateAttachmentDownloadUrlInput!): CreateAttachmentDownloadUrlOutput!
+  createAttachmentUploadUrl(input: CreateAttachmentUploadUrlInput!): CreateAttachmentUploadUrlOutput!
+  createMachineUser(input: CreateMachineUserInput!): CreateMachineUserOutput!
+  deleteMachineUser(input: DeleteMachineUserInput!): DeleteMachineUserOutput!
+  updateMachineUser(input: UpdateMachineUserInput!): UpdateMachineUserOutput!
+  createApiKey(input: CreateApiKeyInput!): CreateApiKeyOutput!
+  deleteApiKey(input: DeleteApiKeyInput!): DeleteApiKeyOutput!
+  upsertCustomTimelineEntry(input: UpsertCustomTimelineEntryInput!): UpsertCustomTimelineEntryOutput!
+  createMySlackIntegration(input: CreateMySlackIntegrationInput!): CreateMySlackIntegrationOutput!
+  deleteMySlackIntegration: DeleteMySlackIntegrationOutput!
+  createWorkspaceSlackIntegration(input: CreateWorkspaceSlackIntegrationInput!): CreateWorkspaceSlackIntegrationOutput!
+  deleteWorkspaceSlackIntegration(input: DeleteWorkspaceSlackIntegrationInput!): DeleteWorkspaceSlackIntegrationOutput!
+  createWorkspaceDiscordIntegration(input: CreateWorkspaceDiscordIntegrationInput!): CreateWorkspaceDiscordIntegrationOutput!
+  deleteWorkspaceDiscordIntegration(input: DeleteWorkspaceDiscordIntegrationInput!): DeleteWorkspaceDiscordIntegrationOutput!
+  createMyLinearIntegration(input: CreateMyLinearIntegrationInput!): CreateMyLinearIntegrationOutput!
+  deleteMyLinearIntegration: DeleteMyLinearIntegrationOutput!
+
+  """Updates a setting."""
+  updateSetting(input: UpdateSettingInput!): UpdateSettingOutput!
+
+  """
+  Creates a customer card config. A maximum of 25 card configs can be created.
+  """
+  createCustomerCardConfig(input: CreateCustomerCardConfigInput!): CreateCustomerCardConfigOutput!
+
+  """Partially updates a customer card config."""
+  updateCustomerCardConfig(input: UpdateCustomerCardConfigInput!): UpdateCustomerCardConfigOutput!
+
+  """Deletes a customer card config."""
+  deleteCustomerCardConfig(input: DeleteCustomerCardConfigInput!): DeleteCustomerCardConfigOutput!
+
+  """
+  Reorders customer card configs.
+  
+  The input can be a partial input and in that case not all configs will be reordered.
+  For example this allows two configs to be swapped with each other.
+  
+  Note: Duplicate orders are allowed by the API.
+  """
+  reorderCustomerCardConfigs(input: ReorderCustomerCardConfigsInput!): ReorderCustomerCardConfigsOutput!
+
+  """
+  Reloads a customer card for a customer.
+  
+  Will discard whatever is in the cache and reload it from the configured API URL.
+  """
+  reloadCustomerCardInstance(input: ReloadCustomerCardInstanceInput!): ReloadCustomerCardInstanceOutput!
+
+  """Creates a webhook target."""
+  createWebhookTarget(input: CreateWebhookTargetInput!): CreateWebhookTargetOutput!
+
+  """Updates a webhook target."""
+  updateWebhookTarget(input: UpdateWebhookTargetInput!): UpdateWebhookTargetOutput!
+
+  """Deletes a webhook target."""
+  deleteWebhookTarget(input: DeleteWebhookTargetInput!): DeleteWebhookTargetOutput!
+  createThread(input: CreateThreadInput!): CreateThreadOutput!
+  assignThread(input: AssignThreadInput!): AssignThreadOutput!
+  unassignThread(input: UnassignThreadInput!): UnassignThreadOutput!
+  snoozeThread(input: SnoozeThreadInput!): SnoozeThreadOutput!
+  markThreadAsDone(input: MarkThreadAsDoneInput!): MarkThreadAsDoneOutput!
+  markThreadAsTodo(input: MarkThreadAsTodoInput!): MarkThreadAsTodoOutput!
+  changeThreadPriority(input: ChangeThreadPriorityInput!): ChangeThreadPriorityOutput!
+  upsertMyEmailSignature(input: UpsertMyEmailSignatureInput!): UpsertMyEmailSignatureOutput!
+}
+
+"""
+Query to search for threads. The search term provided is used to match against different parts of the thread:
+- its title
+- its messages
+- the customer's name
+- the customer's email
+"""
+input ThreadsSearchQuery {
+  """
+  The term to search for. It must be at least 3 characters long. The search is case-insensitive.
+  """
+  term: String!
+}
+
+type ThreadSearchResult {
+  thread: Thread!
+}
+
+type ThreadSearchResultEdge {
+  cursor: String!
+  node: ThreadSearchResult!
+}
+
+type ThreadSearchResultConnection {
+  edges: [ThreadSearchResultEdge!]!
+  pageInfo: PageInfo!
+}
+
+input UpsertMyEmailSignatureInput {
+  text: String!
+  markdown: String
+}
+
+type UpsertMyEmailSignatureOutput {
+  emailSignature: EmailSignature
+  result: UpsertResult
+  error: MutationError
+}
+
+input MarkThreadAsDoneInput {
+  threadId: ID!
+}
+
+type MarkThreadAsDoneOutput {
+  thread: Thread
+  error: MutationError
+}
+
+input MarkThreadAsTodoInput {
+  threadId: ID!
+}
+
+type MarkThreadAsTodoOutput {
+  thread: Thread
+  error: MutationError
+}
+
+input ChangeThreadPriorityInput {
+  threadId: ID!
+  priority: Int!
+}
+
+type ChangeThreadPriorityOutput {
+  thread: Thread
+  error: MutationError
+}
+
+input SnoozeThreadInput {
+  threadId: ID!
+  durationSeconds: Int!
+}
+
+type SnoozeThreadOutput {
+  thread: Thread
+  error: MutationError
+}
+
+input AssignThreadInput {
+  threadId: ID!
+  userId: ID
+  machineUserId: ID
+}
+
+type AssignThreadOutput {
+  thread: Thread
+  error: MutationError
+}
+
+input UnassignThreadInput {
+  threadId: ID!
+}
+
+type UnassignThreadOutput {
+  thread: Thread
+  error: MutationError
+}
+
+enum ThreadStatus {
+  TODO
+  SNOOZED
+  DONE
+}
+
+type ThreadStatusDetailCreated {
+  createdAt: DateTime!
+}
+
+type ThreadStatusDetailSnoozed {
+  snoozedAt: DateTime!
+  snoozedUntil: DateTime!
+}
+
+type ThreadStatusDetailUnsnoozed {
+  snoozedAt: DateTime!
+}
+
+type ThreadStatusDetailNewReply {
+  newReplyAt: DateTime!
+}
+
+interface ThreadStatusDetailThreadLinkUpdated {
+  updatedAt: DateTime!
+}
+
+type ThreadStatusDetailLinearUpdated implements ThreadStatusDetailThreadLinkUpdated {
+  updatedAt: DateTime!
+  linearIssueId: ID!
+}
+
+union ThreadStatusDetail = ThreadStatusDetailCreated | ThreadStatusDetailSnoozed | ThreadStatusDetailUnsnoozed | ThreadStatusDetailNewReply | ThreadStatusDetailLinearUpdated
+
+enum MessageSource {
+  CHAT
+  EMAIL
+  API
+}
+
+type ThreadMessageInfo {
+  """The datetime when the last message was received."""
+  timestamp: DateTime!
+
+  """The source through which the message came through."""
+  messageSource: MessageSource!
+}
+
+"""
+A thread represents a conversation with a customer, around a specific topic.
+"""
+type Thread {
+  """The unique identifier of the thread."""
+  id: ID!
+
+  """The customer involved in this thread."""
+  customer: Customer!
+
+  """
+  The title of this thread, which allows to quickly identify what it is about.
+  """
+  title: String!
+
+  """The preview text of this thread."""
+  previewText: String
+
+  """
+  The priority of the thread. Valid values are 0, 1, 2, 3, from most to least urgent.
+  """
+  priority: Int!
+
+  """
+  The external ID of this thread. You can use this field to store your own unique identifier for this thread.
+  """
+  externalId: ID
+
+  """The status of this thread."""
+  status: ThreadStatus!
+
+  """The datetime when the status of this thread was last changed."""
+  statusChangedAt: DateTime!
+
+  """The actor who last changed the status of this thread."""
+  statusChangedBy: Actor!
+
+  """
+  Additional details about the current thread status. For instance, how long it will be snoozed for.
+  """
+  statusDetail: ThreadStatusDetail
+
+  """Who or what this thread is assigned to."""
+  assignedTo: InternalActor
+
+  """
+  The datetime when this thread was last assigned to someone or something.
+  """
+  assignedAt: DateTime
+
+  """The labels attached to this thread."""
+  labels: [Label!]!
+
+  """The links attached to this thread."""
+  links(first: Int, after: String, last: Int, before: String): ThreadLinkConnection!
+
+  """All of the timeline entries in this thread."""
+  timelineEntries(first: Int, after: String, last: Int, before: String): TimelineEntryConnection!
+
+  """First inbound message on the thread."""
+  firstInboundMessageInfo: ThreadMessageInfo
+
+  """First outbound message on the thread."""
+  firstOutboundMessageInfo: ThreadMessageInfo
+
+  """Last inbound message received."""
+  lastInboundMessageInfo: ThreadMessageInfo
+
+  """Last outbound message received."""
+  lastOutboundMessageInfo: ThreadMessageInfo
+
+  """The datetime when this thread was created."""
+  createdAt: DateTime!
+
+  """The actor who created this thread."""
+  createdBy: Actor!
+
+  """The datetime when this thread was last updated."""
+  updatedAt: DateTime!
+
+  """The actor who last updated this thread."""
+  updatedBy: Actor!
+
+  """
+  The support email addresses involved in this thread.
+  A support email address is either the default support email address or an alternate support email address.
+  A support email address is considered to be involved in a thread when any participant in the thread uses it as their email recipient.
+  """
+  supportEmailAddresses: [String!]!
+}
+
+"""Only one of the fields can be set."""
+input CreateThreadCustomerIdentifierInput {
+  externalId: ID
+  emailAddress: String
+  customerId: ID
+}
+
+"""Only one of the fields can be set."""
+input CreateThreadAssignedToInput {
+  userId: ID
+  machineUserId: ID
+}
+
+input CreateThreadInput {
+  """
+  The identifier of the customer being either the existing customer ID, the customer's email address or and external ID.
+  """
+  customerIdentifier: CreateThreadCustomerIdentifierInput!
+
+  """The title of the thread."""
+  title: String!
+
+  """The components used to create the first timeline entry in the thread."""
+  components: [ComponentInput!]!
+
+  """An array of attachments for the first timeline entry in the thread."""
+  attachmentIds: [ID!]
+
+  """An array of label types to attach to the thread upon creation."""
+  labelTypeIds: [ID!]
+
+  """User or machine user this thread should be assigned to."""
+  assignedTo: CreateThreadAssignedToInput
+
+  """
+  The external ID of this thread. You can use this field to store your own unique identifier for this thread.
+  """
+  externalId: ID
+
+  """
+  The optional preview text for this thread. This is used to display a preview of the thread in the UI.
+  If not provided, text from components will extracted and used instead.
+  """
+  previewText: String
+
+  """
+  The priority of the thread. Valid values are 0, 1, 2, 3, from most to least urgent, defaults to 2.
+  """
+  priority: Int
+}
+
+type CreateThreadOutput {
+  thread: Thread
+  error: MutationError
+}
+
+input MarkCustomerAsSpamInput {
+  customerId: ID!
+}
+
+input UnmarkCustomerAsSpamInput {
+  customerId: ID!
+}
+
+type MarkCustomerAsSpamOutput {
+  customer: Customer
+  error: MutationError
+}
+
+type UnmarkCustomerAsSpamOutput {
+  customer: Customer
+  error: MutationError
+}
+
+type SubscriptionEventType {
+  eventType: String!
+  description: String!
+}
+
+type WebhookTargetEdge {
+  cursor: String!
+  node: WebhookTarget!
+}
+
+type WebhookTargetConnection {
+  edges: [WebhookTargetEdge!]!
+  pageInfo: PageInfo!
+}
+
+type WebhookTarget {
+  id: ID!
+  url: String!
+  description: String!
+  eventSubscriptions: [WebhookTargetEventSubscription!]!
+  isEnabled: Boolean!
+  createdAt: DateTime!
+  createdBy: InternalActor!
+  updatedAt: DateTime!
+  updatedBy: InternalActor!
+}
+
+type WebhookTargetEventSubscription {
+  eventType: String!
+}
+
+input WebhookTargetEventSubscriptionInput {
+  eventType: String!
+}
+
+input CreateWebhookTargetInput {
+  url: String!
+  eventSubscriptions: [WebhookTargetEventSubscriptionInput!]!
+  isEnabled: Boolean!
+  description: String!
+}
+
+input UpdateWebhookTargetInput {
+  webhookTargetId: ID!
+  url: StringInput
+  eventSubscriptions: [WebhookTargetEventSubscriptionInput!]
+  isEnabled: BooleanInput
+  description: StringInput
+}
+
+input DeleteWebhookTargetInput {
+  webhookTargetId: ID!
+}
+
+type CreateWebhookTargetOutput {
+  webhookTarget: WebhookTarget
+  error: MutationError
+}
+
+type UpdateWebhookTargetOutput {
+  webhookTarget: WebhookTarget
+  error: MutationError
+}
+
+type DeleteWebhookTargetOutput {
+  error: MutationError
+}
+
+input CustomerCardConfigOrderInput {
+  """The ID of the customer card config to be reordered."""
+  customerCardConfigId: ID!
+
+  """The order the customer card config should have."""
+  order: Int!
+}
+
+input ReorderCustomerCardConfigsInput {
+  """An array of ordering updates."""
+  customerCardConfigOrders: [CustomerCardConfigOrderInput!]!
+}
+
+type ReorderCustomerCardConfigsOutput {
+  """The reordered customer card configs."""
+  customerCardConfigs: [CustomerCardConfig!]
+  error: MutationError
+}
+
+"""An API header that will be sent to the configured API URL."""
+input CustomerCardConfigApiHeaderInput {
+  """
+  The name of the header, trimmed and treated case insensitively for deduplication purposes (min length: 1, max length: 100). Not all header names are allowed.
+  """
+  name: String!
+
+  """
+  The value of the header, treated case sensitively for deduplication purposes (min length: 1, max length: 500).
+  """
+  value: String!
+}
+
+"""
+Input type to create a new customer card config.
+
+By default new customer cards will have an ordering of 100000 (to place them at the bottom).
+"""
+input CreateCustomerCardConfigInput {
+  """The title of the card (max length: 500 characters)."""
+  title: String!
+
+  """
+  The key of the card (must be unique in a workspace, max length: 500 characters, must match regex: `[a-zA-Z0-9_-]+`).
+  """
+  key: String!
+
+  """
+  The default time the card should be cached for if no TTL is provided in the card response. (minimum: 15 seconds, maximum: 1 year or  31,536,000 seconds).
+  """
+  defaultTimeToLiveSeconds: Int!
+
+  """
+  The URL from which this card should be loaded (must start with `https://` and be a valid URL, max length: 600 characters).
+  """
+  apiUrl: String!
+
+  """An array of headers name-value pairs (maximum length of array: 20)."""
+  apiHeaders: [CustomerCardConfigApiHeaderInput!]!
+}
+
+type CreateCustomerCardConfigOutput {
+  """The created customer card config."""
+  customerCardConfig: CustomerCardConfig
+  error: MutationError
+}
+
+"""
+For constraints and details on the fields see the `CustomerCardConfig` type.
+"""
+input UpdateCustomerCardConfigInput {
+  """The customer card config to update."""
+  customerCardConfigId: ID!
+
+  """If provided, will update the order."""
+  order: IntInput
+
+  """If provided, will update the title."""
+  title: StringInput
+
+  """If provided, will update the key. Keys must be unique in a workspace."""
+  key: StringInput
+
+  """If provided, will update the default time to live seconds."""
+  defaultTimeToLiveSeconds: IntInput
+
+  """
+  If provided, will update the API URL. Requires the `customerCardConfigApiDetails:edit` permission.
+  """
+  apiUrl: StringInput
+
+  """
+  If provided, will replace the existing API headers. Requires the `customerCardConfigApiDetails:edit` permission.
+  """
+  apiHeaders: [CustomerCardConfigApiHeaderInput!]
+
+  """If provided, will update the enabled flag."""
+  isEnabled: BooleanInput
+}
+
+type UpdateCustomerCardConfigOutput {
+  """The updated customer card config."""
+  customerCardConfig: CustomerCardConfig
+  error: MutationError
+}
+
+input DeleteCustomerCardConfigInput {
+  """The customer card config ID to delete."""
+  customerCardConfigId: ID!
+}
+
+type DeleteCustomerCardConfigOutput {
+  error: MutationError
+}
+
+input ReloadCustomerCardInstanceInput {
+  customerId: ID!
+  customerCardConfigId: ID!
+}
+
+type ReloadCustomerCardInstanceOutput {
+  """
+  The reloaded customer card instance. Currently this will always be a `CustomerCardInstanceLoading` type.
+  """
+  customerCardInstance: CustomerCardInstance
+  error: MutationError
+}
+
+"""An input to specify the scope for a setting."""
+input SettingScopeInput {
+  """
+  An optional ID input. Depends on the type of scope if this is required.
+  """
+  id: ID
+
+  """Determines the type of the scope."""
+  scopeType: SettingScopeType!
+}
+
+"""
+An input "union" where exactly one field may be be provided as an input.
+Current API only supports booleans but as the API expands more optional fields will be added.
+"""
+input SettingValueInput {
+  """If the setting is a boolean value then this field should be set."""
+  boolean: Boolean
+}
+
+"""An input provided to the `updateSetting` mutation."""
+input UpdateSettingInput {
+  """A code for the setting."""
+  code: String!
+
+  """A valid scope for the setting code."""
+  scope: SettingScopeInput!
+
+  """The setting value."""
+  value: SettingValueInput!
+}
+
+"""
+An output type provided by the `updateSetting` mutation.
+Returns the updated setting or an error.
+"""
+type UpdateSettingOutput {
+  """The updated setting."""
+  setting: Setting
+  error: MutationError
+}
+
+input CreateMySlackIntegrationInput {
+  authCode: String!
+  redirectUrl: String!
+}
+
+type CreateMySlackIntegrationOutput {
+  integration: UserSlackIntegration
+  error: MutationError
+}
+
+input CreateWorkspaceSlackIntegrationInput {
+  authCode: String!
+  redirectUrl: String!
+}
+
+type CreateWorkspaceSlackIntegrationOutput {
+  integration: WorkspaceSlackIntegration
+  error: MutationError
+}
+
+input DeleteWorkspaceSlackIntegrationInput {
+  integrationId: ID!
+}
+
+type DeleteWorkspaceSlackIntegrationOutput {
+  integration: WorkspaceSlackIntegration
+  error: MutationError
+}
+
+type DeleteMySlackIntegrationOutput {
+  error: MutationError
+}
+
+input CreateWorkspaceDiscordIntegrationInput {
+  name: String!
+  webhookUrl: String!
+}
+
+type CreateWorkspaceDiscordIntegrationOutput {
+  integration: WorkspaceDiscordIntegration
+  error: MutationError
+}
+
+input DeleteWorkspaceDiscordIntegrationInput {
+  integrationId: ID!
+}
+
+type DeleteWorkspaceDiscordIntegrationOutput {
+  integration: WorkspaceDiscordIntegration
+  error: MutationError
+}
+
+input CreateMyLinearIntegrationInput {
+  authCode: String!
+  redirectUrl: String!
+}
+
+type CreateMyLinearIntegrationOutput {
+  integration: UserLinearIntegration
+  error: MutationError
+}
+
+type DeleteMyLinearIntegrationOutput {
+  error: MutationError
+}
+
+enum ChangeType {
+  ADDED
+  UPDATED
+  REMOVED
+}
+
+type TimelineEntryChange {
+  changeType: ChangeType!
+  timelineEntry: TimelineEntry!
+}
+
+type CustomerChange {
+  changeType: ChangeType!
+  customer: Customer!
+}
+
+input CustomerChangesFilter {
+  assignedToUser: [ID!]
+}
+
+type ThreadChange {
+  changeType: ChangeType!
+  thread: Thread!
+}
+
+type UserChange {
+  changeType: ChangeType!
+  user: User!
+}
+
+type IssueChange {
+  changeType: ChangeType!
+  issue: Issue!
+}
+
+type CustomerCardInstanceChange {
+  changeType: ChangeType!
+  customerCardInstance: CustomerCardInstance!
+}
+
+type SubscriptionAcknowledgement {
+  subscriptionId: ID!
+}
+
+union CustomerCardInstanceChangesResult = CustomerCardInstanceChange | SubscriptionAcknowledgement
+
+type Subscription {
+  timelineChanges(customerId: ID!): TimelineEntryChange!
+  threadTimelineChanges(threadId: ID!): TimelineEntryChange!
+  customerChanges(filters: CustomerChangesFilter): CustomerChange!
+  threadChanges: ThreadChange!
+  customerCardInstanceChanges(customerId: ID!): CustomerCardInstanceChangesResult!
+  issueChanges: IssueChange!
+  userChanges: UserChange!
+}
+
+input CreateCustomerGroupInput {
+  name: String!
+  key: String!
+  color: String!
+}
+
+type CreateCustomerGroupOutput {
+  customerGroup: CustomerGroup
+  error: MutationError
+}
+
+input UpdateCustomerGroupInput {
+  customerGroupId: ID!
+  name: StringInput
+  key: StringInput
+  color: StringInput
+}
+
+type UpdateCustomerGroupOutput {
+  customerGroup: CustomerGroup
+  error: MutationError
+}
+
+input DeleteCustomerGroupInput {
+  customerGroupId: ID!
+}
+
+type DeleteCustomerGroupOutput {
+  error: MutationError
+}
+
+input CustomerGroupIdentifier {
+  customerGroupId: ID
+  customerGroupKey: String
+}
+
+input AddCustomerToCustomerGroupsInput {
+  customerId: ID!
+  customerGroupIdentifiers: [CustomerGroupIdentifier!]!
+}
+
+type AddCustomerToCustomerGroupsOutput {
+  customerGroupMemberships: [CustomerGroupMembership!]
+  error: MutationError
+}
+
+input RemoveCustomerFromCustomerGroupsInput {
+  customerId: ID!
+  customerGroupIdentifiers: [CustomerGroupIdentifier!]!
+}
+
+type RemoveCustomerFromCustomerGroupsOutput {
+  error: MutationError
+}

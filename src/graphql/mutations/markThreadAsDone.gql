@@ -1,0 +1,10 @@
+mutation markThreadAsDone($input: MarkThreadAsDoneInput!) {
+  markThreadAsDone(input: $input) {
+    thread {
+      ...ThreadParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
