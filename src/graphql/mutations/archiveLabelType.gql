@@ -1,0 +1,11 @@
+mutation archiveLabelType($input: ArchiveLabelTypeInput!) {
+  archiveLabelType(input: $input) {
+    labelType {
+      ...LabelTypeParts
+    }
+
+    error {
+      message
+    }
+  }
+}

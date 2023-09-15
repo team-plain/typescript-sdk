@@ -1,0 +1,10 @@
+mutation assignThread($input: AssignThreadInput!) {
+  assignThread(input: $input) {
+    thread {
+      ...ThreadParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

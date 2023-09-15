@@ -5,6 +5,8 @@ import type { PlainSDKError } from './error';
 import {
   AddCustomerToCustomerGroupsDocument,
   AddLabelsDocument,
+  ArchiveLabelTypeDocument,
+  AssignThreadDocument,
   type AttachmentUploadUrlPartsFragment,
   ChangeCustomerStatusDocument,
   ChangeThreadPriorityDocument,
@@ -24,6 +26,7 @@ import {
   CustomersDocument,
   DeleteCustomerCardConfigDocument,
   DeleteIssueDocument,
+  DeleteLabelsDocument,
   type EmailPartsFragment,
   type IssuePartsFragment,
   IssuesDocument,
@@ -31,6 +34,8 @@ import {
   LabelTypeDocument,
   type LabelTypePartsFragment,
   LabelTypesDocument,
+  MarkThreadAsDoneDocument,
+  MarkThreadAsTodoDocument,
   MyWorkspaceDocument,
   type PageInfo,
   type PageInfoPartsFragment,
@@ -39,10 +44,12 @@ import {
   ResolveIssueDocument,
   SendChatDocument,
   SendNewEmailDocument,
+  SnoozeThreadDocument,
   ThreadDocument,
   type ThreadPartsFragment,
   ThreadsDocument,
   type TimelineEntryPartsFragment,
+  UnassignThreadDocument,
   UpdateCustomerCardConfigDocument,
   UpsertCustomerDocument,
   UpsertCustomTimelineEntryDocument,
@@ -500,9 +507,9 @@ export class PlainClient {
    * WARNING: This is experimental and subject to change at any time without
    * a major version bump.
    */
-  async createThread(input: VariablesOf<typeof CreateThreadDocument>['input']): SDKResult<{
-    thread: ThreadPartsFragment;
-  }> {
+  async createThread(
+    input: VariablesOf<typeof CreateThreadDocument>['input']
+  ): SDKResult<ThreadPartsFragment> {
     const res = await request(this.#ctx, {
       query: CreateThreadDocument,
       variables: {
@@ -510,11 +517,41 @@ export class PlainClient {
       },
     });
 
-    return unwrapData(res, (q) => {
-      return {
-        thread: nonNullable(q.createThread.thread),
-      };
+    return unwrapData(res, (q) => nonNullable(q.createThread.thread));
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async assignThread(
+    input: VariablesOf<typeof AssignThreadDocument>['input']
+  ): SDKResult<ThreadPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: AssignThreadDocument,
+      variables: {
+        input,
+      },
     });
+
+    return unwrapData(res, (q) => nonNullable(q.assignThread.thread));
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async unassignThread(
+    input: VariablesOf<typeof UnassignThreadDocument>['input']
+  ): SDKResult<ThreadPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: UnassignThreadDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.unassignThread.thread));
   }
 
   /**
@@ -523,9 +560,7 @@ export class PlainClient {
    */
   async changeThreadPriority(
     input: VariablesOf<typeof ChangeThreadPriorityDocument>['input']
-  ): SDKResult<{
-    thread: ThreadPartsFragment;
-  }> {
+  ): SDKResult<ThreadPartsFragment> {
     const res = await request(this.#ctx, {
       query: ChangeThreadPriorityDocument,
       variables: {
@@ -533,11 +568,107 @@ export class PlainClient {
       },
     });
 
-    return unwrapData(res, (q) => {
-      return {
-        thread: nonNullable(q.changeThreadPriority.thread),
-      };
+    return unwrapData(res, (q) => nonNullable(q.changeThreadPriority.thread));
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async addLabels(
+    input: VariablesOf<typeof AddLabelsDocument>['input']
+  ): SDKResult<LabelPartsFragment[]> {
+    const res = await request(this.#ctx, {
+      query: AddLabelsDocument,
+      variables: {
+        input,
+      },
     });
+
+    return unwrapData(res, (q) => q.addLabels.labels);
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async deleteLabels(input: VariablesOf<typeof DeleteLabelsDocument>['input']): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: DeleteLabelsDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async markThreadAsDone(
+    input: VariablesOf<typeof MarkThreadAsDoneDocument>['input']
+  ): SDKResult<ThreadPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: MarkThreadAsDoneDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (d) => nonNullable(d.markThreadAsDone.thread));
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async snoozeThread(
+    input: VariablesOf<typeof SnoozeThreadDocument>['input']
+  ): SDKResult<ThreadPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: SnoozeThreadDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (d) => nonNullable(d.snoozeThread.thread));
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async markThreadAsTodo(
+    input: VariablesOf<typeof MarkThreadAsTodoDocument>['input']
+  ): SDKResult<ThreadPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: MarkThreadAsTodoDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (d) => nonNullable(d.markThreadAsTodo.thread));
+  }
+
+  /**
+   * WARNING: This is experimental and subject to change at any time without
+   * a major version bump.
+   */
+  async archiveLabelType(
+    input: VariablesOf<typeof ArchiveLabelTypeDocument>['input']
+  ): SDKResult<LabelTypePartsFragment> {
+    const res = await request(this.#ctx, {
+      query: ArchiveLabelTypeDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.archiveLabelType.labelType));
   }
 
   /**
@@ -572,26 +703,5 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => q.labelType);
-  }
-
-  /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
-   */
-  async addLabels(input: VariablesOf<typeof AddLabelsDocument>['input']): SDKResult<{
-    labels: LabelPartsFragment[];
-  }> {
-    const res = await request(this.#ctx, {
-      query: AddLabelsDocument,
-      variables: {
-        input,
-      },
-    });
-
-    return unwrapData(res, (q) => {
-      return {
-        labels: q.addLabels.labels,
-      };
-    });
   }
 }
