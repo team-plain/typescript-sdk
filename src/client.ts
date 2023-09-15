@@ -658,9 +658,9 @@ export class PlainClient {
    * WARNING: This is experimental and subject to change at any time without
    * a major version bump.
    */
-  async archiveLabelType(input: VariablesOf<typeof ArchiveLabelTypeDocument>['input']): SDKResult<{
-    labelType: LabelTypePartsFragment;
-  }> {
+  async archiveLabelType(
+    input: VariablesOf<typeof ArchiveLabelTypeDocument>['input']
+  ): SDKResult<LabelTypePartsFragment> {
     const res = await request(this.#ctx, {
       query: ArchiveLabelTypeDocument,
       variables: {
@@ -668,11 +668,7 @@ export class PlainClient {
       },
     });
 
-    return unwrapData(res, (q) => {
-      return {
-        labelType: nonNullable(q.archiveLabelType.labelType),
-      };
-    });
+    return unwrapData(res, (q) => nonNullable(q.archiveLabelType.labelType));
   }
 
   /**
