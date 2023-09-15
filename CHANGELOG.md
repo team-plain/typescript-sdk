@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.15.0
+
+### Minor Changes
+
+- 0b1f810: Added more queries and mutations relating to threads (experimental)
+
 ## 2.14.0
 
 ### Minor Changes
