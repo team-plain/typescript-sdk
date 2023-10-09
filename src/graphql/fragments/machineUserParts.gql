@@ -1,0 +1,10 @@
+fragment MachineUserParts on MachineUser {
+  __typename
+  id
+  fullName
+  publicName
+  description
+  updatedAt {
+    ...DateTimeParts
+  }
+}

@@ -1,12 +1,7 @@
-/**
- * This example calls upsert customer. This file acts as kind of type 'test'
- * since breaking the API would result in this file not typechecking.
- */
-
 import { PlainClient } from '../client';
 
 export async function createCustomer() {
-  const client = new PlainClient({ apiKey: 'XXX' });
+  const client = new PlainClient({ apiKey: process.env.API_KEY || '' });
 
   const res = await client.upsertCustomer({
     identifier: {

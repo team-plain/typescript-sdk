@@ -23,7 +23,7 @@ fragment ThreadParts on Thread {
     ...DateTimeParts
   }
   assignedTo {
-    ...ActorParts
+    ...ThreadAssigneeParts
   }
 
   createdAt {

@@ -26,7 +26,6 @@ import {
   CustomersDocument,
   DeleteCustomerCardConfigDocument,
   DeleteIssueDocument,
-  DeleteLabelsDocument,
   type EmailPartsFragment,
   type IssuePartsFragment,
   IssuesDocument,
@@ -40,6 +39,7 @@ import {
   type PageInfo,
   type PageInfoPartsFragment,
   RemoveCustomerFromCustomerGroupsDocument,
+  RemoveLabelsDocument,
   ReplyToEmailDocument,
   ResolveIssueDocument,
   SendChatDocument,
@@ -87,7 +87,7 @@ function unwrapData<T, X>(
 export class PlainClient {
   #ctx: Context;
 
-  constructor(options: { apiKey: string; apiUrl?: string }) {
+  constructor(options: { apiKey: string; apiUrl?: string; debug?: boolean }) {
     this.#ctx = {
       apiKey: options.apiKey,
       apiUrl: options.apiUrl,
@@ -470,8 +470,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Get a paginated list of threads
    */
   async getThreads(variables: VariablesOf<typeof ThreadsDocument>): SDKResult<{
     threads: ThreadPartsFragment[];
@@ -489,8 +488,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Get a single thread by id
    */
   async getThread(
     variables: VariablesOf<typeof ThreadDocument>
@@ -504,8 +502,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Create a thread (e.g. when a contact form is submitted)
    */
   async createThread(
     input: VariablesOf<typeof CreateThreadDocument>['input']
@@ -521,8 +518,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Assign a thread to a user or machine user
    */
   async assignThread(
     input: VariablesOf<typeof AssignThreadDocument>['input']
@@ -538,8 +534,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Unassign a thread
    */
   async unassignThread(
     input: VariablesOf<typeof UnassignThreadDocument>['input']
@@ -555,8 +550,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Change a thread's priority
    */
   async changeThreadPriority(
     input: VariablesOf<typeof ChangeThreadPriorityDocument>['input']
@@ -572,8 +566,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Add labels to a thread
    */
   async addLabels(
     input: VariablesOf<typeof AddLabelsDocument>['input']
@@ -589,12 +582,11 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Remove labels from a thread
    */
-  async deleteLabels(input: VariablesOf<typeof DeleteLabelsDocument>['input']): SDKResult<null> {
+  async removeLabels(input: VariablesOf<typeof RemoveLabelsDocument>['input']): SDKResult<null> {
     const res = await request(this.#ctx, {
-      query: DeleteLabelsDocument,
+      query: RemoveLabelsDocument,
       variables: {
         input,
       },
@@ -604,8 +596,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Mark a thread as done
    */
   async markThreadAsDone(
     input: VariablesOf<typeof MarkThreadAsDoneDocument>['input']
@@ -621,8 +612,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Snooze thread for a duration defined in seconds
    */
   async snoozeThread(
     input: VariablesOf<typeof SnoozeThreadDocument>['input']
@@ -638,8 +628,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Mark a thread as Todo (e.g. Unsnooze)
    */
   async markThreadAsTodo(
     input: VariablesOf<typeof MarkThreadAsTodoDocument>['input']
@@ -655,8 +644,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Archive a label type
    */
   async archiveLabelType(
     input: VariablesOf<typeof ArchiveLabelTypeDocument>['input']
@@ -672,8 +660,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Get a paginated list of label types
    */
   async getLabelTypes(variables: VariablesOf<typeof LabelTypesDocument>): SDKResult<{
     labelTypes: LabelTypePartsFragment[];
@@ -691,8 +678,7 @@ export class PlainClient {
   }
 
   /**
-   * WARNING: This is experimental and subject to change at any time without
-   * a major version bump.
+   * Get a label type by id
    */
   async getLabelType(
     variables: VariablesOf<typeof LabelTypeDocument>

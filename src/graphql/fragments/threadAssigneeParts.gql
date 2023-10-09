@@ -1,0 +1,11 @@
+fragment ThreadAssigneeParts on ThreadAssignee {
+  ... on User {
+    ...UserParts
+  }
+  ... on MachineUser {
+    ...MachineUserParts
+  }
+  ... on System {
+    ...SystemParts
+  }
+}

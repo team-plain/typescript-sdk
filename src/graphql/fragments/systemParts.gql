@@ -1,0 +1,4 @@
+fragment SystemParts on System {
+  __typename
+  id
+}
