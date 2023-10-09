@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.17.0
+
+### Minor Changes
+
+- d25f9eb: Update CreateThreadInput to take `description` instead of `previewText`
+
 ## 2.16.0
 
 ### Minor Changes
