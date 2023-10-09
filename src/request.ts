@@ -33,7 +33,7 @@ export async function request<Query, Variables>(
 
     const url = ctx.apiUrl || defaultUrl;
 
-    const result = await fetch(url, {
+    const result = await ctx.fetch(url, {
       method: 'POST',
       headers,
       body: JSON.stringify({

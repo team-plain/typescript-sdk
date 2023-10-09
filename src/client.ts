@@ -87,10 +87,11 @@ function unwrapData<T, X>(
 export class PlainClient {
   #ctx: Context;
 
-  constructor(options: { apiKey: string; apiUrl?: string; debug?: boolean }) {
+  constructor(options: { apiKey: string; apiUrl?: string; debug?: boolean; fetch?: typeof fetch }) {
     this.#ctx = {
       apiKey: options.apiKey,
       apiUrl: options.apiUrl,
+      fetch: options.fetch || fetch,
     };
   }
 

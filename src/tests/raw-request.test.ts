@@ -1,8 +1,8 @@
-import nock from 'nock';
 import { describe, expect, test } from 'vitest';
 
 import { PlainClient } from '..';
 import type { PlainSDKError } from '../error';
+import { testHelpers } from './test-helpers';
 
 describe('raw request', () => {
   test('make a request as defined', async () => {
@@ -17,38 +17,42 @@ describe('raw request', () => {
     const query = 'query customer { customer(customerId: "abc") { id }}';
     const variables = { foo: 'bar' };
 
-    const scope = nock('https://core-api.uk.plain.com')
-      .post('/graphql/v1', {
-        query,
-        variables,
-      })
-      .matchHeader('Authorization', `Bearer abc`)
-      .reply(200, response);
+    const { fetchSpy, expectRequest } = testHelpers.createFetch({
+      responseStatus: 200,
+      responseBody: response,
+    });
 
-    const client = new PlainClient({ apiKey: 'abc' });
+    const client = new PlainClient({ apiKey: 'abc', fetch: fetchSpy });
     const result = await client.rawRequest({
       query,
       variables,
     });
 
+    expectRequest({
+      apiKey: 'abc',
+      body: {
+        query,
+        variables,
+      },
+    });
+
     expect(result.error).toBeUndefined();
     expect(result.data).toEqual(response.data);
-    scope.done();
   });
 
   test('uses custom url if provided', async () => {
     const query = '';
     const variables = {};
-    const scope = nock('https://core-api.uk.getresolve.io')
-      .post('/graphql/v1', {
-        query,
-        variables,
-      })
-      .reply(200, {});
+
+    const { fetchSpy, expectRequest } = testHelpers.createFetch({
+      responseStatus: 200,
+      responseBody: {},
+    });
 
     const client = new PlainClient({
       apiKey: 'abc',
       apiUrl: 'https://core-api.uk.getresolve.io/graphql/v1',
+      fetch: fetchSpy,
     });
 
     await client.rawRequest({
@@ -56,7 +60,14 @@ describe('raw request', () => {
       variables,
     });
 
-    scope.done();
+    expectRequest({
+      apiKey: 'abc',
+      url: 'https://core-api.uk.getresolve.io/graphql/v1',
+      body: {
+        query,
+        variables,
+      },
+    });
   });
 
   test.each([
@@ -90,26 +101,28 @@ describe('raw request', () => {
     const query = 'query customer { customer() { id }}';
     const variables = {};
 
-    const scope = nock('https://core-api.uk.plain.com')
-      .post('/graphql/v1', {
-        query,
-        variables,
-      })
-      .matchHeader('Authorization', `Bearer abc`)
-      .reply(
-        400,
-        {
-          errors,
-        },
-        {
-          'apigw-requestid': 'req_2',
-        }
-      );
+    const { fetchSpy, expectRequest } = testHelpers.createFetch({
+      responseStatus: 400,
+      responseBody: {
+        errors,
+      },
+      responseHeaders: {
+        'apigw-requestid': 'req_2',
+      },
+    });
 
-    const client = new PlainClient({ apiKey: 'abc' });
+    const client = new PlainClient({ apiKey: 'abc', fetch: fetchSpy });
     const result = await client.rawRequest({
       query,
       variables,
+    });
+
+    expectRequest({
+      apiKey: 'abc',
+      body: {
+        query,
+        variables,
+      },
     });
 
     const err: PlainSDKError = {
@@ -121,6 +134,5 @@ describe('raw request', () => {
 
     expect(result.data).toBeUndefined();
     expect(result.error).toEqual(err);
-    scope.done();
   });
 });

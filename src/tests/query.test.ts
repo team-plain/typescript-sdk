@@ -1,11 +1,11 @@
 import { print } from 'graphql';
-import nock from 'nock';
 import { describe, expect, test } from 'vitest';
 
 import { PlainClient } from '..';
 import type { PlainSDKError } from '../error';
 import { CustomerByIdDocument } from '../graphql/types';
 import { PlainGraphQLError } from '../graphql-utlities';
+import { testHelpers } from './test-helpers';
 
 describe('query test - customer by id', () => {
   test('should return a valid customer', async () => {
@@ -37,43 +37,51 @@ describe('query test - customer by id', () => {
       },
     };
 
-    const scope = nock('https://core-api.uk.plain.com')
-      .post('/graphql/v1', {
+    const { fetchSpy, expectRequest } = testHelpers.createFetch({
+      responseStatus: 200,
+      responseBody: response,
+    });
+
+    const client = new PlainClient({ apiKey: 'abc', fetch: fetchSpy as typeof fetch });
+    const result = await client.getCustomerById({ customerId: customerId });
+
+    expectRequest({
+      apiKey: 'abc',
+      body: {
         query: print(CustomerByIdDocument),
         variables: { customerId: customerId },
-      })
-      .matchHeader('Authorization', `Bearer abc`)
-      .reply(200, response);
-
-    const client = new PlainClient({ apiKey: 'abc' });
-    const result = await client.getCustomerById({ customerId: customerId });
+      },
+    });
 
     expect(result.error).toBeUndefined();
     expect(result.data).toEqual(response.data.customer);
-    scope.done();
   });
 
   test('should accept a null customer when not found', async () => {
     const customerId = 'c_123';
 
-    const scope = nock('https://core-api.uk.plain.com')
-      .post('/graphql/v1', {
-        query: print(CustomerByIdDocument),
-        variables: { customerId: customerId },
-      })
-      .matchHeader('Authorization', `Bearer 123`)
-      .reply(200, {
+    const { fetchSpy, expectRequest } = testHelpers.createFetch({
+      responseStatus: 200,
+      responseBody: {
         data: {
           customer: null,
         },
-      });
+      },
+    });
 
-    const client = new PlainClient({ apiKey: '123' });
+    const client = new PlainClient({ apiKey: '123', fetch: fetchSpy });
     const result = await client.getCustomerById({ customerId: customerId });
+
+    expectRequest({
+      apiKey: '123',
+      body: {
+        query: print(CustomerByIdDocument),
+        variables: { customerId: customerId },
+      },
+    });
 
     expect(result.error).toBeUndefined();
     expect(result.data).toEqual(null);
-    scope.done();
   });
 
   test('should handle missing inputs/variables', async () => {
@@ -86,23 +94,17 @@ describe('query test - customer by id', () => {
       },
     ];
 
-    const scope = nock('https://core-api.uk.plain.com')
-      .post('/graphql/v1', {
-        query: print(CustomerByIdDocument),
-        variables: {},
-      })
-      .matchHeader('Authorization', `Bearer 456`)
-      .reply(
-        400,
-        {
-          errors: graphqlErrors,
-        },
-        {
-          'Apigw-Requestid': 'req_1',
-        }
-      );
+    const { fetchSpy, expectRequest } = testHelpers.createFetch({
+      responseStatus: 400,
+      responseBody: {
+        errors: graphqlErrors,
+      },
+      responseHeaders: {
+        'Apigw-Requestid': 'req_1',
+      },
+    });
 
-    const client = new PlainClient({ apiKey: '456' });
+    const client = new PlainClient({ apiKey: '456', fetch: fetchSpy });
 
     // We're testing a broken input here for users who don't use typescript
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
@@ -115,9 +117,15 @@ describe('query test - customer by id', () => {
       requestId: 'req_1',
     };
 
+    expectRequest({
+      apiKey: '456',
+      body: {
+        query: print(CustomerByIdDocument),
+        variables: {},
+      },
+    });
+
     expect(result.data).toBeUndefined();
     expect(result.error).toEqual(err);
-
-    scope.done();
   });
 });
