@@ -1,7 +1,0 @@
-mutation deleteLabels($input: DeleteLabelsInput!) {
-  deleteLabels(input: $input) {
-    error {
-      ...MutationErrorParts
-    }
-  }
-}

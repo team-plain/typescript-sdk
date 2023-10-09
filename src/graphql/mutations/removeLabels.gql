@@ -1,0 +1,7 @@
+mutation removeLabels($input: RemoveLabelsInput!) {
+  removeLabels(input: $input) {
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

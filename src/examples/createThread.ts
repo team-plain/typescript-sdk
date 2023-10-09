@@ -2,7 +2,7 @@ import { PlainClient } from '../client';
 import { ComponentTextColor, ComponentTextSize } from '../graphql/types';
 import { uiComponent } from '../ui-components';
 
-export async function createThreadA() {
+export async function createThread() {
   const client = new PlainClient({ apiKey: 'XXX' });
 
   const res = await client.createThread({
@@ -38,7 +38,7 @@ export async function createThreadA() {
   }
 }
 
-export async function createThreadB() {
+export async function createThreadWithUiComponentBuilder() {
   const client = new PlainClient({ apiKey: 'XXX' });
 
   const res = await client.createThread({

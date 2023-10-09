@@ -1,7 +1,7 @@
 import { AttachmentType, PlainClient } from '../';
 
 export async function createAttachmentUploadUrl() {
-  const client = new PlainClient({ apiKey: 'XXX' });
+  const client = new PlainClient({ apiKey: process.env.API_KEY || '' });
 
   const res = await client.createAttachmentUploadUrl({
     customerId: 'c_XXXXXXXXXXXXXXXXXXXXXXXXXX',
