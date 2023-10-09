@@ -12,6 +12,7 @@ fragment ThreadParts on Thread {
   }
 
   title
+  description
   previewText
   priority
 
