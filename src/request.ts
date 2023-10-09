@@ -1,5 +1,4 @@
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
-import axios, { type AxiosResponseHeaders, type RawAxiosResponseHeaders } from 'axios';
 import { print } from 'graphql';
 
 import type { Context } from './context';
@@ -13,8 +12,8 @@ import type { Result } from './result';
 
 const defaultUrl = 'https://core-api.uk.plain.com/graphql/v1';
 
-function getRequestId(headers: AxiosResponseHeaders | RawAxiosResponseHeaders): string | undefined {
-  const reqId: unknown = headers['apigw-requestid'];
+function getRequestId(headers: Headers): string | undefined {
+  const reqId: unknown = headers.get('apigw-requestid');
 
   if (reqId && typeof reqId === 'string') {
     return reqId;
@@ -37,23 +36,57 @@ export async function request<Query, Variables>(
 
     const url = ctx.apiUrl || defaultUrl;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const { data: res, headers: responseHeaders } = await axios.post(
-      url,
-      {
+    const result = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
         query: query,
         variables: args.variables || null,
-      },
-      {
-        headers,
-      }
-    );
+      }),
+    });
 
-    if (!isPlainSuccessfulGraphQLResponse(res)) {
+    const status = result.status;
+    const responseHeaders = result.headers;
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const response = await result.json();
+
+    if (!isPlainSuccessfulGraphQLResponse(response)) {
       throw new Error('Unexpected response received');
     }
 
-    const mutationError = getMutationErrorFromResponse(res.data);
+    if (status === 401 || status === 403) {
+      return {
+        error: {
+          type: 'forbidden',
+          message: 'Authentication failed. Please check the provided API key.',
+          requestId: getRequestId(responseHeaders),
+        },
+      };
+    }
+
+    if (status === 400 && isPlainFailedGraphQLResponse(response)) {
+      return {
+        error: {
+          type: 'bad_request',
+          message: 'Malformed query, missing or invalid arguments provided.',
+          graphqlErrors: response.errors || [],
+          requestId: getRequestId(responseHeaders),
+        },
+      };
+    }
+
+    if (status === 500) {
+      return {
+        error: {
+          type: 'internal_server_error',
+          message: 'Internal server error.',
+          requestId: getRequestId(responseHeaders),
+        },
+      };
+    }
+
+    const mutationError = getMutationErrorFromResponse(response);
     if (mutationError) {
       if (mutationError.code === 'forbidden') {
         return {
@@ -76,55 +109,9 @@ export async function request<Query, Variables>(
     }
 
     return {
-      data: res.data as Query,
+      data: response as Query,
     };
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      // Case 1: We got a response back that was > 299 in status code
-      if (err.response) {
-        if (err.response.status === 401 || err.response.status === 403) {
-          return {
-            error: {
-              type: 'forbidden',
-              message: 'Authentication failed. Please check the provided API key.',
-              requestId: getRequestId(err.response.headers),
-            },
-          };
-        }
-
-        if (err.response.status === 400 && isPlainFailedGraphQLResponse(err.response.data)) {
-          return {
-            error: {
-              type: 'bad_request',
-              message: 'Malformed query, missing or invalid arguments provided.',
-              graphqlErrors: err.response.data.errors || [],
-              requestId: getRequestId(err.response.headers),
-            },
-          };
-        }
-
-        if (err.response.status === 500) {
-          return {
-            error: {
-              type: 'internal_server_error',
-              message: 'Internal server error.',
-              requestId: getRequestId(err.response.headers),
-            },
-          };
-        }
-      }
-
-      if (err.request) {
-        return {
-          error: {
-            type: 'unknown',
-            message: err.message,
-          },
-        };
-      }
-    }
-
-    // Case 3: Something completely unhandled happened
     return {
       error: {
         type: 'unknown',
