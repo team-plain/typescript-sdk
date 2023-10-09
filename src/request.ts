@@ -3,11 +3,7 @@ import { print } from 'graphql';
 
 import type { Context } from './context';
 import type { PlainSDKError } from './error';
-import {
-  getMutationErrorFromResponse,
-  isPlainFailedGraphQLResponse,
-  isPlainSuccessfulGraphQLResponse,
-} from './graphql-utlities';
+import { getMutationErrorFromResponse, isPlainFailedGraphQLResponse } from './graphql-utlities';
 import type { Result } from './result';
 
 const defaultUrl = 'https://core-api.uk.plain.com/graphql/v1';
@@ -32,6 +28,7 @@ export async function request<Query, Variables>(
   try {
     const headers = {
       Authorization: `Bearer ${ctx.apiKey}`,
+      'Content-Type': 'application/json',
     };
 
     const url = ctx.apiUrl || defaultUrl;
@@ -48,11 +45,13 @@ export async function request<Query, Variables>(
     const status = result.status;
     const responseHeaders = result.headers;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const response = await result.json();
-
-    if (!isPlainSuccessfulGraphQLResponse(response)) {
-      throw new Error('Unexpected response received');
+    let response;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      response = await result.json();
+    } catch {
+      // This is probably indicative of downtime
+      throw new Error('Invalid JSON received as response.');
     }
 
     if (status === 401 || status === 403) {
@@ -65,12 +64,12 @@ export async function request<Query, Variables>(
       };
     }
 
-    if (status === 400 && isPlainFailedGraphQLResponse(response)) {
+    if (status === 400) {
       return {
         error: {
           type: 'bad_request',
           message: 'Malformed query, missing or invalid arguments provided.',
-          graphqlErrors: response.errors || [],
+          graphqlErrors: isPlainFailedGraphQLResponse(response) ? response.errors : [],
           requestId: getRequestId(responseHeaders),
         },
       };
@@ -86,7 +85,8 @@ export async function request<Query, Variables>(
       };
     }
 
-    const mutationError = getMutationErrorFromResponse(response);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const mutationError = getMutationErrorFromResponse(response.data);
     if (mutationError) {
       if (mutationError.code === 'forbidden') {
         return {
@@ -109,7 +109,8 @@ export async function request<Query, Variables>(
     }
 
     return {
-      data: response as Query,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      data: response.data as Query,
     };
   } catch (err) {
     return {
