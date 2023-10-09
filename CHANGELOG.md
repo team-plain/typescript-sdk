@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- d25f9eb: Update CreateThreadInput to take a `description` vs a `previewText`
+- d25f9eb: Update CreateThreadInput to take `description` instead of `previewText`
 
 ## 2.16.0
 
