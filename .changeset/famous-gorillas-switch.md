@@ -2,4 +2,4 @@
 '@team-plain/typescript-sdk': minor
 ---
 
-Removed previewText from CreateThreadInput, add description to CreateThreadInput, Thread
+Update CreateThreadInput to take a `description` vs a `previewText`
