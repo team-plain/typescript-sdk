@@ -2,4 +2,4 @@
 '@team-plain/typescript-sdk': minor
 ---
 
-Move from axios to fetch for better edge support
+Switch out axios for native fetch so that the SDK can be used in edge functions/runtimes.
