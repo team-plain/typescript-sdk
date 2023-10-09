@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.16.0
+
+### Minor Changes
+
+- a817cfa: Fix removing of labels from threads and document client methods which were previously marked as experimental.
+
 ## 2.15.0
 
 ### Minor Changes
