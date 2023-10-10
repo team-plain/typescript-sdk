@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 2.18.0
+
+### Minor Changes
+
+- 2ec7d29: Switch out axios for native fetch so that the SDK can be used in edge functions/runtimes.
+
 ## 2.17.0
 
 ### Minor Changes
