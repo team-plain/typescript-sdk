@@ -42,7 +42,7 @@ describe('query test - customer by id', () => {
       responseBody: response,
     });
 
-    const client = new PlainClient({ apiKey: 'abc', fetch: fetchSpy as typeof fetch });
+    const client = new PlainClient({ apiKey: 'abc', __fetch: fetchSpy as typeof fetch });
     const result = await client.getCustomerById({ customerId: customerId });
 
     expectRequest({
@@ -69,7 +69,7 @@ describe('query test - customer by id', () => {
       },
     });
 
-    const client = new PlainClient({ apiKey: '123', fetch: fetchSpy });
+    const client = new PlainClient({ apiKey: '123', __fetch: fetchSpy });
     const result = await client.getCustomerById({ customerId: customerId });
 
     expectRequest({
@@ -104,7 +104,7 @@ describe('query test - customer by id', () => {
       },
     });
 
-    const client = new PlainClient({ apiKey: '456', fetch: fetchSpy });
+    const client = new PlainClient({ apiKey: '456', __fetch: fetchSpy });
 
     // We're testing a broken input here for users who don't use typescript
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any

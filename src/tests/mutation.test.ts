@@ -51,7 +51,7 @@ describe('mutation test - create an issue', () => {
       responseBody: response,
     });
 
-    const client = new PlainClient({ apiKey: 'abc', fetch: fetchSpy });
+    const client = new PlainClient({ apiKey: 'abc', __fetch: fetchSpy });
     const result = await client.createIssue({
       issueTypeId: issueTypeId,
       customerId: customerId,
@@ -113,7 +113,7 @@ describe('mutation test - create an issue', () => {
       },
     });
 
-    const client = new PlainClient({ apiKey: '123', fetch: fetchSpy });
+    const client = new PlainClient({ apiKey: '123', __fetch: fetchSpy });
     const result = await client.createIssue({ customerId: '', issueTypeId: '', priorityValue: 1 });
 
     const err: PlainSDKError = {

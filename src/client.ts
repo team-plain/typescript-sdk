@@ -84,14 +84,27 @@ function unwrapData<T, X>(
   }
 }
 
+type ConstructorOptions = {
+  // The Plain API key
+  apiKey: string;
+
+  // Useful if you want to point to a different Plain environment
+  // as a Plain team-member
+  apiUrl?: string;
+
+  // Used to replace the global fetch implementation with a mock
+  // for testing. Should not be used in production.
+  __fetch?: typeof fetch;
+};
+
 export class PlainClient {
   #ctx: Context;
 
-  constructor(options: { apiKey: string; apiUrl?: string; debug?: boolean; fetch?: typeof fetch }) {
+  constructor(options: ConstructorOptions) {
     this.#ctx = {
       apiKey: options.apiKey,
       apiUrl: options.apiUrl,
-      fetch: options.fetch || fetch,
+      fetch: options.__fetch || fetch,
     };
   }
 
