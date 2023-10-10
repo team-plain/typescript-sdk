@@ -84,10 +84,19 @@ function unwrapData<T, X>(
   }
 }
 
+type ConstructorOptions = {
+  // The Plain API key
+  apiKey: string;
+
+  // Useful if you want to point to a different Plain environment
+  // as a Plain team-member
+  apiUrl?: string;
+};
+
 export class PlainClient {
   #ctx: Context;
 
-  constructor(options: { apiKey: string; apiUrl?: string; debug?: boolean }) {
+  constructor(options: ConstructorOptions) {
     this.#ctx = {
       apiKey: options.apiKey,
       apiUrl: options.apiUrl,

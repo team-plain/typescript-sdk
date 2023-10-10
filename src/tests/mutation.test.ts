@@ -1,5 +1,4 @@
 import { print } from 'graphql';
-import nock from 'nock';
 import { describe, expect, test } from 'vitest';
 
 import { PlainClient } from '..';
@@ -10,6 +9,7 @@ import {
   MutationErrorType,
   MutationFieldErrorType,
 } from '../graphql/types';
+import { testHelpers } from './test-helpers';
 
 describe('mutation test - create an issue', () => {
   test('should handle an succesful mutation response', async () => {
@@ -46,19 +46,12 @@ describe('mutation test - create an issue', () => {
       },
     };
 
-    const scope = nock('https://core-api.uk.plain.com')
-      .post('/graphql/v1', {
-        query: print(CreateIssueDocument),
-        variables: {
-          input: {
-            issueTypeId: issueTypeId,
-            customerId: customerId,
-            priorityValue: 1,
-          },
-        },
-      })
-      .matchHeader('Authorization', `Bearer abc`)
-      .reply(200, response);
+    const { fetchSpy, expectRequest } = testHelpers.createFetch({
+      responseStatus: 200,
+      responseBody: response,
+    });
+
+    globalThis.fetch = fetchSpy;
 
     const client = new PlainClient({ apiKey: 'abc' });
     const result = await client.createIssue({
@@ -67,9 +60,22 @@ describe('mutation test - create an issue', () => {
       priorityValue: 1,
     });
 
+    expectRequest({
+      apiKey: 'abc',
+      responseBody: {
+        query: print(CreateIssueDocument),
+        variables: {
+          input: {
+            issueTypeId: issueTypeId,
+            customerId: customerId,
+            priorityValue: 1,
+          },
+        },
+      },
+    });
+
     expect(result.error).toBeUndefined();
     expect(result.data).toStrictEqual(issue);
-    scope.done();
   });
 
   test('should handle an error mutation response', async () => {
@@ -101,21 +107,15 @@ describe('mutation test - create an issue', () => {
       },
     };
 
-    const scope = nock('https://core-api.uk.plain.com')
-      .post('/graphql/v1', {
-        query: print(CreateIssueDocument),
-        variables: {
-          input: {
-            issueTypeId: '',
-            customerId: '',
-            priorityValue: 1,
-          },
-        },
-      })
-      .matchHeader('Authorization', `Bearer 123`)
-      .reply(200, response, {
+    const { fetchSpy, expectRequest } = testHelpers.createFetch({
+      responseStatus: 200,
+      responseBody: response,
+      responseHeaders: {
         'APIGW-REQUESTID': 'req_3',
-      });
+      },
+    });
+
+    globalThis.fetch = fetchSpy;
 
     const client = new PlainClient({ apiKey: '123' });
     const result = await client.createIssue({ customerId: '', issueTypeId: '', priorityValue: 1 });
@@ -127,8 +127,21 @@ describe('mutation test - create an issue', () => {
       requestId: 'req_3',
     };
 
+    expectRequest({
+      apiKey: '123',
+      responseBody: {
+        query: print(CreateIssueDocument),
+        variables: {
+          input: {
+            issueTypeId: '',
+            customerId: '',
+            priorityValue: 1,
+          },
+        },
+      },
+    });
+
     expect(result.error).toEqual(err);
     expect(result.data).toBeUndefined();
-    scope.done();
   });
 });

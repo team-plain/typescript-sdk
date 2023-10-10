@@ -1,17 +1,17 @@
-import nock from 'nock';
-import { beforeEach, describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 import { PlainClient } from '..';
+import { testHelpers } from './test-helpers';
 
 describe('error handling', () => {
-  let interceptor: nock.Interceptor;
-
-  beforeEach(() => {
-    interceptor = nock('https://core-api.uk.plain.com').post('/graphql/v1');
-  });
-
   test('should return an unknown error when something unexpected is returned', async () => {
-    const scope = interceptor.reply(500, '🌶️', { 'apigw-requestid': 'req_4' });
+    const { fetchSpy } = testHelpers.createFetch({
+      responseStatus: 500,
+      responseBody: '🌶️',
+      responseHeaders: { 'apigw-requestid': 'req_4' },
+    });
+
+    globalThis.fetch = fetchSpy;
 
     const client = new PlainClient({ apiKey: '123' });
 
@@ -22,16 +22,16 @@ describe('error handling', () => {
       message: 'Internal server error.',
       requestId: 'req_4',
     });
-
-    scope.done();
   });
 
   test('should return a forbidden error when API 401s', async () => {
-    const scope = interceptor
-      .matchHeader('Authorization', 'Bearer 123')
-      .reply(401, 'unauthorized', {
-        'apigw-requestid': 'req_5',
-      });
+    const { fetchSpy } = testHelpers.createFetch({
+      responseStatus: 401,
+      responseBody: 'unauthorized',
+      responseHeaders: { 'apigw-requestid': 'req_5' },
+    });
+
+    globalThis.fetch = fetchSpy;
 
     const client = new PlainClient({ apiKey: '123' });
 
@@ -42,14 +42,16 @@ describe('error handling', () => {
       message: expect.stringContaining('Authentication failed'),
       requestId: 'req_5',
     });
-
-    scope.done();
   });
 
   test('should return a forbidden error when API 403s', async () => {
-    const scope = interceptor.matchHeader('Authorization', 'Bearer 123').reply(403, 'forbidden', {
-      'apigw-requestid': 'req_6',
+    const { fetchSpy } = testHelpers.createFetch({
+      responseStatus: 403,
+      responseBody: 'forbidden',
+      responseHeaders: { 'apigw-requestid': 'req_6' },
     });
+
+    globalThis.fetch = fetchSpy;
 
     const client = new PlainClient({ apiKey: '123' });
 
@@ -60,14 +62,12 @@ describe('error handling', () => {
       message: expect.stringContaining('Authentication failed'),
       requestId: 'req_6',
     });
-
-    scope.done();
   });
 
   test('should return a forbidden error when API responds with mutation error', async () => {
-    const scope = interceptor.matchHeader('Authorization', 'Bearer 123').reply(
-      200,
-      {
+    const { fetchSpy } = testHelpers.createFetch({
+      responseStatus: 200,
+      responseBody: {
         data: {
           updateCustomerGroup: {
             customerGroup: null,
@@ -81,10 +81,12 @@ describe('error handling', () => {
           },
         },
       },
-      {
+      responseHeaders: {
         'apigw-requestid': 'req_7',
-      }
-    );
+      },
+    });
+
+    globalThis.fetch = fetchSpy;
 
     const client = new PlainClient({ apiKey: '123' });
 
@@ -95,7 +97,5 @@ describe('error handling', () => {
       message: 'Insufficient permissions, missing "customerGroup:edit".',
       requestId: 'req_7',
     });
-
-    scope.done();
   });
 });
