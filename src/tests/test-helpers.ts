@@ -4,11 +4,11 @@ import { expect, type Mock, vitest } from 'vitest';
 function makeExpectFn(spy: Mock<any, any>) {
   return ({
     apiKey,
-    body,
+    responseBody,
     url = 'https://core-api.uk.plain.com/graphql/v1',
   }: {
     apiKey: string;
-    body: unknown;
+    responseBody: unknown;
     url?: string;
   }) => {
     const args = spy.mock.calls[0] as unknown[];
@@ -26,7 +26,7 @@ function makeExpectFn(spy: Mock<any, any>) {
 
     // We can't assert the two values when they are both strings
     // as the order of the keys may not match, hence the parse here:
-    expect(JSON.parse(reqOptions.body)).toStrictEqual(body);
+    expect(JSON.parse(reqOptions.body)).toStrictEqual(responseBody);
   };
 }
 

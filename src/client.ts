@@ -91,10 +91,6 @@ type ConstructorOptions = {
   // Useful if you want to point to a different Plain environment
   // as a Plain team-member
   apiUrl?: string;
-
-  // Used to replace the global fetch implementation with a mock
-  // for testing. Should not be used in production.
-  __fetch?: typeof fetch;
 };
 
 export class PlainClient {
@@ -104,7 +100,6 @@ export class PlainClient {
     this.#ctx = {
       apiKey: options.apiKey,
       apiUrl: options.apiUrl,
-      fetch: options.__fetch || fetch,
     };
   }
 

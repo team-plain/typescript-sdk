@@ -42,12 +42,14 @@ describe('query test - customer by id', () => {
       responseBody: response,
     });
 
-    const client = new PlainClient({ apiKey: 'abc', __fetch: fetchSpy as typeof fetch });
+    globalThis.fetch = fetchSpy;
+
+    const client = new PlainClient({ apiKey: 'abc' });
     const result = await client.getCustomerById({ customerId: customerId });
 
     expectRequest({
       apiKey: 'abc',
-      body: {
+      responseBody: {
         query: print(CustomerByIdDocument),
         variables: { customerId: customerId },
       },
@@ -69,12 +71,14 @@ describe('query test - customer by id', () => {
       },
     });
 
-    const client = new PlainClient({ apiKey: '123', __fetch: fetchSpy });
+    globalThis.fetch = fetchSpy;
+
+    const client = new PlainClient({ apiKey: '123' });
     const result = await client.getCustomerById({ customerId: customerId });
 
     expectRequest({
       apiKey: '123',
-      body: {
+      responseBody: {
         query: print(CustomerByIdDocument),
         variables: { customerId: customerId },
       },
@@ -104,7 +108,9 @@ describe('query test - customer by id', () => {
       },
     });
 
-    const client = new PlainClient({ apiKey: '456', __fetch: fetchSpy });
+    globalThis.fetch = fetchSpy;
+
+    const client = new PlainClient({ apiKey: '456' });
 
     // We're testing a broken input here for users who don't use typescript
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
@@ -119,7 +125,7 @@ describe('query test - customer by id', () => {
 
     expectRequest({
       apiKey: '456',
-      body: {
+      responseBody: {
         query: print(CustomerByIdDocument),
         variables: {},
       },

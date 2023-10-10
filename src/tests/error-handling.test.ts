@@ -11,7 +11,9 @@ describe('error handling', () => {
       responseHeaders: { 'apigw-requestid': 'req_4' },
     });
 
-    const client = new PlainClient({ apiKey: '123', __fetch: fetchSpy });
+    globalThis.fetch = fetchSpy;
+
+    const client = new PlainClient({ apiKey: '123' });
 
     const result = await client.getCustomerById({ customerId: 'c_123' });
 
@@ -29,7 +31,9 @@ describe('error handling', () => {
       responseHeaders: { 'apigw-requestid': 'req_5' },
     });
 
-    const client = new PlainClient({ apiKey: '123', __fetch: fetchSpy });
+    globalThis.fetch = fetchSpy;
+
+    const client = new PlainClient({ apiKey: '123' });
 
     const result = await client.getCustomerById({ customerId: 'c_123' });
 
@@ -47,7 +51,9 @@ describe('error handling', () => {
       responseHeaders: { 'apigw-requestid': 'req_6' },
     });
 
-    const client = new PlainClient({ apiKey: '123', __fetch: fetchSpy });
+    globalThis.fetch = fetchSpy;
+
+    const client = new PlainClient({ apiKey: '123' });
 
     const result = await client.getCustomerById({ customerId: 'c_123' });
 
@@ -80,7 +86,9 @@ describe('error handling', () => {
       },
     });
 
-    const client = new PlainClient({ apiKey: '123', __fetch: fetchSpy });
+    globalThis.fetch = fetchSpy;
+
+    const client = new PlainClient({ apiKey: '123' });
 
     const result = await client.getCustomerById({ customerId: 'c_123' });
 

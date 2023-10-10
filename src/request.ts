@@ -33,7 +33,7 @@ export async function request<Query, Variables>(
 
     const url = ctx.apiUrl || defaultUrl;
 
-    const result = await ctx.fetch(url, {
+    const result = await fetch(url, {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -51,7 +51,7 @@ export async function request<Query, Variables>(
       response = await result.json();
     } catch {
       // This is probably indicative of downtime
-      throw new Error('Invalid JSON received as response.');
+      throw new Error('Invalid json response received as response.');
     }
 
     if (status === 401 || status === 403) {

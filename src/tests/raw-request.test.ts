@@ -22,7 +22,9 @@ describe('raw request', () => {
       responseBody: response,
     });
 
-    const client = new PlainClient({ apiKey: 'abc', __fetch: fetchSpy });
+    globalThis.fetch = fetchSpy;
+
+    const client = new PlainClient({ apiKey: 'abc' });
     const result = await client.rawRequest({
       query,
       variables,
@@ -30,7 +32,7 @@ describe('raw request', () => {
 
     expectRequest({
       apiKey: 'abc',
-      body: {
+      responseBody: {
         query,
         variables,
       },
@@ -49,10 +51,11 @@ describe('raw request', () => {
       responseBody: {},
     });
 
+    globalThis.fetch = fetchSpy;
+
     const client = new PlainClient({
       apiKey: 'abc',
       apiUrl: 'https://core-api.uk.getresolve.io/graphql/v1',
-      __fetch: fetchSpy,
     });
 
     await client.rawRequest({
@@ -63,7 +66,7 @@ describe('raw request', () => {
     expectRequest({
       apiKey: 'abc',
       url: 'https://core-api.uk.getresolve.io/graphql/v1',
-      body: {
+      responseBody: {
         query,
         variables,
       },
@@ -111,7 +114,9 @@ describe('raw request', () => {
       },
     });
 
-    const client = new PlainClient({ apiKey: 'abc', __fetch: fetchSpy });
+    globalThis.fetch = fetchSpy;
+
+    const client = new PlainClient({ apiKey: 'abc' });
     const result = await client.rawRequest({
       query,
       variables,
@@ -119,7 +124,7 @@ describe('raw request', () => {
 
     expectRequest({
       apiKey: 'abc',
-      body: {
+      responseBody: {
         query,
         variables,
       },
