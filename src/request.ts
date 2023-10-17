@@ -55,10 +55,14 @@ export async function request<Query, Variables>(
     }
 
     if (status === 401 || status === 403) {
+      const gqlErrors = isPlainFailedGraphQLResponse(response) ? response.errors : [];
       return {
         error: {
           type: 'forbidden',
-          message: 'Authentication failed. Please check the provided API key.',
+          message:
+            gqlErrors.length > 0
+              ? gqlErrors[0].message
+              : 'Authentication failed. Please check the provided API key.',
           requestId: getRequestId(responseHeaders),
         },
       };
