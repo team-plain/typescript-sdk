@@ -5,7 +5,7 @@ export async function assignThread() {
     apiKey: process.env.API_KEY || '',
   });
 
-  const res = await client.unassignThread({
+  const res = await client.assignThread({
     threadId: 'th_01H8H46YPB2S4MAJM382FG9423',
   });
 

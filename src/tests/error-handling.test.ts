@@ -98,4 +98,41 @@ describe('error handling', () => {
       requestId: 'req_7',
     });
   });
+
+  test('should return info about missing permissions when API provides it', async () => {
+    const { fetchSpy } = testHelpers.createFetch({
+      responseStatus: 401,
+      responseBody: {
+        errors: [
+          {
+            message: 'Insufficient permissions, missing "customer:read".',
+            locations: [
+              {
+                line: 2,
+                column: 3,
+              },
+            ],
+            path: ['customers'],
+            extensions: {
+              code: 'FORBIDDEN',
+            },
+          },
+        ],
+        data: null,
+      },
+      responseHeaders: { 'apigw-requestid': 'req_8' },
+    });
+
+    globalThis.fetch = fetchSpy;
+
+    const client = new PlainClient({ apiKey: '123' });
+
+    const result = await client.getCustomers({});
+
+    expect(result.error).toEqual({
+      type: 'forbidden',
+      message: expect.stringContaining('Insufficient permissions, missing "customer:read".'),
+      requestId: 'req_8',
+    });
+  });
 });
