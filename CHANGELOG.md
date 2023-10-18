@@ -1,5 +1,15 @@
 # @team-plain/typescript-sdk
 
+## 2.19.0
+
+### Minor Changes
+
+- 0869269: Add support for deleting customers (`deleteCustomer()`)
+
+### Patch Changes
+
+- f781425: Improve permission denied error handling so that if you are missing any permissions, the error now tells you which ones they are.
+
 ## 2.18.0
 
 ### Minor Changes
