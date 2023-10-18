@@ -4,7 +4,7 @@
 
 This is the typescript/node SDK for Plain.com's Core GraphQL API. It makes it easy to make common API calls in just a few lines of code.
 
-If you run into any issues please open an issue or get in touch with us at help@plain.com.
+If you run into any issues please open an issue or get in touch with us at <help@plain.com>.
 
 ## Basic example
 
@@ -24,7 +24,7 @@ if (result.error) {
 }
 ```
 
-You can find out how to make an API key in our documentation: https://docs.plain.com/core-api/authentication
+You can find out how to make an API key in our documentation: <https://docs.plain.com/core-api/authentication>
 
 ## Documentation
 
@@ -98,3 +98,9 @@ Equivalent to a 500 response. If this happens something unexpected within Plain 
 
 [(view source)](./src/error.ts)
 Fallback error type when something unexpected happens.
+
+## Contributing
+
+When submitting a PR, remember to run `pnpm changeset` and provide an easy to understand description of the changes you're making so that the changelog is populated.
+
+When a PR with a changelog is merged a seperate PR will be automatically raised which rolls up any merged changes, handles assigning a new version for release and publishing to NPM.
