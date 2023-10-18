@@ -1,0 +1,7 @@
+mutation deleteCustomer($input: DeleteCustomerInput!) {
+  deleteCustomer(input: $input) {
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

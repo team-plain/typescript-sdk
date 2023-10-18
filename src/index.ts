@@ -39,6 +39,7 @@ export type {
   CreateCustomerCardConfigInput,
   CreateIssueInput,
   DeleteCustomerCardConfigInput,
+  DeleteCustomerInput,
   RemoveCustomerFromCustomerGroupsInput,
   ReplyToEmailInput,
   ResolveIssueInput,

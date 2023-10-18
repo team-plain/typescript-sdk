@@ -25,6 +25,7 @@ import {
   type CustomerPartsFragment,
   CustomersDocument,
   DeleteCustomerCardConfigDocument,
+  DeleteCustomerDocument,
   DeleteIssueDocument,
   type EmailPartsFragment,
   type IssuePartsFragment,
@@ -184,6 +185,19 @@ export class PlainClient {
         customer: nonNullable(q.upsertCustomer.customer),
       };
     });
+  }
+
+  async deleteCustomer(
+    input: VariablesOf<typeof DeleteCustomerDocument>['input']
+  ): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: DeleteCustomerDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
   }
 
   async changeCustomerStatus(
