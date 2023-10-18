@@ -2,4 +2,4 @@
 '@team-plain/typescript-sdk': minor
 ---
 
-Add deleteCustomer to the client
+Add support for deleting customers (`deleteCustomer()`)
