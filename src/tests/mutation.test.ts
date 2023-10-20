@@ -125,7 +125,7 @@ describe('mutation test - create an issue', () => {
 
     const response = {
       data: {
-        createIssue: {
+        createThread: {
           issue: null,
           error: graphqlError,
         },

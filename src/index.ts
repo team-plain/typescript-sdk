@@ -30,7 +30,6 @@ export type {
 
   // Input types
   AddCustomerToCustomerGroupsInput,
-  ChangeCustomerStatusInput,
   CommunicationChannelInput,
   CreateCustomerCardConfigInput,
   DeleteCustomerCardConfigInput,
