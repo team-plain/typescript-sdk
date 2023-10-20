@@ -4,43 +4,59 @@ import { describe, expect, test } from 'vitest';
 import { PlainClient } from '..';
 import type { PlainSDKError } from '../error';
 import {
-  CreateIssueDocument,
+  CreateThreadDocument,
   type MutationErrorPartsFragment,
   MutationErrorType,
   MutationFieldErrorType,
+  type ThreadPartsFragment,
+  ThreadStatus,
 } from '../graphql/types';
 import { testHelpers } from './test-helpers';
 
 describe('mutation test - create an issue', () => {
   test('should handle an succesful mutation response', async () => {
     const customerId = 'c_123';
-    const issueTypeId = 'it_123';
+    const threadTitle = 'Test thread';
 
-    const issue = {
-      __typename: 'Issue',
-      id: 'i_01GZTC622DM8G4RFS8KXG62EGK',
-      issueKey: 'I-806',
-      status: 'OPEN',
-      customer: { id: customerId },
-      priority: { __typename: 'IssuePriority', label: 'High', value: 1 },
-      updatedAt: { __typename: 'DateTime', iso8601: '2023-05-07T05:50:35.085Z' },
-      updatedBy: { __typename: 'UserActor', userId: 'u_01FN4BEVKY3EQQ5BFC24M8JTJH' },
+    const thread: ThreadPartsFragment = {
+      __typename: 'Thread',
+      id: 'th_01HD47ZH1A14GH0HDYBQ9KHGKZ',
+      title: threadTitle,
+      assignedAt: null,
+      assignedTo: null,
       createdBy: { __typename: 'UserActor', userId: 'u_01FN4BEVKY3EQQ5BFC24M8JTJH' },
-      createdAt: { __typename: 'DateTime', iso8601: '2023-05-07T05:50:35.085Z' },
-      issueType: {
-        __typename: 'IssueType',
-        id: issueTypeId,
-        publicName: '$123',
-        isArchived: true,
-        defaultIssuePriority: { __typename: 'IssuePriority', label: 'High', value: 1 },
+      createdAt: {
+        __typename: 'DateTime',
+        iso8601: '2023-05-07T05:50:35.085Z',
+        unixTimestamp: '1683438635085',
       },
-      deletedAt: null,
+      customer: {
+        id: customerId,
+        __typename: 'Customer',
+      },
+      description: null,
+      externalId: null,
+      labels: [],
+      previewText: null,
+      priority: 1,
+      status: ThreadStatus.Todo,
+      statusChangedAt: {
+        __typename: 'DateTime',
+        iso8601: '2023-05-07T05:50:35.085Z',
+        unixTimestamp: '1683438635085',
+      },
+      updatedBy: { __typename: 'UserActor', userId: 'u_01FN4BEVKY3EQQ5BFC24M8JTJH' },
+      updatedAt: {
+        __typename: 'DateTime',
+        iso8601: '2023-05-07T05:50:35.085Z',
+        unixTimestamp: '1683438635085',
+      },
     };
 
     const response = {
       data: {
-        createIssue: {
-          issue,
+        createThread: {
+          thread,
           error: null,
         },
       },
@@ -54,28 +70,32 @@ describe('mutation test - create an issue', () => {
     globalThis.fetch = fetchSpy;
 
     const client = new PlainClient({ apiKey: 'abc' });
-    const result = await client.createIssue({
-      issueTypeId: issueTypeId,
-      customerId: customerId,
-      priorityValue: 1,
+    const result = await client.createThread({
+      components: [{ componentBadge: { badgeLabel: 'Badge' } }],
+      title: threadTitle,
+      customerIdentifier: {
+        customerId: customerId,
+      },
     });
 
     expectRequest({
       apiKey: 'abc',
       responseBody: {
-        query: print(CreateIssueDocument),
+        query: print(CreateThreadDocument),
         variables: {
           input: {
-            issueTypeId: issueTypeId,
-            customerId: customerId,
-            priorityValue: 1,
+            components: [{ componentBadge: { badgeLabel: 'Badge' } }],
+            title: threadTitle,
+            customerIdentifier: {
+              customerId: customerId,
+            },
           },
         },
       },
     });
 
     expect(result.error).toBeUndefined();
-    expect(result.data).toStrictEqual(issue);
+    expect(result.data).toStrictEqual(thread);
   });
 
   test('should handle an error mutation response', async () => {
@@ -86,14 +106,19 @@ describe('mutation test - create an issue', () => {
       code: 'input_validation',
       fields: [
         {
-          field: 'issueTypeId',
+          field: 'customerIdentifier.customerId',
           message: 'Required',
           type: MutationFieldErrorType.Required,
         },
         {
-          field: 'customerId',
+          field: 'title',
           message: 'Required',
           type: MutationFieldErrorType.Required,
+        },
+        {
+          field: 'components',
+          message: 'Array must contain at least 1 element(s)',
+          type: MutationFieldErrorType.Validation,
         },
       ],
     };
@@ -118,7 +143,13 @@ describe('mutation test - create an issue', () => {
     globalThis.fetch = fetchSpy;
 
     const client = new PlainClient({ apiKey: '123' });
-    const result = await client.createIssue({ customerId: '', issueTypeId: '', priorityValue: 1 });
+    const result = await client.createThread({
+      customerIdentifier: {
+        customerId: '',
+      },
+      title: '',
+      components: [],
+    });
 
     const err: PlainSDKError = {
       type: 'mutation_error',
@@ -130,12 +161,14 @@ describe('mutation test - create an issue', () => {
     expectRequest({
       apiKey: '123',
       responseBody: {
-        query: print(CreateIssueDocument),
+        query: print(CreateThreadDocument),
         variables: {
           input: {
-            issueTypeId: '',
-            customerId: '',
-            priorityValue: 1,
+            customerIdentifier: {
+              customerId: '',
+            },
+            title: '',
+            components: [],
           },
         },
       },
