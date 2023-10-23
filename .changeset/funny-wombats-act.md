@@ -16,7 +16,7 @@ The `customer` object has been simplified thanks to the introduction of the `Thr
 - `assignedAt`
 - `lastIdleAt`
 
-To accommodate this the following methods were removed from the client:
+The following related methods have been removed from the client:
 
 - `changeCustomerStatus`
 
@@ -24,7 +24,7 @@ To accommodate this the following methods were removed from the client:
 
 Issues have been removed and replaced with [Labels](https://www.plain.com/docs/graphql/labels).
 
-The following methods have been removed from the client:
+The following related methods have been removed from the client:
 
 - `createIssue`
 - `resolveIssue`
@@ -33,7 +33,7 @@ The following methods have been removed from the client:
 
 ## Custom Timeline Entries
 
-Custom timeline entries have been replaced with [Events](https://www.plain.com/docs/graphql/events)
+Custom timeline entries have been split into two more specific APIs: [threads](https://www.plain.com/docs/graphql/threads) and [events](https://www.plain.com/docs/graphql/events).
 
 The following methods have been removed from the client:
 
@@ -41,7 +41,7 @@ The following methods have been removed from the client:
 
 ## Chat
 
-Chat support in Plain has been removed, see [Contact Forms](https://www.plain.com/docs/contact-forms-setup) for our recommended replacement
+Chat support in Plain has been deprecated. As a replacement you may want to consider building a [contact form](https://www.plain.com/docs/contact-forms-setup) instead.
 
 The following methods have been removed from the client:
 
