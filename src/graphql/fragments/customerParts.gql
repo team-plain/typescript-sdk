@@ -11,20 +11,7 @@ fragment CustomerParts on Customer {
       ...DateTimeParts
     }
   }
-  status
-  statusChangedAt {
-    ...DateTimeParts
-  }
-  assignedToUser {
-    ...UserActorParts
-  }
-  assignedAt {
-    ...DateTimeParts
-  }
   updatedAt {
-    ...DateTimeParts
-  }
-  lastIdleAt {
     ...DateTimeParts
   }
   createdAt {

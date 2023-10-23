@@ -1,9 +1,0 @@
-fragment IssueTypeParts on IssueType {
-  __typename
-  id
-  publicName
-  isArchived
-  defaultIssuePriority {
-    ...IssuePriorityParts
-  }
-}
