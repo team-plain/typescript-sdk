@@ -1,5 +1,55 @@
 # @team-plain/typescript-sdk
 
+## 3.0.0
+
+### Major Changes
+
+- dfa8d1c: Breaking change `uiComponent.spacer({ spacingSize: 'M' })` is now `uiComponent.spacer({ size: 'M' })` to match naming convention with all other components.
+- dfa8d1c: Removed deprecated endpoints in support of the release of threads for Plain. For a full migration guide visit [Migrate to threads](https://www.plain.com/docs/migrate-to-threads) on our docs site.
+
+  The breaking changes are as follows:
+
+  ## Customer changes
+
+  The `customer` object has been simplified thanks to the introduction of the `Thread` object. Specifically the following fields were removed:
+
+  - `status`
+  - `statusChangedAt`
+  - `assignedToUser`
+  - `assignedAt`
+  - `lastIdleAt`
+
+  The following related methods have been removed from the client:
+
+  - `changeCustomerStatus`
+
+  ## Issue removal
+
+  Issues have been removed and replaced with [Labels](https://www.plain.com/docs/graphql/labels).
+
+  The following related methods have been removed from the client:
+
+  - `createIssue`
+  - `resolveIssue`
+  - `deleteIssue`
+  - `getIssues`
+
+  ## Custom Timeline Entries
+
+  Custom timeline entries have been split into two more specific APIs: [threads](https://www.plain.com/docs/graphql/threads) and [events](https://www.plain.com/docs/graphql/events).
+
+  The following methods have been removed from the client:
+
+  - `upsertCustomTimelineEntry`
+
+  ## Chat
+
+  Chat support in Plain has been deprecated. As a replacement you may want to consider building a [contact form](https://www.plain.com/docs/contact-forms-setup) instead.
+
+  The following methods have been removed from the client:
+
+  - `sendChat`
+
 ## 2.19.0
 
 ### Minor Changes
