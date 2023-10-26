@@ -1,0 +1,7 @@
+mutation replyToThread($input: ReplyToThreadInput!) {
+  replyToThread(input: $input) {
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
