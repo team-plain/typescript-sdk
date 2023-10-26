@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.0.1
+
+### Patch Changes
+
+- b8ab363: Added `replyToThread` support. This lets you quickly reply to any thread when, for example, building an autoresponder.
+
 ## 3.0.0
 
 ### Major Changes
