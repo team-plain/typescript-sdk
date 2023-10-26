@@ -77,7 +77,8 @@ Every mutation error will contain:
 - **fields**: an array containing all the fields that errored. Each field:
   - **field**: the name of the input field the error is for
   - **message**: an English technical description of the error. This error is usually meant to be read by a developer and not an end user.
-    type: one of `VALIDATION`, `REQUIRED`, `NOT_FOUND`. See [MutationFieldErrorType](https://docs.plain.com/core-api/reference/enums/mutation-field-error-type) for a description of each value.
+    type: one of `VALIDATION`, `REQUIRED`, `NOT_FOUND`. See [Error codes
+    ](https://www.plain.com/docs/graphql/error-codes) in our docs for a description of each value.
 
 ### BadRequestError
 

@@ -36,6 +36,7 @@ import {
   RemoveCustomerFromCustomerGroupsDocument,
   RemoveLabelsDocument,
   ReplyToEmailDocument,
+  ReplyToThreadDocument,
   SendNewEmailDocument,
   SnoozeThreadDocument,
   ThreadDocument,
@@ -283,6 +284,17 @@ export class PlainClient {
     return unwrapData(res, (q) => {
       return nonNullable(q.replyToEmail.email);
     });
+  }
+
+  async replyToThread(input: VariablesOf<typeof ReplyToThreadDocument>['input']): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: ReplyToThreadDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
   }
 
   async createAttachmentUploadUrl(
