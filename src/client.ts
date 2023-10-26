@@ -8,12 +8,9 @@ import {
   ArchiveLabelTypeDocument,
   AssignThreadDocument,
   type AttachmentUploadUrlPartsFragment,
-  ChangeCustomerStatusDocument,
   ChangeThreadPriorityDocument,
-  type ChatPartsFragment,
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
-  CreateIssueDocument,
   CreateThreadDocument,
   CustomerByEmailDocument,
   CustomerByIdDocument,
@@ -26,10 +23,7 @@ import {
   CustomersDocument,
   DeleteCustomerCardConfigDocument,
   DeleteCustomerDocument,
-  DeleteIssueDocument,
   type EmailPartsFragment,
-  type IssuePartsFragment,
-  IssuesDocument,
   type LabelPartsFragment,
   LabelTypeDocument,
   type LabelTypePartsFragment,
@@ -42,18 +36,14 @@ import {
   RemoveCustomerFromCustomerGroupsDocument,
   RemoveLabelsDocument,
   ReplyToEmailDocument,
-  ResolveIssueDocument,
-  SendChatDocument,
   SendNewEmailDocument,
   SnoozeThreadDocument,
   ThreadDocument,
   type ThreadPartsFragment,
   ThreadsDocument,
-  type TimelineEntryPartsFragment,
   UnassignThreadDocument,
   UpdateCustomerCardConfigDocument,
   UpsertCustomerDocument,
-  UpsertCustomTimelineEntryDocument,
   type UpsertResult,
   type WorkspacePartsFragment,
 } from './graphql/types';
@@ -200,84 +190,6 @@ export class PlainClient {
     return unwrapData(res, () => null);
   }
 
-  async changeCustomerStatus(
-    input: VariablesOf<typeof ChangeCustomerStatusDocument>['input']
-  ): SDKResult<{ customer: CustomerPartsFragment }> {
-    const res = await request(this.#ctx, {
-      query: ChangeCustomerStatusDocument,
-      variables: {
-        input,
-      },
-    });
-
-    return unwrapData(res, (q) => {
-      return {
-        customer: nonNullable(q.changeCustomerStatus.customer),
-      };
-    });
-  }
-
-  /**
-   * Create an issue for a customer. If you want you can override the default issue priority
-   * in your settings by specifying a priority manually here.
-   */
-  async createIssue(
-    input: VariablesOf<typeof CreateIssueDocument>['input']
-  ): SDKResult<IssuePartsFragment> {
-    const res = await request(this.#ctx, {
-      query: CreateIssueDocument,
-      variables: {
-        input,
-      },
-    });
-
-    return unwrapData(res, (q) => nonNullable(q.createIssue.issue));
-  }
-
-  /**
-   * Resolve an issue for a customer.
-   */
-  async resolveIssue(
-    input: VariablesOf<typeof ResolveIssueDocument>['input']
-  ): SDKResult<IssuePartsFragment> {
-    const res = await request(this.#ctx, {
-      query: ResolveIssueDocument,
-      variables: {
-        input,
-      },
-    });
-
-    return unwrapData(res, (q) => nonNullable(q.resolveIssue.issue));
-  }
-
-  async deleteIssue(
-    input: VariablesOf<typeof DeleteIssueDocument>['input']
-  ): SDKResult<IssuePartsFragment> {
-    const res = await request(this.#ctx, {
-      query: DeleteIssueDocument,
-      variables: {
-        input,
-      },
-    });
-
-    return unwrapData(res, (q) => nonNullable(q.deleteIssue.issue));
-  }
-
-  async getIssues(variables: VariablesOf<typeof IssuesDocument>): SDKResult<{
-    issues: IssuePartsFragment[];
-    pageInfo: PageInfoPartsFragment;
-  }> {
-    const res = await request(this.#ctx, {
-      query: IssuesDocument,
-      variables,
-    });
-
-    return unwrapData(res, (q) => ({
-      pageInfo: q.issues.pageInfo,
-      issues: q.issues.edges.map((edge) => edge.node),
-    }));
-  }
-
   /**
    * If the customer group is not found this will return null.
    */
@@ -343,29 +255,6 @@ export class PlainClient {
     return unwrapData(res, () => null);
   }
 
-  /**
-   * Add a custom timeline entry to a customer's timeline.
-   *
-   * This can be used to power custom contact forms, log events from your own systems and much more.
-   */
-  async upsertCustomTimelineEntry(
-    input: VariablesOf<typeof UpsertCustomTimelineEntryDocument>['input']
-  ): SDKResult<{ result: UpsertResult; timelineEntry: TimelineEntryPartsFragment }> {
-    const res = await request(this.#ctx, {
-      query: UpsertCustomTimelineEntryDocument,
-      variables: {
-        input,
-      },
-    });
-
-    return unwrapData(res, (q) => {
-      return {
-        result: nonNullable(q.upsertCustomTimelineEntry.result),
-        timelineEntry: nonNullable(q.upsertCustomTimelineEntry.timelineEntry),
-      };
-    });
-  }
-
   async sendNewEmail(
     input: VariablesOf<typeof SendNewEmailDocument>['input']
   ): SDKResult<EmailPartsFragment> {
@@ -393,21 +282,6 @@ export class PlainClient {
 
     return unwrapData(res, (q) => {
       return nonNullable(q.replyToEmail.email);
-    });
-  }
-
-  async sendChat(
-    input: VariablesOf<typeof SendChatDocument>['input']
-  ): SDKResult<ChatPartsFragment> {
-    const res = await request(this.#ctx, {
-      query: SendChatDocument,
-      variables: {
-        input,
-      },
-    });
-
-    return unwrapData(res, (q) => {
-      return nonNullable(q.sendChat.chat);
     });
   }
 

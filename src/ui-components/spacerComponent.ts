@@ -19,10 +19,10 @@ function spacingSizeToEnum(size?: Size): ComponentSpacerSize | null {
 /**
  * Returns a ComponentInput which can be used with the API.
  */
-export function spacerComponent(args: { spacingSize?: Size }): ComponentInput {
+export function spacerComponent(args: { size?: Size }): ComponentInput {
   return {
     componentSpacer: {
-      spacerSize: spacingSizeToEnum(args.spacingSize),
+      spacerSize: spacingSizeToEnum(args.size),
     },
   };
 }
