@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.1.0
+
+### Minor Changes
+
+- 0901359: Add ability to get a user by email (userByEmail)
+
 ## 3.0.1
 
 ### Patch Changes
