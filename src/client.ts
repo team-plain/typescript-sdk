@@ -46,6 +46,8 @@ import {
   UpdateCustomerCardConfigDocument,
   UpsertCustomerDocument,
   type UpsertResult,
+  UserByEmailDocument,
+  type UserPartsFragment,
   type WorkspacePartsFragment,
 } from './graphql/types';
 import { request } from './request';
@@ -106,6 +108,20 @@ export class PlainClient {
       query: args.query,
       variables: args.variables,
     });
+  }
+
+  /**
+   * Get a paginated list of customers.
+   */
+  async userByEmail(
+    variables: VariablesOf<typeof UserByEmailDocument>
+  ): SDKResult<UserPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: UserByEmailDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => q.userByEmail || null);
   }
 
   /**

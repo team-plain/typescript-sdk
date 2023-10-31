@@ -16,3 +16,20 @@ export async function assignThread() {
     console.log(res.data);
   }
 }
+
+export async function userExample() {
+  const client = new PlainClient({
+    apiKey: process.env.API_KEY || '',
+  });
+
+  const res = await client.userByEmail({
+    email: 'foo@foo.com',
+  });
+
+  if (res.error) {
+    console.error(res.error);
+  } else {
+    console.log(`Thread assigned!`);
+    console.log(res.data);
+  }
+}
