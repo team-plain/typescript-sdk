@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.2.0
+
+### Minor Changes
+
+- 112e6cf: Rename `userByEmail` to `getUserByEmail` and deprecate old method.
+
 ## 3.1.0
 
 ### Minor Changes
