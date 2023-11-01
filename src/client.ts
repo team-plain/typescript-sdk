@@ -112,8 +112,23 @@ export class PlainClient {
 
   /**
    * Get a paginated list of customers.
+   * @deprecated "use `getUserByEmail" instead
    */
   async userByEmail(
+    variables: VariablesOf<typeof UserByEmailDocument>
+  ): SDKResult<UserPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: UserByEmailDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => q.userByEmail || null);
+  }
+
+  /**
+   * Get a paginated list of customers.
+   */
+  async getUserByEmail(
     variables: VariablesOf<typeof UserByEmailDocument>
   ): SDKResult<UserPartsFragment | null> {
     const res = await request(this.#ctx, {
