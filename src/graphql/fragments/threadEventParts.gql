@@ -2,6 +2,7 @@ fragment ThreadEventParts on ThreadEvent {
   id
   threadId
   title
+  customerId
   components {
     ...EventComponentParts
   }
