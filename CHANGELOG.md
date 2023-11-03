@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.3.0
+
+### Minor Changes
+
+- 8ce2a2f: Adds the ability to create customer and thread events via the `createCustomerEvent` and `createThreadEvent` methods.
+
 ## 3.2.0
 
 ### Minor Changes
