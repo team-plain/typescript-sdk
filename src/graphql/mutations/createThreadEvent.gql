@@ -1,0 +1,10 @@
+mutation createThreadEvent($input: CreateThreadEventInput!) {
+  createThreadEvent(input: $input) {
+    threadEvent {
+      ...ThreadEventParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

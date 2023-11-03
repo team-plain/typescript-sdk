@@ -1,0 +1,20 @@
+fragment CustomerEventParts on CustomerEvent {
+  id
+  customerId
+  title
+  components {
+    ...EventComponentParts
+  }
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...ActorParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+  updatedBy {
+    ...ActorParts
+  }
+}

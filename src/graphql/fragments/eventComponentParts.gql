@@ -1,0 +1,58 @@
+fragment SharedComponentFragment on ComponentRowContent {
+  __typename
+  ... on ComponentLinkButton {
+    label
+    url
+  }
+  ... on ComponentDivider {
+    spacingSize
+  }
+  ... on ComponentText {
+    text
+  }
+  ... on ComponentPlainText {
+    plainTextSize
+    plainTextColor
+    plainText
+  }
+  ... on ComponentSpacer {
+    spacerSize
+  }
+  ... on ComponentBadge {
+    badgeColor
+    badgeLabel
+  }
+  ... on ComponentCopyButton {
+    copyButtonTooltipLabel
+    copyButtonValue
+  }
+}
+
+fragment ComponentRowFragment on CustomTimelineEntryComponent {
+  ... on ComponentRow {
+    __typename
+    rowAsideContent {
+      ...SharedComponentFragment
+    }
+    rowMainContent {
+      ...SharedComponentFragment
+    }
+  }
+}
+
+fragment ContainerContentFragment on CustomTimelineEntryComponent {
+  ... on ComponentContainer {
+    __typename
+    containerContent {
+      ...SharedComponentFragment
+      ...ComponentRowFragment
+    }
+  }
+}
+
+fragment EventComponentParts on EventComponent {
+  __typename
+  ...SharedComponentFragment
+  ...ComponentRowFragment
+  ...ContainerContentFragment
+}

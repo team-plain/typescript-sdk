@@ -1,0 +1,20 @@
+fragment ThreadEventParts on ThreadEvent {
+  id
+  threadId
+  title
+  components {
+    ...EventComponentParts
+  }
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...ActorParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+  updatedBy {
+    ...ActorParts
+  }
+}

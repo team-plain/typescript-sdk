@@ -1,0 +1,10 @@
+mutation createCustomerEvent($input: CreateCustomerEventInput!) {
+  createCustomerEvent(input: $input) {
+    customerEvent {
+      ...CustomerEventParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
