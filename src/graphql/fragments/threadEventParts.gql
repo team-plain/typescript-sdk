@@ -3,9 +3,6 @@ fragment ThreadEventParts on ThreadEvent {
   threadId
   title
   customerId
-  components {
-    ...EventComponentParts
-  }
   createdAt {
     ...DateTimeParts
   }

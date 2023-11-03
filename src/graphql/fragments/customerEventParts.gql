@@ -2,9 +2,6 @@ fragment CustomerEventParts on CustomerEvent {
   id
   customerId
   title
-  components {
-    ...EventComponentParts
-  }
   createdAt {
     ...DateTimeParts
   }
