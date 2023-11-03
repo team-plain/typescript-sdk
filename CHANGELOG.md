@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- 8ce2a2f: Adds ability to create customer and thread events
+- 8ce2a2f: Adds the ability to create customer and thread events via the `createCustomerEvent` and `createThreadEvent` methods.
 
 ## 3.2.0
 
