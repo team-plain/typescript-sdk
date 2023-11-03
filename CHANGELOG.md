@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.3.0
+
+### Minor Changes
+
+- 8ce2a2f: Adds ability to create customer and thread events
+
 ## 3.2.0
 
 ### Minor Changes
