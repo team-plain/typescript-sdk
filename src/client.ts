@@ -11,10 +11,13 @@ import {
   ChangeThreadPriorityDocument,
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
+  CreateCustomerEventDocument,
   CreateThreadDocument,
+  CreateThreadEventDocument,
   CustomerByEmailDocument,
   CustomerByIdDocument,
   type CustomerCardConfigPartsFragment,
+  type CustomerEventPartsFragment,
   CustomerGroupByIdDocument,
   type CustomerGroupMembershipPartsFragment,
   type CustomerGroupPartsFragment,
@@ -40,6 +43,7 @@ import {
   SendNewEmailDocument,
   SnoozeThreadDocument,
   ThreadDocument,
+  type ThreadEventPartsFragment,
   type ThreadPartsFragment,
   ThreadsDocument,
   UnassignThreadDocument,
@@ -629,5 +633,33 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => q.labelType);
+  }
+
+  /** Create a Customer Event */
+  async createCustomerEvent(
+    input: VariablesOf<typeof CreateCustomerEventDocument>['input']
+  ): SDKResult<CustomerEventPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: CreateCustomerEventDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.createCustomerEvent.customerEvent));
+  }
+
+  /** Create a Thread Event */
+  async createThreadEvent(
+    input: VariablesOf<typeof CreateThreadEventDocument>['input']
+  ): SDKResult<ThreadEventPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: CreateThreadEventDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.createThreadEvent.threadEvent));
   }
 }

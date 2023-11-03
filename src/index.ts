@@ -43,6 +43,8 @@ export type {
   UpsertCustomTimelineEntryInput,
   CreateThreadInput,
   ChangeThreadPriorityInput,
+  CreateCustomerEventInput,
+  CreateThreadEventInput,
 
   // Fragment types
   ActorPartsFragment,
@@ -68,6 +70,8 @@ export type {
   ThreadPartsFragment,
   LabelTypePartsFragment,
   LabelPartsFragment,
+  CustomerEventPartsFragment,
+  ThreadEventPartsFragment,
 } from './graphql/types';
 
 export type {

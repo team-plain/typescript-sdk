@@ -1,0 +1,18 @@
+fragment ThreadEventParts on ThreadEvent {
+  id
+  threadId
+  title
+  customerId
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...ActorParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+  updatedBy {
+    ...ActorParts
+  }
+}
