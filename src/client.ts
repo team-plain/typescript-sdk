@@ -42,6 +42,7 @@ import {
   ReplyToThreadDocument,
   SendNewEmailDocument,
   SnoozeThreadDocument,
+  ThreadByExternalIdDocument,
   ThreadDocument,
   type ThreadEventPartsFragment,
   type ThreadPartsFragment,
@@ -443,6 +444,21 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => q.thread);
+  }
+
+  /**
+   * Get a single thread by external id. A thread's external id is unique per customer,
+   * hence why the customer id is also required.
+   */
+  async getThreadByExternalId(
+    variables: VariablesOf<typeof ThreadByExternalIdDocument>
+  ): SDKResult<ThreadPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: ThreadByExternalIdDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => q.threadByExternalId);
   }
 
   /**

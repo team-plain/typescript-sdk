@@ -1,0 +1,5 @@
+query threadByExternalId($customerId: ID!, $externalId: ID!) {
+  threadByExternalId(customerId: $customerId, externalId: $externalId) {
+    ...ThreadParts
+  }
+}
