@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.3.1
+
+### Patch Changes
+
+- 69f6239: Adds the ability to get a thread by its external id
+
 ## 3.3.0
 
 ### Minor Changes
