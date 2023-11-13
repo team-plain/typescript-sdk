@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.4.0
+
+### Minor Changes
+
+- 0d9b3d6: Updates the customer fragment so that it also fetches customer groups
+
 ## 3.3.1
 
 ### Patch Changes
