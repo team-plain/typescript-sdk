@@ -58,7 +58,32 @@ import {
 import { request } from './request';
 import type { Result } from './result';
 
-type SDKResult<T> = Promise<Result<T, PlainSDKError>>;
+type SDKResult<T> = Promise<Result<Transform<T>, PlainSDKError>>;
+
+// Transform takes a GraphQL Fragment and transforms it into a type in which
+// all of its connection-like fields (e.g. fields which have an `edges`) property
+// are flattened into an array. For example:
+//
+// Given the type:
+//
+// type Fragment = {
+//     customerGroupMemberships: {
+//        edges: Array<{ node: CustomerGroupMembershipPartsFragment }>
+//     }
+// }
+//
+// When we apply Transform to it, we get:
+//
+// type Transform<Fragment> = {
+// {
+//     customerGroupMemberships: Array<CustomerGroupMembershipPartsFragment>
+// }
+//
+type Transform<T> = T extends { edges: Array<{ node: infer E }> }
+  ? Array<Transform<E>>
+  : T extends object
+  ? { [K in keyof T]: Transform<T[K]> }
+  : T;
 
 function nonNullable<T>(x: T | null | undefined): T {
   if (x === null || x === undefined) {
@@ -159,7 +184,10 @@ export class PlainClient {
 
     return unwrapData(res, (q) => ({
       pageInfo: q.customers.pageInfo,
-      customers: q.customers.edges.map((edge) => edge.node),
+      customers: q.customers.edges.map((edge) => ({
+        ...edge.node,
+        customerGroupMemberships: edge.node.customerGroupMemberships.edges.map((e) => e.node),
+      })),
       totalCount: q.customers.totalCount,
     }));
   }
@@ -175,7 +203,15 @@ export class PlainClient {
       variables,
     });
 
-    return unwrapData(res, (q) => q.customer);
+    return unwrapData(res, (q) => {
+      if (!q.customer) {
+        return null;
+      }
+      return {
+        ...q.customer,
+        customerGroupMemberships: q.customer.customerGroupMemberships.edges.map((e) => e.node),
+      };
+    });
   }
 
   /**
@@ -189,7 +225,18 @@ export class PlainClient {
       variables,
     });
 
-    return unwrapData(res, (q) => q.customerByEmail);
+    return unwrapData(res, (q) => {
+      if (!q.customerByEmail) {
+        return null;
+      }
+
+      return {
+        ...q.customerByEmail,
+        customerGroupMemberships: q.customerByEmail.customerGroupMemberships.edges.map(
+          (e) => e.node
+        ),
+      };
+    });
   }
 
   /**
@@ -207,9 +254,13 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => {
+      const customer = nonNullable(q.upsertCustomer.customer);
       return {
         result: nonNullable(q.upsertCustomer.result),
-        customer: nonNullable(q.upsertCustomer.customer),
+        customer: {
+          ...customer,
+          customerGroupMemberships: customer.customerGroupMemberships.edges.map((e) => e.node),
+        },
       };
     });
   }

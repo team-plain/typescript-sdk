@@ -1,4 +1,5 @@
 fragment CustomerGroupMembershipParts on CustomerGroupMembership {
+  __typename
   customerId
   createdAt {
     ...DateTimeParts

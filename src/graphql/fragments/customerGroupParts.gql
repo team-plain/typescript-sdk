@@ -1,4 +1,5 @@
 fragment CustomerGroupParts on CustomerGroup {
+  __typename
   id
   name
   key

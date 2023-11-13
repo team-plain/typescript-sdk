@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 
 import { PlainClient } from '..';
 import type { PlainSDKError } from '../error';
-import { CustomerByIdDocument } from '../graphql/types';
+import { CustomerByIdDocument, type CustomerPartsFragment } from '../graphql/types';
 import { PlainGraphQLError } from '../graphql-utlities';
 import { testHelpers } from './test-helpers';
 
@@ -11,7 +11,7 @@ describe('query test - customer by id', () => {
   test('should return a valid customer', async () => {
     const customerId = 'c_123';
 
-    const response = {
+    const response: { data: { customer: CustomerPartsFragment } } = {
       data: {
         customer: {
           __typename: 'Customer',
@@ -22,17 +22,27 @@ describe('query test - customer by id', () => {
           email: {
             email: 'test@gmail.com',
             isVerified: true,
-            verifiedAt: { __typename: 'DateTime', iso8601: '2023-03-20T13:06:37.918Z' },
+            verifiedAt: {
+              __typename: 'DateTime',
+              iso8601: '2023-03-20T13:06:37.918Z',
+              unixTimestamp: '1699890305',
+            },
           },
-          status: 'ACTIVE',
-          statusChangedAt: { __typename: 'DateTime', iso8601: '2023-05-01T09:54:51.715Z' },
-          assignedToUser: { __typename: 'UserActor', userId: 'u_123' },
-          assignedAt: { __typename: 'DateTime', iso8601: '2023-04-10T15:01:54.499Z' },
-          updatedAt: { __typename: 'DateTime', iso8601: '2023-05-01T09:54:51.715Z' },
-          lastIdleAt: { __typename: 'DateTime', iso8601: '2023-03-20T13:06:47.492Z' },
-          createdAt: { __typename: 'DateTime', iso8601: '2023-03-20T13:06:37.961Z' },
+          updatedAt: {
+            __typename: 'DateTime',
+            iso8601: '2023-05-01T09:54:51.715Z',
+            unixTimestamp: '1699890305',
+          },
+          createdAt: {
+            __typename: 'DateTime',
+            iso8601: '2023-03-20T13:06:37.961Z',
+            unixTimestamp: '1699890305',
+          },
           createdBy: {},
           markedAsSpamAt: null,
+          customerGroupMemberships: {
+            edges: [],
+          },
         },
       },
     };
@@ -56,7 +66,10 @@ describe('query test - customer by id', () => {
     });
 
     expect(result.error).toBeUndefined();
-    expect(result.data).toEqual(response.data.customer);
+    expect(result.data).toEqual({
+      ...response.data.customer,
+      customerGroupMemberships: [],
+    });
   });
 
   test('should accept a null customer when not found', async () => {

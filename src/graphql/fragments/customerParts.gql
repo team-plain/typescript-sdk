@@ -23,4 +23,11 @@ fragment CustomerParts on Customer {
   markedAsSpamAt {
     ...DateTimeParts
   }
+  customerGroupMemberships {
+    edges {
+      node {
+        ...CustomerGroupMembershipParts
+      }
+    }
+  }
 }
