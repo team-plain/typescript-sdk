@@ -1,4 +1,5 @@
 fragment CustomerEventParts on CustomerEvent {
+  __typename
   id
   customerId
   title
