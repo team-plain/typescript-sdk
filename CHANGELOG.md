@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.4.1
+
+### Patch Changes
+
+- 1cdb361: Export missing types
+
 ## 3.4.0
 
 ### Minor Changes
