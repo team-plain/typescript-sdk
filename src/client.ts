@@ -58,9 +58,9 @@ import {
 import { request } from './request';
 import type { Result } from './result';
 
-type SDKResult<T> = Promise<Result<Transform<T>, PlainSDKError>>;
+type SDKResult<T> = Promise<Result<Public<T>, PlainSDKError>>;
 
-// Transform takes a GraphQL Fragment and transforms it into a type in which
+// Public takes a GraphQL Fragment and transforms it into a type in which
 // all of its connection-like fields (e.g. fields which have an `edges`) property
 // are flattened into an array. For example:
 //
@@ -72,17 +72,17 @@ type SDKResult<T> = Promise<Result<Transform<T>, PlainSDKError>>;
 //     }
 // }
 //
-// When we apply Transform to it, we get:
+// When we apply Public to it, we get:
 //
-// type Transform<Fragment> = {
+// type Public<Fragment> = {
 // {
 //     customerGroupMemberships: Array<CustomerGroupMembershipPartsFragment>
 // }
 //
-type Transform<T> = T extends { edges: Array<{ node: infer E }> }
-  ? Array<Transform<E>>
+export type Public<T> = T extends { edges: Array<{ node: infer E }> }
+  ? Array<Public<E>>
   : T extends object
-  ? { [K in keyof T]: Transform<T[K]> }
+  ? { [K in keyof T]: Public<T[K]> }
   : T;
 
 function nonNullable<T>(x: T | null | undefined): T {
