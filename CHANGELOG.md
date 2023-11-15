@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.5.0
+
+### Minor Changes
+
+- 3d7148a: Export Public fragment types, which flatten connection object edges into arrays
+
 ## 3.4.1
 
 ### Patch Changes
