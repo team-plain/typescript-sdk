@@ -8,7 +8,9 @@
   "scripts": {
     "build": "rm -rf dist && rollup -c",
     "build:docs": "typedoc --plugin typedoc-plugin-missing-exports src/index.ts",
-    "codegen": "graphql-codegen",
+    "codegen": "pnpm run codegen:graphql && pnpm run codegen:webhooks",
+    "codegen:graphql": "graphql-codegen",
+    "codegen:webhooks": "sh ./scripts/codegen-webhooks.sh",
     "typecheck": "tsc --noEmit",
     "lint": "pnpm run lint:eslint && pnpm run lint:prettier",
     "lint:eslint": "eslint 'src/**/*.ts'",
@@ -33,6 +35,7 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^2.0.0",
+    "json-schema-to-typescript": "^13.1.1",
     "rollup": "^3.21.5",
     "rollup-plugin-dts": "^5.3.0",
     "rollup-plugin-esbuild": "^5.0.0",
