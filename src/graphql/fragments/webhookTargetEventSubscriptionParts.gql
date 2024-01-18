@@ -1,0 +1,4 @@
+fragment WebhookTargetEventSubscriptionParts on WebhookTargetEventSubscription {
+  __typename
+  eventType
+}

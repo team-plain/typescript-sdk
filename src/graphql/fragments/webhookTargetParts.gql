@@ -1,0 +1,21 @@
+fragment WebhookTargetParts on WebhookTarget {
+  id
+  url
+  isEnabled
+  description
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...ActorParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+  updatedBy {
+    ...ActorParts
+  }
+  eventSubscriptions {
+    ...WebhookTargetEventSubscriptionParts
+  }
+}

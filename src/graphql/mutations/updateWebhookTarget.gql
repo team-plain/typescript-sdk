@@ -1,0 +1,10 @@
+mutation updateWebhookTarget($input: UpdateWebhookTargetInput!) {
+  updateWebhookTarget(input: $input) {
+    webhookTarget {
+      ...WebhookTargetParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
