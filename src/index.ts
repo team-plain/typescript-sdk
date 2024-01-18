@@ -80,6 +80,7 @@ export type LabelTypePartsFragment = Public<OriginalLabelTypePartsFragment>;
 export type LabelPartsFragment = Public<OriginalLabelPartsFragment>;
 export type CustomerEventPartsFragment = Public<OriginalCustomerEventPartsFragment>;
 export type ThreadEventPartsFragment = Public<OriginalThreadEventPartsFragment>;
+export type WebhookTargetPartsFragment = Public<OriginalThreadEventPartsFragment>;
 
 export type {
   // Query arguments
@@ -91,7 +92,6 @@ export type {
   AddCustomerToCustomerGroupsInput,
   ArchiveLabelTypeInput,
   ChangeThreadPriorityInput,
-  CommunicationChannelInput,
   CreateAttachmentDownloadUrlInput,
   CreateCustomerCardConfigInput,
   CreateCustomerEventInput,
@@ -110,6 +110,9 @@ export type {
   UpdateCustomerCardConfigInput,
   UpsertCustomerInput,
   UpsertCustomTimelineEntryInput,
+  CreateWebhookTargetInput,
+  DeleteWebhookTargetInput,
+  UpdateWebhookTargetInput,
 } from './graphql/types';
 
 export type {

@@ -1,0 +1,10 @@
+mutation createWebhookTarget($input: CreateWebhookTargetInput!) {
+  createWebhookTarget(input: $input) {
+    webhookTarget {
+      ...WebhookTargetParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
