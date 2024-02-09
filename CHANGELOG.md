@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.7.0
+
+### Minor Changes
+
+- a2ab671: Expose ComponentInput and EventComponentInput
+
 ## 3.6.0
 
 ### Minor Changes
