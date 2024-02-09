@@ -815,6 +815,8 @@ export type Customer = {
   assignedAt: Maybe<DateTime>;
   /** The user the customer is assigned to. */
   assignedToUser: Maybe<UserActor>;
+  /** The avatar URL of the customer. */
+  avatarUrl: Maybe<Scalars['String']>;
   /** The company the customer belongs to. */
   company: Maybe<Company>;
   createdAt: DateTime;
@@ -1480,11 +1482,21 @@ export enum EmailAuthenticity {
   Unknown = 'UNKNOWN'
 }
 
+export type EmailBounce = {
+  __typename?: 'EmailBounce';
+  bouncedAt: DateTime;
+  isSendRetriable: Scalars['Boolean'];
+  recipient: EmailParticipant;
+};
+
 export type EmailEntry = {
   __typename?: 'EmailEntry';
   additionalRecipients: Array<EmailParticipant>;
+  /** All the attachments included in this email. */
   attachments: Array<Attachment>;
   authenticity: EmailAuthenticity;
+  /** If any of the recipients bounces the email, this will contain the list of bounces. */
+  bounces: Array<EmailBounce>;
   emailId: Scalars['ID'];
   from: EmailParticipant;
   /** The full email's markdown content, including all replies. */
@@ -1502,7 +1514,9 @@ export type EmailEntry = {
   markdownContent: Maybe<Scalars['String']>;
   /** When the email was received by Plain. */
   receivedAt: Maybe<DateTime>;
-  /** When the email was sent. Initially set to null while the email is being processed. */
+  /** Informs whether the email was sent successfully, bounced or failed. If the email is still being sent, the status will be 'PENDING'. Only set for outbound emails. */
+  sendStatus: Maybe<EmailSendStatus>;
+  /** When the email was sent. Only set for outbound emails and will be null until the email is sent. */
   sentAt: Maybe<DateTime>;
   subject: Maybe<Scalars['String']>;
   /** The most recent email's text content. */
@@ -1527,6 +1541,17 @@ export type EmailPreviewUrl = {
   expiresAt: DateTime;
   previewUrl: Scalars['String'];
 };
+
+export enum EmailSendStatus {
+  /** Some (or all) of the recipients bounced the email, meaning they did not recieve it. Check 'bounces' for more details on which recipients bounced. */
+  Bounced = 'BOUNCED',
+  /** The email failed to send. This will happen if the main recipient (To) bounced the email, or if there was an unexpected error sending the email. */
+  Failed = 'FAILED',
+  /** The email is being sent. */
+  Pending = 'PENDING',
+  /** The email was sent successfully to all recipients. */
+  Sent = 'SENT'
+}
 
 export type EmailSignature = {
   __typename?: 'EmailSignature';
@@ -1559,6 +1584,17 @@ export type FileSize = {
   bytes: Scalars['Int'];
   kiloBytes: Scalars['Float'];
   megaBytes: Scalars['Float'];
+};
+
+export type ForkThreadInput = {
+  threadId: Scalars['ID'];
+  timelineEntryId: Scalars['ID'];
+};
+
+export type ForkThreadOutput = {
+  __typename?: 'ForkThreadOutput';
+  error: Maybe<MutationError>;
+  thread: Maybe<Thread>;
 };
 
 export type IntInput = {
@@ -1798,6 +1834,7 @@ export type Mutation = {
   deleteWorkspaceInvite: DeleteWorkspaceInviteOutput;
   deleteWorkspaceSlackChannelIntegration: DeleteWorkspaceSlackChannelIntegrationOutput;
   deleteWorkspaceSlackIntegration: DeleteWorkspaceSlackIntegrationOutput;
+  forkThread: ForkThreadOutput;
   inviteUserToWorkspace: InviteUserToWorkspaceOutput;
   /** Marks a customer as spam. */
   markCustomerAsSpam: MarkCustomerAsSpamOutput;
@@ -1848,6 +1885,7 @@ export type Mutation = {
   /** Updates a setting. */
   updateSetting: UpdateSettingOutput;
   updateSnippet: UpdateSnippetOutput;
+  updateThreadTitle: UpdateThreadTitleOutput;
   /** Updates a webhook target. */
   updateWebhookTarget: UpdateWebhookTargetOutput;
   updateWorkspace: UpdateWorkspaceOutput;
@@ -2096,6 +2134,11 @@ export type MutationDeleteWorkspaceSlackIntegrationArgs = {
 };
 
 
+export type MutationForkThreadArgs = {
+  input: ForkThreadInput;
+};
+
+
 export type MutationInviteUserToWorkspaceArgs = {
   input: InviteUserToWorkspaceInput;
 };
@@ -2228,6 +2271,11 @@ export type MutationUpdateSettingArgs = {
 
 export type MutationUpdateSnippetArgs = {
   input: UpdateSnippetInput;
+};
+
+
+export type MutationUpdateThreadTitleArgs = {
+  input: UpdateThreadTitleInput;
 };
 
 
@@ -2412,6 +2460,11 @@ export type Query = {
   thread: Maybe<Thread>;
   /** Get a thread by its external ID. A thread's external ID is unique within a customer, hence why the customer ID is required. */
   threadByExternalId: Maybe<Thread>;
+  /**
+   * Gets all slack users involved in a thread
+   * Note: This endpoint currently only returns a max of 25 users, pagination is NYI.
+   */
+  threadSlackUsers: SlackUserConnection;
   threads: ThreadConnection;
   timelineEntries: TimelineEntryConnection;
   timelineEntry: Maybe<TimelineEntry>;
@@ -2597,6 +2650,15 @@ export type QueryThreadArgs = {
 export type QueryThreadByExternalIdArgs = {
   customerId: Scalars['ID'];
   externalId: Scalars['ID'];
+};
+
+
+export type QueryThreadSlackUsersArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  threadId: Scalars['ID'];
 };
 
 
@@ -2954,6 +3016,7 @@ export type SlackMessageEntry = {
   customerId: Scalars['ID'];
   deletedOnSlackAt: Maybe<DateTime>;
   lastEditedOnSlackAt: Maybe<DateTime>;
+  reactions: Array<SlackReaction>;
   relatedThread: Maybe<SlackMessageEntryRelatedThread>;
   slackMessageLink: Scalars['String'];
   text: Scalars['String'];
@@ -2964,14 +3027,42 @@ export type SlackMessageEntryRelatedThread = {
   threadId: Scalars['ID'];
 };
 
+export type SlackReaction = {
+  __typename?: 'SlackReaction';
+  actors: Array<Actor>;
+  imageUrl: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
 export type SlackReplyEntry = {
   __typename?: 'SlackReplyEntry';
   attachments: Array<Attachment>;
   customerId: Scalars['ID'];
   deletedOnSlackAt: Maybe<DateTime>;
   lastEditedOnSlackAt: Maybe<DateTime>;
+  reactions: Array<SlackReaction>;
   slackMessageLink: Scalars['String'];
   text: Scalars['String'];
+};
+
+export type SlackUser = {
+  __typename?: 'SlackUser';
+  fullName: Scalars['String'];
+  handle: Scalars['String'];
+  slackAvatarUrl72px: Maybe<Scalars['String']>;
+  slackUserId: Scalars['ID'];
+};
+
+export type SlackUserConnection = {
+  __typename?: 'SlackUserConnection';
+  edges: Array<SlackUserEdge>;
+  pageInfo: PageInfo;
+};
+
+export type SlackUserEdge = {
+  __typename?: 'SlackUserEdge';
+  cursor: Scalars['String'];
+  node: SlackUser;
 };
 
 export type Snippet = {
@@ -3539,6 +3630,17 @@ export type UpdateSnippetOutput = {
   snippet: Maybe<Snippet>;
 };
 
+export type UpdateThreadTitleInput = {
+  threadId: Scalars['ID'];
+  title: Scalars['String'];
+};
+
+export type UpdateThreadTitleOutput = {
+  __typename?: 'UpdateThreadTitleOutput';
+  error: Maybe<MutationError>;
+  thread: Maybe<Thread>;
+};
+
 export type UpdateWebhookTargetInput = {
   description?: InputMaybe<StringInput>;
   eventSubscriptions?: InputMaybe<Array<WebhookTargetEventSubscriptionInput>>;
@@ -3679,6 +3781,8 @@ export enum UpsertResult {
 
 export type User = {
   __typename?: 'User';
+  /** The avatar URL of the user. */
+  avatarUrl: Maybe<Scalars['String']>;
   createdAt: DateTime;
   createdBy: InternalActor;
   deletedAt: Maybe<DateTime>;
