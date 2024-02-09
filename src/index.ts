@@ -96,6 +96,8 @@ export type {
   CreateCustomerCardConfigInput,
   CreateCustomerEventInput,
   CreateThreadInput,
+  ComponentInput,
+  EventComponentInput,
   CreateThreadEventInput,
   DeleteCustomerCardConfigInput,
   DeleteCustomerInput,
