@@ -24,4 +24,4 @@ docs
 
 # Temporary
 webhook-schema.json
-webhook-schema-resolved.json
+webhook-schema.ts

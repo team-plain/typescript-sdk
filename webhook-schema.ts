@@ -11,8 +11,6 @@ export type Datetime = string;
 export type InternalActor = UserActor | MachineUserActor | SystemActor;
 export type CustomerGroupMemberships = CustomerGroupMembership[];
 export type Actor = UserActor | MachineUserActor | SystemActor | CustomerActor;
-export type IssueTypeIcon = string;
-export type IssueStatus = "OPEN" | "RESOLVED";
 export type EmailActor =
   | UserActor
   | CustomerActor
@@ -103,39 +101,7 @@ export type ThreadAssignee =
   | User
   | MachineUser
   | {
-      id:
-        | "customer_status_state_machine"
-        | "thread_status_state_machine"
-        | "timeline_writer"
-        | "timeline_listener"
-        | "email_builder"
-        | "email_sender"
-        | "postmark_external_inbound_handler"
-        | "postmark_inbound_handler"
-        | "email_inbound_handler"
-        | "notifications"
-        | "slack_integrations_janitor"
-        | "slack_notifications_sender"
-        | "slack_webhook_handler"
-        | "customer_authentication"
-        | "unread_user_chat_messages_handler"
-        | "unread_user_chat_messages_publisher"
-        | "plain_cli"
-        | "public_event_builder"
-        | "webhook_subscription_handler"
-        | "slack_user_notification_builder"
-        | "slack_workspace_notification_builder"
-        | "discord_workspace_notification_builder"
-        | "backfill_external_email_settings_job"
-        | "customer_card_updater"
-        | "internal_customer_card_api"
-        | "linear_webhook_handler"
-        | "linear_integrations_janitor"
-        | "job"
-        | "search_indexer"
-        | "thread_snooze_handler"
-        | "timeline_events_writer"
-        | "thread_triage_handler";
+      id: string;
     };
 
 /**
@@ -145,7 +111,6 @@ export interface WebhooksSchemaDefinition {
   timestamp: unknown;
   workspaceId: Id;
   payload:
-    | CustomerStatusTransitionedPayload
     | CustomerChangedPayload
     | CustomerGroupMembershipsChangedPayload
     | TimelineEntryChangedPayload
@@ -175,7 +140,6 @@ export interface WebhooksSchemaDefinition {
     | "customer.customer_created"
     | "customer.customer_updated"
     | "customer.customer_deleted"
-    | "customer.customer_status_transitioned"
     | "customer.customer_changed"
     | "customer.customer_group_changed"
     | "customer.customer_group_memberships_changed"
@@ -188,12 +152,13 @@ export interface WebhooksSchemaDefinition {
   };
 }
 /**
- * The status of a customer has changed
+ * A customer has been created or updated
  */
-export interface CustomerStatusTransitionedPayload {
-  eventType: "customer.customer_status_transitioned";
-  previousCustomer: Customer;
+export interface CustomerChangedPayload {
+  changeType: "ADDED" | "UPDATED";
+  eventType: "customer.customer_changed";
   customer: Customer;
+  previousCustomer: Customer | null;
 }
 export interface Customer {
   id: Id;
@@ -203,8 +168,6 @@ export interface Customer {
   shortName: string | null;
   assignedAt: Datetime | null;
   assignedToUser: User | null;
-  status: "IDLE" | "ACTIVE" | "SNOOZED";
-  statusChangedAt: Datetime;
   markedAsSpamAt?: Datetime | null;
   markedAsSpamBy?: InternalActor | null;
   customerGroupMemberships: CustomerGroupMemberships;
@@ -242,39 +205,7 @@ export interface MachineUserActor {
 }
 export interface SystemActor {
   actorType: "system";
-  system:
-    | "customer_status_state_machine"
-    | "thread_status_state_machine"
-    | "timeline_writer"
-    | "timeline_listener"
-    | "email_builder"
-    | "email_sender"
-    | "postmark_external_inbound_handler"
-    | "postmark_inbound_handler"
-    | "email_inbound_handler"
-    | "notifications"
-    | "slack_integrations_janitor"
-    | "slack_notifications_sender"
-    | "slack_webhook_handler"
-    | "customer_authentication"
-    | "unread_user_chat_messages_handler"
-    | "unread_user_chat_messages_publisher"
-    | "plain_cli"
-    | "public_event_builder"
-    | "webhook_subscription_handler"
-    | "slack_user_notification_builder"
-    | "slack_workspace_notification_builder"
-    | "discord_workspace_notification_builder"
-    | "backfill_external_email_settings_job"
-    | "customer_card_updater"
-    | "internal_customer_card_api"
-    | "linear_webhook_handler"
-    | "linear_integrations_janitor"
-    | "job"
-    | "search_indexer"
-    | "thread_snooze_handler"
-    | "timeline_events_writer"
-    | "thread_triage_handler";
+  system: string;
 }
 export interface CustomerGroupMembership {
   customerId: Id;
@@ -300,15 +231,6 @@ export interface CustomerGroup {
 export interface CustomerActor {
   actorType: "customer";
   customerId: Id;
-}
-/**
- * A customer has been created or updated
- */
-export interface CustomerChangedPayload {
-  changeType: "ADDED" | "UPDATED";
-  eventType: "customer.customer_changed";
-  customer: Customer;
-  previousCustomer: Customer | null;
 }
 export interface CustomerGroupMembershipsChangedPayload {
   eventType: "customer.customer_group_memberships_changed";
@@ -350,80 +272,13 @@ export interface TimelineEntry {
   customerId: Id;
   timestamp: Datetime;
   actor: Actor;
-  entry:
-    | IssueStatusTransitionedEntry
-    | IssueTypeChangedEntry
-    | IssuePriorityChangedEntry
-    | IssueDeletedEntry
-    | NoteEntry
-    | CustomerAssignmentTransitionedEntry
-    | ChatEntry
-    | CustomerStatusTransitionedEntry
-    | EmailEntry
-    | CustomEntry
-    | LinearIssueLinkStateTransitionedEntry;
-}
-export interface IssueStatusTransitionedEntry {
-  entryType: "issue_status_transitioned";
-  issueId: Id;
-  issueKey: string;
-  issueTypeId: Id;
-  issueTypePublicName: string;
-  issueTypeIcon: IssueTypeIcon | null;
-  priority: IssuePriority;
-  previousStatus: IssueStatus | null;
-  nextStatus: IssueStatus;
-}
-export interface IssuePriority {
-  value: number;
-  label: string;
-}
-export interface IssueTypeChangedEntry {
-  entryType: "issue_issue_type_changed";
-  issueId: Id;
-  issueKey: string;
-  previousIssueTypeId: Id;
-  previousIssueTypePublicName: string;
-  previousIssueTypeIcon: IssueTypeIcon | null;
-  nextIssueTypeId: Id;
-  nextIssueTypePublicName: string;
-  nextIssueTypeIcon: IssueTypeIcon | null;
-  status: IssueStatus;
-  priority: IssuePriority;
-}
-export interface IssuePriorityChangedEntry {
-  entryType: "issue_priority_changed";
-  issueId: Id;
-  issueKey: string;
-  issueTypeId: Id;
-  issueTypePublicName: string;
-  issueTypeIcon: IssueTypeIcon | null;
-  previousPriority: IssuePriority;
-  nextPriority: IssuePriority;
-  status: IssueStatus;
-}
-export interface IssueDeletedEntry {
-  entryType: "issue_deleted";
-  issueId: Id;
-  issueKey: string;
-  issueTypeId: Id;
-  issueTypePublicName: string;
-  issueTypeIcon: IssueTypeIcon | null;
-  status: IssueStatus;
-  priority: IssuePriority;
+  entry: NoteEntry | ChatEntry | EmailEntry | CustomEntry;
 }
 export interface NoteEntry {
   entryType: "note";
   noteId: Id;
   text: string;
   markdown: string | null;
-}
-export interface CustomerAssignmentTransitionedEntry {
-  entryType: "customer_assignment_transitioned";
-  previousUserId: Id | null;
-  previousUser: User | null;
-  nextUserId: Id | null;
-  nextUser: User | null;
 }
 export interface ChatEntry {
   entryType: "chat";
@@ -443,11 +298,6 @@ export interface ChatEntryAttachment {
   updatedAt: Datetime;
   updatedBy: Actor;
   type: "CHAT";
-}
-export interface CustomerStatusTransitionedEntry {
-  entryType: "customer_status_transitioned";
-  previousStatus: "IDLE" | "ACTIVE" | "SNOOZED";
-  nextStatus: "IDLE" | "ACTIVE" | "SNOOZED";
 }
 export interface EmailEntry {
   entryType: "email";
@@ -558,17 +408,6 @@ export interface CustomEntryAttachment {
   updatedAt: Datetime;
   updatedBy: Actor;
   type: "CUSTOM_TIMELINE_ENTRY";
-}
-export interface LinearIssueLinkStateTransitionedEntry {
-  entryType: "linear_issue_link_state_transitioned";
-  customerId: Id;
-  issueId: Id;
-  issueKey: string;
-  issueTypeId: Id;
-  issueTypePublicName: string;
-  linearIssueId: string;
-  previousLinearStateId: string;
-  nextLinearStateId: string;
 }
 export interface ThreadCreatedPublicEventPayload {
   eventType: "thread.thread_created";
