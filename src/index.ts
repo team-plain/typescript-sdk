@@ -51,7 +51,6 @@ export type {
   SystemActorPartsFragment,
   ThreadEventPartsFragment,
   ThreadPartsFragment,
-  TimelineEntryPartsFragment,
   UserActorPartsFragment,
   WorkspacePartsFragment,
   TierPartsFragment,
