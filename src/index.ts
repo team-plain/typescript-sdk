@@ -24,7 +24,6 @@ import {
   type SystemActorPartsFragment as OriginalSystemActorPartsFragment,
   type ThreadEventPartsFragment as OriginalThreadEventPartsFragment,
   type ThreadPartsFragment as OriginalThreadPartsFragment,
-  type TimelineEntryPartsFragment as OriginalTimelineEntryPartsFragment,
   type UserActorPartsFragment as OriginalUserActorPartsFragment,
   type WorkspacePartsFragment as OriginalWorkspacePartsFragment,
 } from './graphql/types';
@@ -72,7 +71,6 @@ export type MachineUserActorPartsFragment = Public<OriginalMachineUserActorParts
 export type MutationErrorPartsFragment = Public<OriginalMutationErrorPartsFragment>;
 export type PageInfoPartsFragment = Public<OriginalPageInfoPartsFragment>;
 export type SystemActorPartsFragment = Public<OriginalSystemActorPartsFragment>;
-export type TimelineEntryPartsFragment = Public<OriginalTimelineEntryPartsFragment>;
 export type UserActorPartsFragment = Public<OriginalUserActorPartsFragment>;
 export type WorkspacePartsFragment = Public<OriginalWorkspacePartsFragment>;
 export type ThreadPartsFragment = Public<OriginalThreadPartsFragment>;
