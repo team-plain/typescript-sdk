@@ -1,5 +1,17 @@
 # @team-plain/typescript-sdk
 
+## 3.7.0
+
+### Minor Changes
+
+- a2ab671: Expose ComponentInput and EventComponentInput
+
+## 3.6.0
+
+### Minor Changes
+
+- 772d0c6: Add support for creating, updating, deleting and fetcing webhook targets.
+
 ## 3.5.0
 
 ### Minor Changes

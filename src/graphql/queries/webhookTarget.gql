@@ -1,0 +1,5 @@
+query webhookTarget($id: ID!) {
+  webhookTarget(webhookTargetId: $id) {
+    ...WebhookTargetParts
+  }
+}

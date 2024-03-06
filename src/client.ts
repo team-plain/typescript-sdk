@@ -14,6 +14,7 @@ import {
   CreateCustomerEventDocument,
   CreateThreadDocument,
   CreateThreadEventDocument,
+  CreateWebhookTargetDocument,
   CustomerByEmailDocument,
   CustomerByIdDocument,
   type CustomerCardConfigPartsFragment,
@@ -26,6 +27,7 @@ import {
   CustomersDocument,
   DeleteCustomerCardConfigDocument,
   DeleteCustomerDocument,
+  DeleteWebhookTargetDocument,
   type EmailPartsFragment,
   type LabelPartsFragment,
   LabelTypeDocument,
@@ -49,10 +51,14 @@ import {
   ThreadsDocument,
   UnassignThreadDocument,
   UpdateCustomerCardConfigDocument,
+  UpdateWebhookTargetDocument,
   UpsertCustomerDocument,
   type UpsertResult,
   UserByEmailDocument,
   type UserPartsFragment,
+  WebhookTargetDocument,
+  type WebhookTargetPartsFragment,
+  WebhookTargetsDocument,
   type WorkspacePartsFragment,
 } from './graphql/types';
 import { request } from './request';
@@ -728,5 +734,75 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.createThreadEvent.threadEvent));
+  }
+
+  async createWebhookTarget(
+    input: VariablesOf<typeof CreateWebhookTargetDocument>['input']
+  ): SDKResult<WebhookTargetPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: CreateWebhookTargetDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.createWebhookTarget.webhookTarget));
+  }
+
+  async updateWebhookTarget(
+    input: VariablesOf<typeof UpdateWebhookTargetDocument>['input']
+  ): SDKResult<WebhookTargetPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: UpdateWebhookTargetDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.updateWebhookTarget.webhookTarget));
+  }
+
+  async deleteWebhookTarget(
+    input: VariablesOf<typeof DeleteWebhookTargetDocument>['input']
+  ): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: DeleteWebhookTargetDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
+  }
+
+  async getWebhookTargets(variables: VariablesOf<typeof WebhookTargetsDocument>): SDKResult<{
+    webhookTargets: WebhookTargetPartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+  }> {
+    const res = await request(this.#ctx, {
+      query: WebhookTargetsDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      pageInfo: q.webhookTargets.pageInfo,
+      webhookTargets: q.webhookTargets.edges.map((edge) => edge.node),
+    }));
+  }
+
+  /**
+   * If the webhook target is not found it will return null
+   */
+  async getWebhookTargetById(
+    variables: VariablesOf<typeof WebhookTargetDocument>
+  ): SDKResult<WebhookTargetPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: WebhookTargetDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => {
+      return q.webhookTarget;
+    });
   }
 }

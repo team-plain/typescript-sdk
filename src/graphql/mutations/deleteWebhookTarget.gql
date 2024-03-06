@@ -1,0 +1,7 @@
+mutation deleteWebhookTarget($input: DeleteWebhookTargetInput!) {
+  deleteWebhookTarget(input: $input) {
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
