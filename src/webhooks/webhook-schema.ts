@@ -270,6 +270,7 @@ export interface TimelineEntryChangedPayload {
 export interface TimelineEntry {
   id: Id;
   customerId: Id;
+  threadId?: Id | null;
   timestamp: Datetime;
   actor: Actor;
   entry: NoteEntry | ChatEntry | EmailEntry | CustomEntry;

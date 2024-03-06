@@ -31,6 +31,8 @@ import {
 
 export { PlainClient } from './client';
 
+export { parsePlainWebhook } from './webhooks';
+
 export { uiComponent } from './ui-components';
 
 export {

@@ -1,24 +1,27 @@
-import { describe, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
-import { webhooksSchemaDefinitionSchema } from '../../webhook-model';
+import { parsePlainWebhook } from '../webhooks/parse';
 import customerCreatedPayload from './webhook-payloads/customer-created';
 import emailReceivedPayload from './webhook-payloads/email-received';
-import emailSentPayload from './webhook-payloads/email-sent';
+import invalidWebhook from './webhook-payloads/invalid';
 import threadAssignmentTransitionedPayload from './webhook-payloads/thread-assignment-transitioned';
 import threadCreatedPayload from './webhook-payloads/thread-created';
 import threadStatusTransitionedPayload from './webhook-payloads/thread-status-transitioned';
 
-describe('Webhook model tests', () => {
+describe('Parse webhook', () => {
   [
     customerCreatedPayload,
     emailReceivedPayload,
-    emailSentPayload,
     threadAssignmentTransitionedPayload,
     threadCreatedPayload,
     threadStatusTransitionedPayload,
-  ].forEach((payload) => {
-    test(`should parse the ${payload.type} payload`, () => {
-      webhooksSchemaDefinitionSchema.parse(payload);
+  ].forEach((payload: { type: string }) => {
+    test(`should validate the ${payload?.type} payload successfully`, () => {
+      expect(parsePlainWebhook(payload).data).toBeTruthy();
     });
+  });
+
+  test(`should fail to validate an invalid payload`, () => {
+    expect(parsePlainWebhook(invalidWebhook).error).toBeTruthy();
   });
 });

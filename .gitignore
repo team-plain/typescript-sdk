@@ -21,7 +21,3 @@ docs
 
 # cache
 .eslintcache
-
-# Temporary
-webhook-schema.json
-webhook-schema.ts
