@@ -18,7 +18,6 @@ export function parsePlainWebhook(payload: unknown): Result<WebhooksSchemaDefini
       };
     }
   } catch (e) {
-    console.log(e);
     return {
       error:
         e instanceof Error
