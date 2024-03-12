@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.8.0
+
+### Minor Changes
+
+- 046ed23: Add a 'parsePlainWebhook' method which validates and types an incoming Plain webhook payload
+
 ## 3.7.0
 
 ### Minor Changes
