@@ -505,6 +505,7 @@ export interface Email1 {
   receivedAt: Datetime | null;
   attachments: Attachment[];
   inReplyToEmailId: string | null;
+  isStartOfThread: boolean;
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;

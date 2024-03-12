@@ -68,6 +68,7 @@ export default {
       receivedAt: '2024-03-06T12:37:08.539Z',
       attachments: [],
       inReplyToEmailId: null,
+      isStartOfThread: false,
       createdAt: '2024-03-06T12:37:10.228Z',
       createdBy: { actorType: 'customer', customerId: 'c_01H0MHCVC5EGDGY3EJXTHHWTGR' },
       updatedAt: '2024-03-06T12:37:10.228Z',

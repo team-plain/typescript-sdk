@@ -754,6 +754,9 @@
             "null"
           ]
         },
+        "isStartOfThread": {
+          "type": "boolean"
+        },
         "createdAt": {
           "$ref": "#/definitions/datetime"
         },
@@ -783,6 +786,7 @@
         "receivedAt",
         "attachments",
         "inReplyToEmailId",
+        "isStartOfThread",
         "createdAt",
         "createdBy",
         "updatedAt",
