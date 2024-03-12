@@ -12,6 +12,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTimeISO: any;
 };
 
 export type AcceptWorkspaceInviteInput = {
@@ -92,23 +93,6 @@ export type ArchiveLabelTypeOutput = {
   __typename?: 'ArchiveLabelTypeOutput';
   error: Maybe<MutationError>;
   labelType: Maybe<LabelType>;
-};
-
-export type AssignCustomerToUserInput = {
-  /**
-   * Should the mutation change the customer's status to Active.
-   *
-   * Defaults to true.
-   */
-  changeCustomerStatusToActive?: InputMaybe<Scalars['Boolean']>;
-  customerId: Scalars['ID'];
-  userId?: InputMaybe<Scalars['ID']>;
-};
-
-export type AssignCustomerToUserOutput = {
-  __typename?: 'AssignCustomerToUserOutput';
-  customer: Maybe<Customer>;
-  error: Maybe<MutationError>;
 };
 
 export type AssignRolesToUserInput = {
@@ -243,16 +227,67 @@ export type ChatEntry = {
   text: Maybe<Scalars['String']>;
 };
 
+/** Query to search for companies. */
+export type CompaniesSearchQuery = {
+  /**
+   * The term to search for. It must be at least 2 characters long. The search is case-insensitive on these two fields:
+   *   - the company name (partial match)
+   *   - the company domain name (partial match)
+   */
+  term: Scalars['String'];
+};
+
 export type Company = {
   __typename?: 'Company';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  domainName: Scalars['String'];
   id: Scalars['ID'];
   logoUrl: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
 };
 
 
 export type CompanyLogoUrlArgs = {
   size?: InputMaybe<Scalars['Int']>;
+};
+
+export type CompanyConnection = {
+  __typename?: 'CompanyConnection';
+  edges: Array<CompanyEdge>;
+  pageInfo: PageInfo;
+};
+
+export type CompanyEdge = {
+  __typename?: 'CompanyEdge';
+  cursor: Scalars['String'];
+  node: Company;
+};
+
+export type CompanyIdentifier = {
+  /** The domain name of the company (e.g. plain.com). Alternatively, you can provide a full URL (e.g. https://www.plain.com) and we will do our best to extract the domain name. */
+  companyDomainName?: InputMaybe<Scalars['String']>;
+  /** Plain's internal identifier for the company. */
+  companyId?: InputMaybe<Scalars['ID']>;
+};
+
+export type CompanySearchResult = {
+  __typename?: 'CompanySearchResult';
+  company: Company;
+};
+
+export type CompanySearchResultConnection = {
+  __typename?: 'CompanySearchResultConnection';
+  edges: Array<CompanySearchResultEdge>;
+  pageInfo: PageInfo;
+};
+
+export type CompanySearchResultEdge = {
+  __typename?: 'CompanySearchResultEdge';
+  cursor: Scalars['String'];
+  node: CompanySearchResult;
 };
 
 export type ComponentBadge = {
@@ -548,6 +583,7 @@ export type CreateCustomerEventOutput = {
 
 export type CreateCustomerGroupInput = {
   color: Scalars['String'];
+  externalId?: InputMaybe<Scalars['String']>;
   key: Scalars['String'];
   name: Scalars['String'];
 };
@@ -855,6 +891,7 @@ export type Customer = {
 export type CustomerCustomerGroupMembershipsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<CustomerGroupMembershipsFilter>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -863,14 +900,6 @@ export type CustomerActor = {
   __typename?: 'CustomerActor';
   customer: Customer;
   customerId: Scalars['ID'];
-};
-
-export type CustomerAssignmentTransitionedEntry = {
-  __typename?: 'CustomerAssignmentTransitionedEntry';
-  nextUser: Maybe<User>;
-  nextUserId: Maybe<Scalars['ID']>;
-  previousUser: Maybe<User>;
-  previousUserId: Maybe<Scalars['ID']>;
 };
 
 export type CustomerCardComponent = ComponentBadge | ComponentContainer | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
@@ -1131,6 +1160,7 @@ export type CustomerGroup = {
   color: Scalars['String'];
   createdAt: DateTime;
   createdBy: InternalActor;
+  externalId: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   key: Scalars['String'];
   name: Scalars['String'];
@@ -1153,6 +1183,7 @@ export type CustomerGroupEdge = {
 export type CustomerGroupIdentifier = {
   customerGroupId?: InputMaybe<Scalars['ID']>;
   customerGroupKey?: InputMaybe<Scalars['String']>;
+  externalId?: InputMaybe<Scalars['String']>;
 };
 
 export type CustomerGroupMembership = {
@@ -1175,6 +1206,14 @@ export type CustomerGroupMembershipEdge = {
   __typename?: 'CustomerGroupMembershipEdge';
   cursor: Scalars['String'];
   node: CustomerGroupMembership;
+};
+
+export type CustomerGroupMembershipsFilter = {
+  customerGroupExternalIds?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type CustomerGroupsFilter = {
+  externalIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 /** Only one of the fields can be set. */
@@ -1226,7 +1265,6 @@ export enum CustomerStatus {
 }
 
 export type CustomersFilter = {
-  assignedToUser?: InputMaybe<Array<Scalars['ID']>>;
   /**
    * Filters customers to those with at least one of the given customer group IDs.
    * Customers with no groups will not be included.
@@ -1239,7 +1277,6 @@ export type CustomersFilter = {
    * Can be combined with other group filters.
    */
   customerGroupKeys?: InputMaybe<Array<Scalars['String']>>;
-  isAssigned?: InputMaybe<Scalars['Boolean']>;
   isMarkedAsSpam?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -1354,6 +1391,10 @@ export type DeleteThreadLinkOutput = {
   error: Maybe<MutationError>;
 };
 
+export type DeleteUserAuthSlackIntegrationInput = {
+  slackTeamId: Scalars['String'];
+};
+
 export type DeleteUserAuthSlackIntegrationOutput = {
   __typename?: 'DeleteUserAuthSlackIntegrationOutput';
   error: Maybe<MutationError>;
@@ -1400,6 +1441,10 @@ export type DeleteWorkspaceInviteOutput = {
   __typename?: 'DeleteWorkspaceInviteOutput';
   error: Maybe<MutationError>;
   invite: Maybe<WorkspaceInvite>;
+};
+
+export type DeleteWorkspaceSlackChannelIntegrationInput = {
+  integrationId: Scalars['ID'];
 };
 
 export type DeleteWorkspaceSlackChannelIntegrationOutput = {
@@ -1564,7 +1609,7 @@ export type EmailSignature = {
 };
 
 /** A union of all possible entries that can appear in a timeline. */
-export type Entry = ChatEntry | CustomEntry | CustomerAssignmentTransitionedEntry | CustomerEventEntry | EmailEntry | LinearIssueThreadLinkStateTransitionedEntry | NoteEntry | SlackMessageEntry | SlackReplyEntry | ThreadAssignmentTransitionedEntry | ThreadEventEntry | ThreadLabelsChangedEntry | ThreadPriorityChangedEntry | ThreadStatusTransitionedEntry;
+export type Entry = ChatEntry | CustomEntry | CustomerEventEntry | EmailEntry | LinearIssueThreadLinkStateTransitionedEntry | NoteEntry | SlackMessageEntry | SlackReplyEntry | ThreadAssignmentTransitionedEntry | ThreadEventEntry | ThreadLabelsChangedEntry | ThreadPriorityChangedEntry | ThreadStatusTransitionedEntry;
 
 export type EventComponent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
 
@@ -1778,7 +1823,6 @@ export type Mutation = {
   addLabels: AddLabelsOutput;
   addWorkspaceAlternateSupportEmailAddress: AddWorkspaceAlternateSupportEmailAddressOutput;
   archiveLabelType: ArchiveLabelTypeOutput;
-  assignCustomerToUser: AssignCustomerToUserOutput;
   assignRolesToUser: AssignRolesToUserOutput;
   assignThread: AssignThreadOutput;
   changeThreadPriority: ChangeThreadPriorityOutput;
@@ -1872,12 +1916,13 @@ export type Mutation = {
   sendSlackMessage: SendSlackMessageOutput;
   snoozeThread: SnoozeThreadOutput;
   unarchiveLabelType: UnarchiveLabelTypeOutput;
-  unassignAllCustomers: UnassignAllCustomersOutput;
   unassignThread: UnassignThreadOutput;
   /** Removes the spam mark from a customer. */
   unmarkCustomerAsSpam: UnmarkCustomerAsSpamOutput;
   /** Partially updates a customer card config. */
   updateCustomerCardConfig: UpdateCustomerCardConfigOutput;
+  /** Changes the company of a customer. */
+  updateCustomerCompany: UpdateCustomerCompanyOutput;
   /** Update a customer group. */
   updateCustomerGroup: UpdateCustomerGroupOutput;
   updateLabelType: UpdateLabelTypeOutput;
@@ -1891,9 +1936,14 @@ export type Mutation = {
   updateWorkspace: UpdateWorkspaceOutput;
   updateWorkspaceEmailSettings: UpdateWorkspaceEmailSettingsOutput;
   upsertAutoresponder: UpsertAutoresponderOutput;
+  upsertCompany: UpsertCompanyOutput;
   upsertCustomTimelineEntry: UpsertCustomTimelineEntryOutput;
+  /** Creates or updates a customer. */
   upsertCustomer: UpsertCustomerOutput;
+  /** Creates or updates a customer group. */
+  upsertCustomerGroup: UpsertCustomerGroupOutput;
   upsertMyEmailSignature: UpsertMyEmailSignatureOutput;
+  upsertTenant: UpsertTenantOutput;
   verifyWorkspaceEmailDnsSettings: VerifyWorkspaceEmailDnsSettingsOutput;
   verifyWorkspaceEmailForwardingSettings: VerifyWorkspaceEmailForwardingSettingsOutput;
 };
@@ -1921,11 +1971,6 @@ export type MutationAddWorkspaceAlternateSupportEmailAddressArgs = {
 
 export type MutationArchiveLabelTypeArgs = {
   input: ArchiveLabelTypeInput;
-};
-
-
-export type MutationAssignCustomerToUserArgs = {
-  input: AssignCustomerToUserInput;
 };
 
 
@@ -2114,6 +2159,11 @@ export type MutationDeleteUserArgs = {
 };
 
 
+export type MutationDeleteUserAuthSlackIntegrationArgs = {
+  input?: InputMaybe<DeleteUserAuthSlackIntegrationInput>;
+};
+
+
 export type MutationDeleteWebhookTargetArgs = {
   input: DeleteWebhookTargetInput;
 };
@@ -2126,6 +2176,11 @@ export type MutationDeleteWorkspaceDiscordIntegrationArgs = {
 
 export type MutationDeleteWorkspaceInviteArgs = {
   input: DeleteWorkspaceInviteInput;
+};
+
+
+export type MutationDeleteWorkspaceSlackChannelIntegrationArgs = {
+  input?: InputMaybe<DeleteWorkspaceSlackChannelIntegrationInput>;
 };
 
 
@@ -2229,11 +2284,6 @@ export type MutationUnarchiveLabelTypeArgs = {
 };
 
 
-export type MutationUnassignAllCustomersArgs = {
-  input: UnassignAllCustomersInput;
-};
-
-
 export type MutationUnassignThreadArgs = {
   input: UnassignThreadInput;
 };
@@ -2246,6 +2296,11 @@ export type MutationUnmarkCustomerAsSpamArgs = {
 
 export type MutationUpdateCustomerCardConfigArgs = {
   input: UpdateCustomerCardConfigInput;
+};
+
+
+export type MutationUpdateCustomerCompanyArgs = {
+  input: UpdateCustomerCompanyInput;
 };
 
 
@@ -2299,6 +2354,11 @@ export type MutationUpsertAutoresponderArgs = {
 };
 
 
+export type MutationUpsertCompanyArgs = {
+  input: UpsertCompanyInput;
+};
+
+
 export type MutationUpsertCustomTimelineEntryArgs = {
   input: UpsertCustomTimelineEntryInput;
 };
@@ -2309,8 +2369,18 @@ export type MutationUpsertCustomerArgs = {
 };
 
 
+export type MutationUpsertCustomerGroupArgs = {
+  input: UpsertCustomerGroupInput;
+};
+
+
 export type MutationUpsertMyEmailSignatureArgs = {
   input: UpsertMyEmailSignatureInput;
+};
+
+
+export type MutationUpsertTenantArgs = {
+  input: UpsertTenantInput;
 };
 
 
@@ -2404,6 +2474,8 @@ export type Permissions = {
 export type Query = {
   __typename?: 'Query';
   autoresponder: Maybe<Autoresponder>;
+  companies: CompanyConnection;
+  company: Maybe<Company>;
   customer: Maybe<Customer>;
   customerByEmail: Maybe<Customer>;
   /** Get a customer by its external ID. A customer's external ID is unique within a workspace. */
@@ -2444,11 +2516,13 @@ export type Query = {
   myWorkspaces: WorkspaceConnection;
   permissions: Permissions;
   roles: RoleConnection;
+  searchCompanies: CompanySearchResultConnection;
   /**
    * Search for customers based on the provided query. Returned customers are sorted by how recently
    * they changed status (most recent first).
    */
   searchCustomers: CustomerSearchConnection;
+  searchTenants: TenantSearchResultConnection;
   searchThreads: ThreadSearchResultConnection;
   /** Gets a single setting based on the code and the scope. */
   setting: Maybe<Setting>;
@@ -2456,6 +2530,8 @@ export type Query = {
   snippets: SnippetConnection;
   /** List all the events types you can subscribe to. */
   subscriptionEventTypes: Array<SubscriptionEventType>;
+  tenant: Maybe<Tenant>;
+  tenants: TenantConnection;
   /** Get a thread by its ID. */
   thread: Maybe<Thread>;
   /** Get a thread by its external ID. A thread's external ID is unique within a customer, hence why the customer ID is required. */
@@ -2466,11 +2542,13 @@ export type Query = {
    */
   threadSlackUsers: SlackUserConnection;
   threads: ThreadConnection;
+  timeSeriesMetric: Maybe<TimeSeriesMetric>;
   timelineEntries: TimelineEntryConnection;
   timelineEntry: Maybe<TimelineEntry>;
   user: Maybe<User>;
   userAuthSlackInstallationInfo: UserAuthSlackInstallationInfo;
   userAuthSlackIntegration: Maybe<UserAuthSlackIntegration>;
+  userAuthSlackIntegrationByThreadId: Maybe<UserAuthSlackIntegration>;
   /**
    * Returns a user by email or null if the user is not found.
    *
@@ -2490,9 +2568,23 @@ export type Query = {
   workspaceInvites: WorkspaceInviteConnection;
   workspaceSlackChannelInstallationInfo: WorkspaceSlackChannelInstallationInfo;
   workspaceSlackChannelIntegration: Maybe<WorkspaceSlackChannelIntegration>;
+  workspaceSlackChannelIntegrations: WorkspaceSlackChannelIntegrationConnection;
   workspaceSlackInstallationInfo: WorkspaceSlackInstallationInfo;
   workspaceSlackIntegration: Maybe<WorkspaceSlackIntegration>;
   workspaceSlackIntegrations: WorkspaceSlackIntegrationConnection;
+};
+
+
+export type QueryCompaniesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryCompanyArgs = {
+  companyId: Scalars['ID'];
 };
 
 
@@ -2518,6 +2610,7 @@ export type QueryCustomerCardConfigArgs = {
 
 export type QueryCustomerCardInstancesArgs = {
   customerId: Scalars['ID'];
+  threadId?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -2529,6 +2622,7 @@ export type QueryCustomerGroupArgs = {
 export type QueryCustomerGroupsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<CustomerGroupsFilter>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -2605,12 +2699,30 @@ export type QueryRolesArgs = {
 };
 
 
+export type QuerySearchCompaniesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  searchQuery: CompaniesSearchQuery;
+};
+
+
 export type QuerySearchCustomersArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   searchQuery: CustomersSearchQuery;
+};
+
+
+export type QuerySearchTenantsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  searchQuery: TenantsSearchQuery;
 };
 
 
@@ -2635,6 +2747,19 @@ export type QuerySnippetArgs = {
 
 
 export type QuerySnippetsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryTenantArgs = {
+  tenantId: Scalars['ID'];
+};
+
+
+export type QueryTenantsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
@@ -2672,6 +2797,12 @@ export type QueryThreadsArgs = {
 };
 
 
+export type QueryTimeSeriesMetricArgs = {
+  name: Scalars['String'];
+  options?: InputMaybe<TimeSeriesMetricOptions>;
+};
+
+
 export type QueryTimelineEntriesArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -2694,6 +2825,16 @@ export type QueryUserArgs = {
 
 export type QueryUserAuthSlackInstallationInfoArgs = {
   redirectUrl: Scalars['String'];
+};
+
+
+export type QueryUserAuthSlackIntegrationArgs = {
+  slackTeamId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryUserAuthSlackIntegrationByThreadIdArgs = {
+  threadId: Scalars['ID'];
 };
 
 
@@ -2755,6 +2896,19 @@ export type QueryWorkspaceSlackChannelInstallationInfoArgs = {
 };
 
 
+export type QueryWorkspaceSlackChannelIntegrationArgs = {
+  integrationId?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type QueryWorkspaceSlackChannelIntegrationsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryWorkspaceSlackInstallationInfoArgs = {
   redirectUrl: Scalars['String'];
 };
@@ -2775,6 +2929,7 @@ export type QueryWorkspaceSlackIntegrationsArgs = {
 export type ReloadCustomerCardInstanceInput = {
   customerCardConfigId: Scalars['ID'];
   customerId: Scalars['ID'];
+  threadId?: InputMaybe<Scalars['ID']>;
 };
 
 export type ReloadCustomerCardInstanceOutput = {
@@ -2951,7 +3106,7 @@ export type SendSlackMessageOutput = {
 };
 
 /** A union of different types of settings. */
-export type Setting = BooleanSetting;
+export type Setting = BooleanSetting | StringSetting;
 
 export type SettingScope = {
   __typename?: 'SettingScope';
@@ -3008,6 +3163,8 @@ export enum SettingScopeType {
 export type SettingValueInput = {
   /** If the setting is a boolean value then this field should be set. */
   boolean?: InputMaybe<Scalars['Boolean']>;
+  /** If the setting is a string value then this field should be set. */
+  string?: InputMaybe<Scalars['String']>;
 };
 
 export type SlackMessageEntry = {
@@ -3121,6 +3278,17 @@ export type StringSearchExpression = {
   caseInsensitiveContains?: InputMaybe<Scalars['String']>;
 };
 
+/** A string setting */
+export type StringSetting = {
+  __typename?: 'StringSetting';
+  /** The setting code. */
+  code: Scalars['String'];
+  /** The scope of the setting. */
+  scope: SettingScope;
+  /** The value of the setting. This is named uniquely (instead of just `value`) so that the union has unique fields. */
+  stringValue: Scalars['String'];
+};
+
 export type Subscription = {
   __typename?: 'Subscription';
   customerCardInstanceChanges: CustomerCardInstanceChangesResult;
@@ -3175,6 +3343,62 @@ export type System = {
 export type SystemActor = {
   __typename?: 'SystemActor';
   systemId: Scalars['ID'];
+};
+
+export type Tenant = {
+  __typename?: 'Tenant';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  externalId: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+  url: Maybe<Scalars['String']>;
+};
+
+export type TenantConnection = {
+  __typename?: 'TenantConnection';
+  edges: Array<TenantEdge>;
+  pageInfo: PageInfo;
+};
+
+export type TenantEdge = {
+  __typename?: 'TenantEdge';
+  cursor: Scalars['String'];
+  node: Tenant;
+};
+
+export type TenantIdentifierInput = {
+  externalId?: InputMaybe<Scalars['String']>;
+  tenantId?: InputMaybe<Scalars['ID']>;
+};
+
+export type TenantSearchResult = {
+  __typename?: 'TenantSearchResult';
+  tenant: Tenant;
+};
+
+export type TenantSearchResultConnection = {
+  __typename?: 'TenantSearchResultConnection';
+  edges: Array<TenantSearchResultEdge>;
+  pageInfo: PageInfo;
+};
+
+export type TenantSearchResultEdge = {
+  __typename?: 'TenantSearchResultEdge';
+  cursor: Scalars['String'];
+  node: TenantSearchResult;
+};
+
+/** Query to search for tenants. */
+export type TenantsSearchQuery = {
+  /**
+   * The term to search for. It must be at least 2 characters long. The search is case-insensitive on these two fields:
+   *   - the tenant name (partial match)
+   *   - the tenant external id (exact match)
+   */
+  term: Scalars['String'];
 };
 
 /** A thread represents a conversation with a customer, around a specific topic. */
@@ -3441,7 +3665,7 @@ export type ThreadsFilter = {
  * - the customer's email
  */
 export type ThreadsSearchQuery = {
-  /** The term to search for. It must be at least 3 characters long. The search is case-insensitive. */
+  /** The term to search for. It must be at least 2 characters long. The search is case-insensitive. */
   term: Scalars['String'];
 };
 
@@ -3454,6 +3678,46 @@ export enum ThreadsSortField {
   CreatedAt = 'CREATED_AT',
   StatusChangedAt = 'STATUS_CHANGED_AT'
 }
+
+export type TimeSeriesMetric = {
+  __typename?: 'TimeSeriesMetric';
+  series: Array<TimeSeriesSeries>;
+  timestamps: Array<DateTime>;
+};
+
+export type TimeSeriesMetricDimension = {
+  __typename?: 'TimeSeriesMetricDimension';
+  type: TimeSeriesMetricDimensionType;
+  value: Scalars['String'];
+};
+
+export enum TimeSeriesMetricDimensionType {
+  CustomerGroup = 'CUSTOMER_GROUP',
+  LabelType = 'LABEL_TYPE',
+  MessageSource = 'MESSAGE_SOURCE'
+}
+
+export type TimeSeriesMetricInterval = {
+  unit?: InputMaybe<TimeSeriesMetricIntervalUnit>;
+};
+
+export enum TimeSeriesMetricIntervalUnit {
+  Day = 'DAY',
+  Hour = 'HOUR'
+}
+
+export type TimeSeriesMetricOptions = {
+  dimension?: InputMaybe<TimeSeriesMetricDimensionType>;
+  from?: InputMaybe<Scalars['DateTimeISO']>;
+  interval?: InputMaybe<TimeSeriesMetricInterval>;
+  to?: InputMaybe<Scalars['DateTimeISO']>;
+};
+
+export type TimeSeriesSeries = {
+  __typename?: 'TimeSeriesSeries';
+  dimension: Maybe<TimeSeriesMetricDimension>;
+  values: Array<Maybe<Scalars['Float']>>;
+};
 
 export type TimelineEntry = {
   __typename?: 'TimelineEntry';
@@ -3499,16 +3763,6 @@ export type UnarchiveLabelTypeOutput = {
   __typename?: 'UnarchiveLabelTypeOutput';
   error: Maybe<MutationError>;
   labelType: Maybe<LabelType>;
-};
-
-export type UnassignAllCustomersInput = {
-  userId: Scalars['ID'];
-};
-
-export type UnassignAllCustomersOutput = {
-  __typename?: 'UnassignAllCustomersOutput';
-  error: Maybe<MutationError>;
-  unassignedCustomerCount: Maybe<Scalars['Int']>;
 };
 
 export type UnassignThreadInput = {
@@ -3558,9 +3812,23 @@ export type UpdateCustomerCardConfigOutput = {
   error: Maybe<MutationError>;
 };
 
+export type UpdateCustomerCompanyInput = {
+  /** The identifier of the company we want to update the customer with. Pass null if you want to remove the company from the customer. */
+  companyIdentifier?: InputMaybe<CompanyIdentifier>;
+  /** The identifier of the customer we want to update the company for. */
+  customerId: Scalars['ID'];
+};
+
+export type UpdateCustomerCompanyOutput = {
+  __typename?: 'UpdateCustomerCompanyOutput';
+  customer: Maybe<Customer>;
+  error: Maybe<MutationError>;
+};
+
 export type UpdateCustomerGroupInput = {
   color?: InputMaybe<StringInput>;
   customerGroupId: Scalars['ID'];
+  externalId?: InputMaybe<OptionalStringInput>;
   key?: InputMaybe<StringInput>;
   name?: InputMaybe<StringInput>;
 };
@@ -3695,6 +3963,19 @@ export type UpsertAutoresponderOutput = {
   result: Maybe<UpsertResult>;
 };
 
+export type UpsertCompanyInput = {
+  domainName: Scalars['String'];
+  identifier: CompanyIdentifier;
+  name: Scalars['String'];
+};
+
+export type UpsertCompanyOutput = {
+  __typename?: 'UpsertCompanyOutput';
+  company: Maybe<Company>;
+  error: Maybe<MutationError>;
+  result: Maybe<UpsertResult>;
+};
+
 export type UpsertCustomTimelineEntryInput = {
   attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
   /**
@@ -3725,6 +4006,21 @@ export type UpsertCustomTimelineEntryOutput = {
   error: Maybe<MutationError>;
   result: Maybe<UpsertResult>;
   timelineEntry: Maybe<TimelineEntry>;
+};
+
+export type UpsertCustomerGroupInput = {
+  color: Scalars['String'];
+  externalId?: InputMaybe<Scalars['String']>;
+  identifier: CustomerGroupIdentifier;
+  key: Scalars['String'];
+  name: Scalars['String'];
+};
+
+export type UpsertCustomerGroupOutput = {
+  __typename?: 'UpsertCustomerGroupOutput';
+  customerGroup: Maybe<CustomerGroup>;
+  error: Maybe<MutationError>;
+  result: Maybe<UpsertResult>;
 };
 
 export type UpsertCustomerIdentifierInput = {
@@ -3779,6 +4075,20 @@ export enum UpsertResult {
   Updated = 'UPDATED'
 }
 
+export type UpsertTenantInput = {
+  externalId: Scalars['String'];
+  identifier: TenantIdentifierInput;
+  name: Scalars['String'];
+  url: OptionalStringInput;
+};
+
+export type UpsertTenantOutput = {
+  __typename?: 'UpsertTenantOutput';
+  error: Maybe<MutationError>;
+  result: Maybe<UpsertResult>;
+  tenant: Maybe<Tenant>;
+};
+
 export type User = {
   __typename?: 'User';
   /** The avatar URL of the user. */
@@ -3831,6 +4141,7 @@ export type UserAuthSlackIntegration = {
   createdBy: InternalActor;
   integrationId: Scalars['ID'];
   isReinstallRequired: Scalars['Boolean'];
+  slackTeamId: Scalars['String'];
   slackTeamName: Scalars['String'];
   updatedAt: DateTime;
   updatedBy: InternalActor;
@@ -4076,10 +4387,23 @@ export type WorkspaceSlackChannelIntegration = {
   createdBy: InternalActor;
   integrationId: Scalars['ID'];
   isReinstallRequired: Scalars['Boolean'];
+  slackTeamId: Scalars['String'];
   slackTeamImageUrl68px: Maybe<Scalars['String']>;
   slackTeamName: Scalars['String'];
   updatedAt: DateTime;
   updatedBy: InternalActor;
+};
+
+export type WorkspaceSlackChannelIntegrationConnection = {
+  __typename?: 'WorkspaceSlackChannelIntegrationConnection';
+  edges: Array<WorkspaceSlackChannelIntegrationEdge>;
+  pageInfo: PageInfo;
+};
+
+export type WorkspaceSlackChannelIntegrationEdge = {
+  __typename?: 'WorkspaceSlackChannelIntegrationEdge';
+  cursor: Scalars['String'];
+  node: WorkspaceSlackChannelIntegration;
 };
 
 export type WorkspaceSlackInstallationInfo = {
@@ -4200,7 +4524,7 @@ export type ThreadEventPartsFragment = { __typename?: 'ThreadEvent', id: string,
 
 export type ThreadPartsFragment = { __typename: 'Thread', id: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } };
 
-export type TimelineEntryPartsFragment = { __typename?: 'TimelineEntry', id: string, customerId: string, timestamp: { __typename?: 'DateTime', iso8601: string }, actor: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, entry: { __typename: 'ChatEntry' } | { __typename: 'CustomEntry' } | { __typename: 'CustomerAssignmentTransitionedEntry' } | { __typename: 'CustomerEventEntry' } | { __typename: 'EmailEntry' } | { __typename: 'LinearIssueThreadLinkStateTransitionedEntry' } | { __typename: 'NoteEntry' } | { __typename: 'SlackMessageEntry' } | { __typename: 'SlackReplyEntry' } | { __typename: 'ThreadAssignmentTransitionedEntry' } | { __typename: 'ThreadEventEntry' } | { __typename: 'ThreadLabelsChangedEntry' } | { __typename: 'ThreadPriorityChangedEntry' } | { __typename: 'ThreadStatusTransitionedEntry' } };
+export type TimelineEntryPartsFragment = { __typename?: 'TimelineEntry', id: string, customerId: string, timestamp: { __typename?: 'DateTime', iso8601: string }, actor: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, entry: { __typename: 'ChatEntry' } | { __typename: 'CustomEntry' } | { __typename: 'CustomerEventEntry' } | { __typename: 'EmailEntry' } | { __typename: 'LinearIssueThreadLinkStateTransitionedEntry' } | { __typename: 'NoteEntry' } | { __typename: 'SlackMessageEntry' } | { __typename: 'SlackReplyEntry' } | { __typename: 'ThreadAssignmentTransitionedEntry' } | { __typename: 'ThreadEventEntry' } | { __typename: 'ThreadLabelsChangedEntry' } | { __typename: 'ThreadPriorityChangedEntry' } | { __typename: 'ThreadStatusTransitionedEntry' } };
 
 export type UserActorPartsFragment = { __typename: 'UserActor', userId: string };
 

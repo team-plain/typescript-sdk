@@ -1,0 +1,1 @@
+export { parsePlainWebhook } from './parse';
