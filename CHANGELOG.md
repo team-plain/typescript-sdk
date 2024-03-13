@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.8.1
+
+### Patch Changes
+
+- 9d45fb2: Removes some unneeded packages
+
 ## 3.8.0
 
 ### Minor Changes
