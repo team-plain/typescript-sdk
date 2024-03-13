@@ -1631,6 +1631,16 @@ export type FileSize = {
   megaBytes: Scalars['Float'];
 };
 
+export type FinishServiceAuthorizationInput = {
+  serviceAuthorizationId: Scalars['ID'];
+};
+
+export type FinishServiceAuthorizationOutput = {
+  __typename?: 'FinishServiceAuthorizationOutput';
+  error: Maybe<MutationError>;
+  serviceAuthorization: Maybe<ServiceAuthorization>;
+};
+
 export type ForkThreadInput = {
   threadId: Scalars['ID'];
   timelineEntryId: Scalars['ID'];
@@ -1878,6 +1888,7 @@ export type Mutation = {
   deleteWorkspaceInvite: DeleteWorkspaceInviteOutput;
   deleteWorkspaceSlackChannelIntegration: DeleteWorkspaceSlackChannelIntegrationOutput;
   deleteWorkspaceSlackIntegration: DeleteWorkspaceSlackIntegrationOutput;
+  finishServiceAuthorization: FinishServiceAuthorizationOutput;
   forkThread: ForkThreadOutput;
   inviteUserToWorkspace: InviteUserToWorkspaceOutput;
   /** Marks a customer as spam. */
@@ -1915,6 +1926,7 @@ export type Mutation = {
   sendNewEmail: SendNewEmailOutput;
   sendSlackMessage: SendSlackMessageOutput;
   snoozeThread: SnoozeThreadOutput;
+  startServiceAuthorization: StartServiceAuthorizationOutput;
   unarchiveLabelType: UnarchiveLabelTypeOutput;
   unassignThread: UnassignThreadOutput;
   /** Removes the spam mark from a customer. */
@@ -2189,6 +2201,11 @@ export type MutationDeleteWorkspaceSlackIntegrationArgs = {
 };
 
 
+export type MutationFinishServiceAuthorizationArgs = {
+  input: FinishServiceAuthorizationInput;
+};
+
+
 export type MutationForkThreadArgs = {
   input: ForkThreadInput;
 };
@@ -2276,6 +2293,11 @@ export type MutationSendSlackMessageArgs = {
 
 export type MutationSnoozeThreadArgs = {
   input: SnoozeThreadInput;
+};
+
+
+export type MutationStartServiceAuthorizationArgs = {
+  input: StartServiceAuthorizationInput;
 };
 
 
@@ -2524,6 +2546,8 @@ export type Query = {
   searchCustomers: CustomerSearchConnection;
   searchTenants: TenantSearchResultConnection;
   searchThreads: ThreadSearchResultConnection;
+  serviceAuthorizations: ServiceAuthorizationConnection;
+  serviceIntegrations: Array<ServiceIntegration>;
   /** Gets a single setting based on the code and the scope. */
   setting: Maybe<Setting>;
   snippet: Maybe<Snippet>;
@@ -2732,6 +2756,14 @@ export type QuerySearchThreadsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   searchQuery: ThreadsSearchQuery;
+};
+
+
+export type QueryServiceAuthorizationsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -3105,6 +3137,42 @@ export type SendSlackMessageOutput = {
   error: Maybe<MutationError>;
 };
 
+export type ServiceAuthorization = {
+  __typename?: 'ServiceAuthorization';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  id: Scalars['ID'];
+  serviceIntegration: ServiceIntegration;
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+};
+
+export type ServiceAuthorizationConnection = {
+  __typename?: 'ServiceAuthorizationConnection';
+  edges: Array<ServiceAuthorizationEdge>;
+  pageInfo: PageInfo;
+};
+
+export type ServiceAuthorizationConnectionDetails = {
+  __typename?: 'ServiceAuthorizationConnectionDetails';
+  hmacDigest: Scalars['String'];
+  serviceAuthorizationId: Scalars['ID'];
+  serviceIntegrationKey: Scalars['String'];
+};
+
+export type ServiceAuthorizationEdge = {
+  __typename?: 'ServiceAuthorizationEdge';
+  cursor: Scalars['String'];
+  node: ServiceAuthorization;
+};
+
+export type ServiceIntegration = {
+  __typename?: 'ServiceIntegration';
+  key: Scalars['String'];
+  logoUrl: Scalars['String'];
+  name: Scalars['String'];
+};
+
 /** A union of different types of settings. */
 export type Setting = BooleanSetting | StringSetting;
 
@@ -3264,6 +3332,16 @@ export enum SortDirection {
   Asc = 'ASC',
   Desc = 'DESC'
 }
+
+export type StartServiceAuthorizationInput = {
+  serviceIntegrationKey: Scalars['String'];
+};
+
+export type StartServiceAuthorizationOutput = {
+  __typename?: 'StartServiceAuthorizationOutput';
+  connectionDetails: Maybe<ServiceAuthorizationConnectionDetails>;
+  error: Maybe<MutationError>;
+};
 
 export type StringInput = {
   value: Scalars['String'];

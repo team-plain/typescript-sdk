@@ -36,15 +36,13 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^2.0.0",
-    "json-refs": "^3.0.15",
     "json-schema-to-typescript": "^13.1.2",
     "rollup": "^3.21.5",
     "rollup-plugin-dts": "^5.3.0",
     "rollup-plugin-esbuild": "^5.0.0",
-    "ts-to-zod": "^3.7.3",
     "typedoc": "^0.24.7",
     "typedoc-plugin-missing-exports": "^2.0.0",
-    "typescript": "5.0.4",
+    "typescript": "^5.1.6",
     "vitest": "^0.31.0"
   },
   "dependencies": {
@@ -52,7 +50,6 @@
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
     "graphql": "^16.6.0",
-    "graphql-anywhere": "^4.2.8",
     "zod": "3.22.4"
   }
 }
