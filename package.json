@@ -40,8 +40,8 @@
     "rollup": "^3.21.5",
     "rollup-plugin-dts": "^5.3.0",
     "rollup-plugin-esbuild": "^5.0.0",
-    "typedoc": "^0.24.7",
-    "typedoc-plugin-missing-exports": "^2.0.0",
+    "typedoc": "^0.25.12",
+    "typedoc-plugin-missing-exports": "^2.2.0",
     "typescript": "^5.1.6",
     "vitest": "^0.31.0"
   },
