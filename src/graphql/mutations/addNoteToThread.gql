@@ -1,0 +1,10 @@
+mutation addNoteToThread($input: CreateNoteInput!) {
+  createNote(input: $input) {
+    note {
+      ...NoteParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

@@ -97,6 +97,7 @@ export type {
   CreateAttachmentDownloadUrlInput,
   CreateCustomerCardConfigInput,
   CreateCustomerEventInput,
+  CreateNoteInput,
   CreateThreadInput,
   ComponentInput,
   EventComponentInput,

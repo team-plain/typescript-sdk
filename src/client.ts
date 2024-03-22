@@ -5,6 +5,7 @@ import type { PlainSDKError } from './error';
 import {
   AddCustomerToCustomerGroupsDocument,
   AddLabelsDocument,
+  AddNoteToThreadDocument,
   ArchiveLabelTypeDocument,
   AssignThreadDocument,
   type AttachmentUploadUrlPartsFragment,
@@ -36,6 +37,7 @@ import {
   MarkThreadAsDoneDocument,
   MarkThreadAsTodoDocument,
   MyWorkspaceDocument,
+  type NotePartsFragment,
   type PageInfo,
   type PageInfoPartsFragment,
   RemoveCustomerFromCustomerGroupsDocument,
@@ -804,5 +806,17 @@ export class PlainClient {
     return unwrapData(res, (q) => {
       return q.webhookTarget;
     });
+  }
+
+  /** Create a note on a thread */
+  async addNoteToThread(
+    input: VariablesOf<typeof AddNoteToThreadDocument>
+  ): SDKResult<NotePartsFragment> {
+    const res = await request(this.#ctx, {
+      query: AddNoteToThreadDocument,
+      variables: { input },
+    });
+
+    return unwrapData(res, (d) => nonNullable(d.createNote.note));
   }
 }

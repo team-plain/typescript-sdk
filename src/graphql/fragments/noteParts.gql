@@ -1,0 +1,6 @@
+fragment NoteParts on Note {
+  __typename
+  id
+  markdown
+  text
+}
