@@ -12,6 +12,7 @@ import {
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
   CreateCustomerEventDocument,
+  CreateNoteDocument,
   CreateThreadDocument,
   CreateThreadEventDocument,
   CreateWebhookTargetDocument,
@@ -36,6 +37,7 @@ import {
   MarkThreadAsDoneDocument,
   MarkThreadAsTodoDocument,
   MyWorkspaceDocument,
+  type NotePartsFragment,
   type PageInfo,
   type PageInfoPartsFragment,
   RemoveCustomerFromCustomerGroupsDocument,
@@ -804,5 +806,17 @@ export class PlainClient {
     return unwrapData(res, (q) => {
       return q.webhookTarget;
     });
+  }
+
+  /** Create a note on a thread */
+  async createNote(
+    input: VariablesOf<typeof CreateNoteDocument>['input']
+  ): SDKResult<NotePartsFragment> {
+    const res = await request(this.#ctx, {
+      query: CreateNoteDocument,
+      variables: { input },
+    });
+
+    return unwrapData(res, (d) => nonNullable(d.createNote.note));
   }
 }
