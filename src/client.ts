@@ -5,7 +5,6 @@ import type { PlainSDKError } from './error';
 import {
   AddCustomerToCustomerGroupsDocument,
   AddLabelsDocument,
-  CreateNoteDocument,
   ArchiveLabelTypeDocument,
   AssignThreadDocument,
   type AttachmentUploadUrlPartsFragment,
@@ -13,6 +12,7 @@ import {
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
   CreateCustomerEventDocument,
+  CreateNoteDocument,
   CreateThreadDocument,
   CreateThreadEventDocument,
   CreateWebhookTargetDocument,
