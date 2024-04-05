@@ -114,7 +114,6 @@ export type {
   SnoozeThreadInput,
   UpdateCustomerCardConfigInput,
   UpsertCustomerInput,
-  UpsertCustomTimelineEntryInput,
   CreateWebhookTargetInput,
   DeleteWebhookTargetInput,
   UpdateWebhookTargetInput,
