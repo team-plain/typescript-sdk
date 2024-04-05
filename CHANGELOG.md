@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 3.9.0
+
+### Minor Changes
+
+- 1c3167e: Add `createNote` method to the SDK
+
 ## 3.8.1
 
 ### Patch Changes
