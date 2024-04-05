@@ -5,7 +5,7 @@ import type { PlainSDKError } from './error';
 import {
   AddCustomerToCustomerGroupsDocument,
   AddLabelsDocument,
-  AddNoteToThreadDocument,
+  CreateNoteDocument,
   ArchiveLabelTypeDocument,
   AssignThreadDocument,
   type AttachmentUploadUrlPartsFragment,
@@ -809,11 +809,11 @@ export class PlainClient {
   }
 
   /** Create a note on a thread */
-  async addNoteToThread(
-    input: VariablesOf<typeof AddNoteToThreadDocument>
+  async createNote(
+    input: VariablesOf<typeof CreateNoteDocument>['input']
   ): SDKResult<NotePartsFragment> {
     const res = await request(this.#ctx, {
-      query: AddNoteToThreadDocument,
+      query: CreateNoteDocument,
       variables: { input },
     });
 
