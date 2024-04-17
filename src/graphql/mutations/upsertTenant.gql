@@ -1,0 +1,10 @@
+mutation upsertTenant($input: UpsertTenantInput!) {
+  upsertTenant(input: $input) {
+    tenant {
+      ...TenantParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

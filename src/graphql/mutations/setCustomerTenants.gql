@@ -1,0 +1,7 @@
+mutation setCustomerTenants($input: SetCustomerTenantsInput!) {
+  setCustomerTenants(input: $input) {
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

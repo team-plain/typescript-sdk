@@ -1,0 +1,7 @@
+mutation removeMembersFromTier($input: RemoveMembersFromTierInput!) {
+  removeMembersFromTier(input: $input) {
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

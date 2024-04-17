@@ -11,6 +11,9 @@ fragment CustomerParts on Customer {
       ...DateTimeParts
     }
   }
+  company {
+    ...CompanyParts
+  }
   updatedAt {
     ...DateTimeParts
   }
@@ -22,12 +25,5 @@ fragment CustomerParts on Customer {
   }
   markedAsSpamAt {
     ...DateTimeParts
-  }
-  customerGroupMemberships {
-    edges {
-      node {
-        ...CustomerGroupMembershipParts
-      }
-    }
   }
 }

@@ -1,0 +1,7 @@
+mutation removeCustomerFromTenants($input: RemoveCustomerFromTenantsInput!) {
+  removeCustomerFromTenants(input: $input) {
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

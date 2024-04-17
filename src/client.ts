@@ -4,11 +4,15 @@ import type { Context } from './context';
 import type { PlainSDKError } from './error';
 import {
   AddCustomerToCustomerGroupsDocument,
+  AddCustomerToTenantsDocument,
   AddLabelsDocument,
+  AddMembersToTierDocument,
   ArchiveLabelTypeDocument,
   AssignThreadDocument,
   type AttachmentUploadUrlPartsFragment,
   ChangeThreadPriorityDocument,
+  CompaniesDocument,
+  type CompanyPartsFragment,
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
   CreateCustomerEventDocument,
@@ -19,13 +23,15 @@ import {
   CustomerByEmailDocument,
   CustomerByIdDocument,
   type CustomerCardConfigPartsFragment,
+  CustomerCustomerGroupsDocument,
   type CustomerEventPartsFragment,
   CustomerGroupByIdDocument,
   type CustomerGroupMembershipPartsFragment,
   type CustomerGroupPartsFragment,
   CustomerGroupsDocument,
   type CustomerPartsFragment,
-  CustomersDocument,
+  type CustomerTenantMembershipPartsFragment,
+  CustomerTenantsDocument,
   DeleteCustomerCardConfigDocument,
   DeleteCustomerDocument,
   DeleteWebhookTargetDocument,
@@ -41,21 +47,34 @@ import {
   type PageInfo,
   type PageInfoPartsFragment,
   RemoveCustomerFromCustomerGroupsDocument,
+  RemoveCustomerFromTenantsDocument,
   RemoveLabelsDocument,
+  RemoveMembersFromTierDocument,
   ReplyToEmailDocument,
   ReplyToThreadDocument,
+  SearchCompaniesDocument,
+  SearchTenantsDocument,
   SendNewEmailDocument,
+  SetCustomerTenantsDocument,
   SnoozeThreadDocument,
+  TenantDocument,
+  type TenantPartsFragment,
+  TenantsDocument,
   ThreadByExternalIdDocument,
   ThreadDocument,
   type ThreadEventPartsFragment,
   type ThreadPartsFragment,
   ThreadsDocument,
+  TierDocument,
+  type TierPartsFragment,
+  TiersDocument,
   UnassignThreadDocument,
   UpdateCustomerCardConfigDocument,
+  UpdateCustomerCompanyDocument,
   UpdateWebhookTargetDocument,
   UpsertCustomerDocument,
   type UpsertResult,
+  UpsertTenantDocument,
   UserByEmailDocument,
   type UserPartsFragment,
   WebhookTargetDocument,
@@ -178,29 +197,6 @@ export class PlainClient {
   }
 
   /**
-   * Get a paginated list of customers.
-   */
-  async getCustomers(variables: VariablesOf<typeof CustomersDocument>): SDKResult<{
-    customers: CustomerPartsFragment[];
-    pageInfo: PageInfoPartsFragment;
-    totalCount: number;
-  }> {
-    const res = await request(this.#ctx, {
-      query: CustomersDocument,
-      variables,
-    });
-
-    return unwrapData(res, (q) => ({
-      pageInfo: q.customers.pageInfo,
-      customers: q.customers.edges.map((edge) => ({
-        ...edge.node,
-        customerGroupMemberships: edge.node.customerGroupMemberships.edges.map((e) => e.node),
-      })),
-      totalCount: q.customers.totalCount,
-    }));
-  }
-
-  /**
    * If the customer is not found this will return null.
    */
   async getCustomerById(
@@ -215,10 +211,7 @@ export class PlainClient {
       if (!q.customer) {
         return null;
       }
-      return {
-        ...q.customer,
-        customerGroupMemberships: q.customer.customerGroupMemberships.edges.map((e) => e.node),
-      };
+      return q.customer;
     });
   }
 
@@ -238,12 +231,7 @@ export class PlainClient {
         return null;
       }
 
-      return {
-        ...q.customerByEmail,
-        customerGroupMemberships: q.customerByEmail.customerGroupMemberships.edges.map(
-          (e) => e.node
-        ),
-      };
+      return q.customerByEmail;
     });
   }
 
@@ -265,10 +253,7 @@ export class PlainClient {
       const customer = nonNullable(q.upsertCustomer.customer);
       return {
         result: nonNullable(q.upsertCustomer.result),
-        customer: {
-          ...customer,
-          customerGroupMemberships: customer.customerGroupMemberships.edges.map((e) => e.node),
-        },
+        customer,
       };
     });
   }
@@ -349,6 +334,46 @@ export class PlainClient {
     });
 
     return unwrapData(res, () => null);
+  }
+
+  async getCustomerCustomerGroupMemberships(
+    variables: VariablesOf<typeof CustomerCustomerGroupsDocument>
+  ): SDKResult<{
+    customerGroupMemberships: CustomerGroupMembershipPartsFragment[];
+    pageInfo: PageInfo | null;
+  }> {
+    const res = await request(this.#ctx, {
+      query: CustomerCustomerGroupsDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => {
+      return {
+        customerGroupMemberships: q.customer
+          ? q.customer.customerGroupMemberships.edges.map((e) => e.node)
+          : [],
+        pageInfo: q.customer ? q.customer.customerGroupMemberships.pageInfo : null,
+      };
+    });
+  }
+
+  async getCustomerTenantMemberships(
+    variables: VariablesOf<typeof CustomerTenantsDocument>
+  ): SDKResult<{
+    tenantMemberships: CustomerTenantMembershipPartsFragment[];
+    pageInfo: PageInfo | null;
+  }> {
+    const res = await request(this.#ctx, {
+      query: CustomerTenantsDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => {
+      return {
+        tenantMemberships: q.customer ? q.customer.tenantMemberships.edges.map((e) => e.node) : [],
+        pageInfo: q.customer ? q.customer.tenantMemberships.pageInfo : null,
+      };
+    });
   }
 
   async sendNewEmail(
@@ -818,5 +843,196 @@ export class PlainClient {
     });
 
     return unwrapData(res, (d) => nonNullable(d.createNote.note));
+  }
+  async getTenantById(
+    variables: VariablesOf<typeof TenantDocument>
+  ): SDKResult<TenantPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: TenantDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => {
+      return q.tenant;
+    });
+  }
+
+  async getTenants(variables: VariablesOf<typeof TenantsDocument>): SDKResult<{
+    tenants: TenantPartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+  }> {
+    const res = await request(this.#ctx, {
+      query: TenantsDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      tenants: q.tenants.edges.map((edge) => edge.node),
+      pageInfo: q.tenants.pageInfo,
+    }));
+  }
+
+  async searchTenants(variables: VariablesOf<typeof SearchTenantsDocument>): SDKResult<{
+    tenants: TenantPartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+  }> {
+    const res = await request(this.#ctx, {
+      query: SearchTenantsDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      tenants: q.searchTenants.edges.map((edge) => edge.node.tenant),
+      pageInfo: q.searchTenants.pageInfo,
+    }));
+  }
+
+  async upsertTenant(
+    input: VariablesOf<typeof UpsertTenantDocument>['input']
+  ): SDKResult<TenantPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: UpsertTenantDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.upsertTenant.tenant));
+  }
+
+  async setCustomerTenants(
+    input: VariablesOf<typeof SetCustomerTenantsDocument>['input']
+  ): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: SetCustomerTenantsDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
+  }
+
+  async addCustomerToTenants(
+    input: VariablesOf<typeof AddCustomerToTenantsDocument>['input']
+  ): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: AddCustomerToTenantsDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
+  }
+
+  async removeCustomerFromTenants(
+    input: VariablesOf<typeof RemoveCustomerFromTenantsDocument>['input']
+  ): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: RemoveCustomerFromTenantsDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
+  }
+
+  async getCompanies(variables: VariablesOf<typeof CompaniesDocument>): SDKResult<{
+    companies: CompanyPartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+  }> {
+    const res = await request(this.#ctx, {
+      query: CompaniesDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      companies: q.companies.edges.map((edge) => edge.node),
+      pageInfo: q.companies.pageInfo,
+    }));
+  }
+
+  async searchCompanies(variables: VariablesOf<typeof SearchCompaniesDocument>): SDKResult<{
+    tenants: CompanyPartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+  }> {
+    const res = await request(this.#ctx, {
+      query: SearchCompaniesDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      tenants: q.searchCompanies.edges.map((edge) => edge.node.company),
+      pageInfo: q.searchCompanies.pageInfo,
+    }));
+  }
+
+  async updateCustomerCompany(
+    input: VariablesOf<typeof UpdateCustomerCompanyDocument>['input']
+  ): SDKResult<CustomerPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: UpdateCustomerCompanyDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (res) => nonNullable(res.updateCustomerCompany.customer));
+  }
+
+  async getTierById(
+    variables: VariablesOf<typeof TierDocument>
+  ): SDKResult<TierPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: TierDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => {
+      return q.tier;
+    });
+  }
+
+  async getTiers(variables: VariablesOf<typeof TiersDocument>): SDKResult<{
+    tiers: TierPartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+  }> {
+    const res = await request(this.#ctx, {
+      query: TiersDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      tiers: q.tiers.edges.map((edge) => edge.node),
+      pageInfo: q.tiers.pageInfo,
+    }));
+  }
+
+  async addMembersToTier(
+    input: VariablesOf<typeof AddMembersToTierDocument>['input']
+  ): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: AddMembersToTierDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
+  }
+
+  async removeMembersToTier(
+    input: VariablesOf<typeof RemoveMembersFromTierDocument>['input']
+  ): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: RemoveMembersFromTierDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
   }
 }

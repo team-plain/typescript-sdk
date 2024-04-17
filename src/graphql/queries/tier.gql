@@ -1,0 +1,5 @@
+query tier($tierId: ID!) {
+  tier(tierId: $tierId) {
+    ...TierParts
+  }
+}
