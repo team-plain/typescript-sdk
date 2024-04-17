@@ -86,32 +86,7 @@ import {
 import { request } from './request';
 import type { Result } from './result';
 
-type SDKResult<T> = Promise<Result<Public<T>, PlainSDKError>>;
-
-// Public takes a GraphQL Fragment and transforms it into a type in which
-// all of its connection-like fields (e.g. fields which have an `edges`) property
-// are flattened into an array. For example:
-//
-// Given the type:
-//
-// type Fragment = {
-//     customerGroupMemberships: {
-//        edges: Array<{ node: CustomerGroupMembershipPartsFragment }>
-//     }
-// }
-//
-// When we apply Public to it, we get:
-//
-// type Public<Fragment> = {
-// {
-//     customerGroupMemberships: Array<CustomerGroupMembershipPartsFragment>
-// }
-//
-export type Public<T> = T extends { edges: Array<{ node: infer E }> }
-  ? Array<Public<E>>
-  : T extends object
-  ? { [K in keyof T]: Public<T[K]> }
-  : T;
+type SDKResult<T> = Promise<Result<T, PlainSDKError>>;
 
 function nonNullable<T>(x: T | null | undefined): T {
   if (x === null || x === undefined) {
