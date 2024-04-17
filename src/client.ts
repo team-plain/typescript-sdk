@@ -1044,7 +1044,7 @@ export class PlainClient {
     return unwrapData(res, () => null);
   }
 
-  async removeMembersToTier(
+  async removeMembersFromTier(
     input: VariablesOf<typeof RemoveMembersFromTierDocument>['input']
   ): SDKResult<null> {
     const res = await request(this.#ctx, {
