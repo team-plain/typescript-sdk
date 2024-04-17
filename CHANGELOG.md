@@ -1,5 +1,35 @@
 # @team-plain/typescript-sdk
 
+## 4.0.0
+
+### Major Changes
+
+- 4551691: Added the following queries:
+
+  - `getCustomerCustomerGroupMemberships`
+  - `getCustomerTenantMemberships`
+  - `getTenantById`
+  - `getTenants`
+  - `searchTenants`
+  - `getCompanies`
+  - `searchCompanies`
+  - `getTierById`
+  - `getTiers`
+
+  Added support for the following mutations:
+
+  - `upsertTenant`
+  - `setCustomerTenants`
+  - `addCustomerToTenants`
+  - `removeCustomerFromTenants`
+  - `updateCustomerCompany`
+  - `addMembersToTier`
+  - `removeMembersFromTier`
+
+  Breaking change:
+
+  - You previously received customer group memberships whenever you got a customer back. As there might be many customer groups this is now it's own separate query (`getCustomerCustomerGroupMemberships`). This allows you to fetch and paginate through a customer's customer groups.
+
 ## 3.9.0
 
 ### Minor Changes
