@@ -66,7 +66,6 @@ describe('query test - customer by id', () => {
     expect(result.error).toBeUndefined();
     expect(result.data).toEqual({
       ...response.data.customer,
-      customerGroupMemberships: [],
     });
   });
 
