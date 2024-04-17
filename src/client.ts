@@ -30,6 +30,7 @@ import {
   type CustomerGroupPartsFragment,
   CustomerGroupsDocument,
   type CustomerPartsFragment,
+  CustomersDocument,
   type CustomerTenantMembershipPartsFragment,
   CustomerTenantsDocument,
   DeleteCustomerCardConfigDocument,
@@ -194,6 +195,26 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => q.userByEmail || null);
+  }
+
+  /**
+   * Get a paginated list of customers.
+   */
+  async getCustomers(variables: VariablesOf<typeof CustomersDocument>): SDKResult<{
+    customers: CustomerPartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+    totalCount: number;
+  }> {
+    const res = await request(this.#ctx, {
+      query: CustomersDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => ({
+      pageInfo: q.customers.pageInfo,
+      customers: q.customers.edges.map((edge) => edge.node),
+      totalCount: q.customers.totalCount,
+    }));
   }
 
   /**

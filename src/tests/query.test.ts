@@ -28,6 +28,7 @@ describe('query test - customer by id', () => {
               unixTimestamp: '1699890305',
             },
           },
+          company: null,
           updatedAt: {
             __typename: 'DateTime',
             iso8601: '2023-05-01T09:54:51.715Z',
@@ -40,9 +41,6 @@ describe('query test - customer by id', () => {
           },
           createdBy: {},
           markedAsSpamAt: null,
-          customerGroupMemberships: {
-            edges: [],
-          },
         },
       },
     };
