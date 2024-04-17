@@ -4346,7 +4346,7 @@ export type ThreadsFilter = {
   supportEmailAddresses?: InputMaybe<Array<Scalars['String']>>;
   tenantIdentifiers?: InputMaybe<Array<TenantIdentifierInput>>;
   threadIds?: InputMaybe<Array<Scalars['ID']>>;
-  tierIds?: InputMaybe<Array<Scalars['ID']>>;
+  tierIdentifiers?: InputMaybe<Array<TierIdentifierInput>>;
 };
 
 /**
@@ -4405,6 +4405,11 @@ export type TierEdge = {
   __typename?: 'TierEdge';
   cursor: Scalars['String'];
   node: Tier;
+};
+
+export type TierIdentifierInput = {
+  externalId?: InputMaybe<Scalars['String']>;
+  tierId?: InputMaybe<Scalars['ID']>;
 };
 
 export type TierMemberIdentifierInput = {
