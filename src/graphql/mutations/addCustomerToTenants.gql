@@ -1,0 +1,7 @@
+mutation addCustomerToTenants($input: AddCustomerToTenantsInput!) {
+  addCustomerToTenants(input: $input) {
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

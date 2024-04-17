@@ -1,0 +1,27 @@
+query customerCustomerGroups(
+  $customerId: ID!
+  $filters: CustomerGroupMembershipsFilter
+  $first: Int
+  $after: String
+  $last: Int
+  $before: String
+) {
+  customer(customerId: $customerId) {
+    customerGroupMemberships(
+      filters: $filters
+      first: $first
+      after: $after
+      last: $last
+      before: $before
+    ) {
+      edges {
+        node {
+          ...CustomerGroupMembershipParts
+        }
+      }
+      pageInfo {
+        ...PageInfoParts
+      }
+    }
+  }
+}

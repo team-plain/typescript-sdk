@@ -1,0 +1,19 @@
+fragment TenantParts on Tenant {
+  __typename
+  id
+  name
+  externalId
+  url
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...InternalActorParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+  updatedBy {
+    ...InternalActorParts
+  }
+}

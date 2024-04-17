@@ -1,0 +1,10 @@
+mutation updateCustomerCompany($input: UpdateCustomerCompanyInput!) {
+  updateCustomerCompany(input: $input) {
+    customer {
+      ...CustomerParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

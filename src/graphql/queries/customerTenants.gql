@@ -1,0 +1,14 @@
+query customerTenants($customerId: ID!, $first: Int, $after: String, $last: Int, $before: String) {
+  customer(customerId: $customerId) {
+    tenantMemberships(first: $first, after: $after, last: $last, before: $before) {
+      edges {
+        node {
+          ...CustomerTenantMembershipParts
+        }
+      }
+      pageInfo {
+        ...PageInfoParts
+      }
+    }
+  }
+}
