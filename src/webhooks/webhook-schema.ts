@@ -122,6 +122,9 @@ export interface WebhooksSchemaDefinition {
     | ThreadEmailSentPublicEventPayload
     | ThreadLabelsChangedPublicEventPayload
     | ThreadPriorityChangedPublicEventPayload
+    | ThreadFieldCreatedPublicEventPayload
+    | ThreadFieldUpdatedPublicEventPayload
+    | ThreadFieldDeletedPublicEventPayload
     | ThreadChatSentPublicEventPayload
     | CustomerCreatedPublicEventPayload
     | CustomerUpdatedPublicEventPayload
@@ -137,6 +140,9 @@ export interface WebhooksSchemaDefinition {
     | "thread.note_created"
     | "thread.thread_labels_changed"
     | "thread.thread_priority_changed"
+    | "thread.thread_field_created"
+    | "thread.thread_field_updated"
+    | "thread.thread_field_deleted"
     | "customer.customer_created"
     | "customer.customer_updated"
     | "customer.customer_deleted"
@@ -537,6 +543,34 @@ export interface ThreadPriorityChangedPublicEventPayload {
   eventType: "thread.thread_priority_changed";
   previousThread: Thread;
   thread: Thread;
+}
+export interface ThreadFieldCreatedPublicEventPayload {
+  eventType: "thread.thread_field_created";
+  thread: Thread;
+  threadField: ThreadField;
+}
+export interface ThreadField {
+  id: Id;
+  threadId: Id;
+  key: string;
+  type: "STRING" | "BOOL" | "ENUM";
+  stringValue: string | null;
+  booleanValue: boolean | null;
+  createdAt: Datetime;
+  createdBy: InternalActor;
+  updatedAt: Datetime;
+  updatedBy: InternalActor;
+}
+export interface ThreadFieldUpdatedPublicEventPayload {
+  eventType: "thread.thread_field_updated";
+  thread: Thread;
+  previousThreadField: ThreadField;
+  threadField: ThreadField;
+}
+export interface ThreadFieldDeletedPublicEventPayload {
+  eventType: "thread.thread_field_deleted";
+  thread: Thread;
+  previousThreadField: ThreadField;
 }
 export interface ThreadChatSentPublicEventPayload {
   eventType: "thread.chat_sent";

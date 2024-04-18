@@ -44,6 +44,15 @@
           "$ref": "#/definitions/threadPriorityChangedPublicEventPayload"
         },
         {
+          "$ref": "#/definitions/threadFieldCreatedPublicEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadFieldUpdatedPublicEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadFieldDeletedPublicEventPayload"
+        },
+        {
           "$ref": "#/definitions/threadChatSentPublicEventPayload"
         },
         {
@@ -72,6 +81,9 @@
         "thread.note_created",
         "thread.thread_labels_changed",
         "thread.thread_priority_changed",
+        "thread.thread_field_created",
+        "thread.thread_field_updated",
+        "thread.thread_field_deleted",
         "customer.customer_created",
         "customer.customer_updated",
         "customer.customer_deleted",
@@ -1577,11 +1589,11 @@
         "timestamp": {
           "anyOf": [
             {
-              "type": "string",
-              "format": "date-time"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "string",
+              "format": "date-time"
             },
             {}
           ]
@@ -2576,6 +2588,129 @@
         "eventType",
         "previousThread",
         "thread"
+      ],
+      "additionalProperties": false
+    },
+    "threadFieldCreatedPublicEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.thread_field_created"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "threadField": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/definitions/id"
+            },
+            "threadId": {
+              "$ref": "#/definitions/id"
+            },
+            "key": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "STRING",
+                "BOOL",
+                "ENUM"
+              ]
+            },
+            "stringValue": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "booleanValue": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "createdAt": {
+              "$ref": "#/definitions/datetime"
+            },
+            "createdBy": {
+              "$ref": "#/definitions/internalActor"
+            },
+            "updatedAt": {
+              "$ref": "#/definitions/datetime"
+            },
+            "updatedBy": {
+              "$ref": "#/definitions/internalActor"
+            }
+          },
+          "required": [
+            "id",
+            "threadId",
+            "key",
+            "type",
+            "stringValue",
+            "booleanValue",
+            "createdAt",
+            "createdBy",
+            "updatedAt",
+            "updatedBy"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "threadField"
+      ],
+      "additionalProperties": false
+    },
+    "threadFieldUpdatedPublicEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.thread_field_updated"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "previousThreadField": {
+          "$ref": "#/definitions/threadFieldCreatedPublicEventPayload/properties/threadField"
+        },
+        "threadField": {
+          "$ref": "#/definitions/threadFieldCreatedPublicEventPayload/properties/threadField"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "previousThreadField",
+        "threadField"
+      ],
+      "additionalProperties": false
+    },
+    "threadFieldDeletedPublicEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.thread_field_deleted"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "previousThreadField": {
+          "$ref": "#/definitions/threadFieldCreatedPublicEventPayload/properties/threadField"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "previousThreadField"
       ],
       "additionalProperties": false
     },

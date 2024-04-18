@@ -3406,8 +3406,8 @@ export type RemoveLabelsOutput = {
 };
 
 export type RemoveMembersFromTierInput = {
+  memberIdentifiers: Array<TierMemberIdentifierInput>;
   tierId: Scalars['ID'];
-  tierMembershipIds: Array<Scalars['String']>;
 };
 
 export type RemoveMembersFromTierOutput = {
@@ -3629,7 +3629,42 @@ export type ServiceLevelAgreementInput = {
 
 export type ServiceLevelAgreementStatus = {
   __typename?: 'ServiceLevelAgreementStatus';
+  firstResponseTime: ServiceLevelAgreementStatusDetail;
   firstResponseTimeObjective: ServiceLevelObjectiveStatus;
+};
+
+export type ServiceLevelAgreementStatusDetail = ServiceLevelAgreementStatusDetailAchieved | ServiceLevelAgreementStatusDetailBreached | ServiceLevelAgreementStatusDetailBreaching | ServiceLevelAgreementStatusDetailImminentBreach | ServiceLevelAgreementStatusDetailPending;
+
+export type ServiceLevelAgreementStatusDetailAchieved = {
+  __typename?: 'ServiceLevelAgreementStatusDetailAchieved';
+  /** The time when this SLA was achieved. */
+  achievedAt: DateTime;
+};
+
+export type ServiceLevelAgreementStatusDetailBreached = {
+  __typename?: 'ServiceLevelAgreementStatusDetailBreached';
+  /** The time when this SLA breached. */
+  breachedAt: DateTime;
+  /** The time when we completed this breached SLA. */
+  completedAt: DateTime;
+};
+
+export type ServiceLevelAgreementStatusDetailBreaching = {
+  __typename?: 'ServiceLevelAgreementStatusDetailBreaching';
+  /** The time when this SLA breached. */
+  breachedAt: DateTime;
+};
+
+export type ServiceLevelAgreementStatusDetailImminentBreach = {
+  __typename?: 'ServiceLevelAgreementStatusDetailImminentBreach';
+  /** The time when this SLA will breach. */
+  breachingAt: DateTime;
+};
+
+export type ServiceLevelAgreementStatusDetailPending = {
+  __typename?: 'ServiceLevelAgreementStatusDetailPending';
+  /** The time when this SLA will breach. */
+  breachingAt: DateTime;
 };
 
 export type ServiceLevelObjectiveStatus = ServiceLevelObjectiveStatusAchieved | ServiceLevelObjectiveStatusBreached | ServiceLevelObjectiveStatusBreaching | ServiceLevelObjectiveStatusImminentBreach | ServiceLevelObjectiveStatusPending;
@@ -4178,6 +4213,12 @@ export type ThreadFieldEdge = {
   node: ThreadField;
 };
 
+export type ThreadFieldFilter = {
+  booleanValue?: InputMaybe<Scalars['Boolean']>;
+  key: Scalars['String'];
+  stringValue?: InputMaybe<Scalars['String']>;
+};
+
 export type ThreadFieldSchema = {
   __typename?: 'ThreadFieldSchema';
   createdAt: DateTime;
@@ -4345,6 +4386,7 @@ export type ThreadsFilter = {
   statuses?: InputMaybe<Array<ThreadStatus>>;
   supportEmailAddresses?: InputMaybe<Array<Scalars['String']>>;
   tenantIdentifiers?: InputMaybe<Array<TenantIdentifierInput>>;
+  threadFields?: InputMaybe<Array<ThreadFieldFilter>>;
   threadIds?: InputMaybe<Array<Scalars['ID']>>;
   tierIdentifiers?: InputMaybe<Array<TierIdentifierInput>>;
 };
@@ -4383,6 +4425,7 @@ export type Tier = {
   memberships: TierMembershipConnection;
   name: Scalars['String'];
   serviceLevelAgreement: Maybe<ServiceLevelAgreement>;
+  serviceLevelAgreements: Array<ServiceLevelAgreement>;
   updatedAt: DateTime;
   updatedBy: InternalActor;
 };
