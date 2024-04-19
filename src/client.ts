@@ -790,7 +790,7 @@ export class PlainClient {
   }
 
   /**
-   * Get a paginated list of label types
+   * Get a paginated list of thread fields
    */
   async getThreadFieldsByThreadId(
     variables: VariablesOf<typeof ThreadFieldsByThreadIdDocument>
