@@ -37,33 +37,3 @@ export async function deleteThreadField() {
     console.log(res.data);
   }
 }
-
-export async function getThread() {
-  const res = await client.getThread({
-    threadId: 'th_01HVNWFJS395XVPPBJNE6A8BHP',
-  });
-
-  if (res.error) {
-    console.log('There was an error getting thread');
-    console.error(res.error);
-  } else {
-    console.log(`Fetched thread!`);
-    console.log(res.data);
-  }
-}
-
-// upsertThreadField()
-//   .then(() => {
-//     console.log('finish');
-//   })
-//   .catch((e) => {
-//     console.error(e);
-//   });
-
-getThread()
-  .then(() => {
-    console.log('finish');
-  })
-  .catch((e) => {
-    console.error(e);
-  });
