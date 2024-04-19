@@ -8,11 +8,11 @@ const client = new PlainClient({
 export async function upsertThreadField() {
   const res = await client.upsertThreadField({
     identifier: {
-      key: 'hello_world',
+      key: 'topic',
       threadId: 'th_01HVNWFJS395XVPPBJNE6A8BHP',
     },
     type: ThreadFieldSchemaType.String,
-    stringValue: 'hello world',
+    stringValue: 'security',
   });
 
   if (res.error) {
