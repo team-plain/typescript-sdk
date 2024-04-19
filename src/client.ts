@@ -35,6 +35,7 @@ import {
   CustomerTenantsDocument,
   DeleteCustomerCardConfigDocument,
   DeleteCustomerDocument,
+  DeleteThreadFieldDocument,
   DeleteWebhookTargetDocument,
   type EmailPartsFragment,
   type LabelPartsFragment,
@@ -64,6 +65,8 @@ import {
   ThreadByExternalIdDocument,
   ThreadDocument,
   type ThreadEventPartsFragment,
+  type ThreadFieldPartsFragment,
+  ThreadFieldsByThreadIdDocument,
   type ThreadPartsFragment,
   ThreadsDocument,
   TierDocument,
@@ -76,6 +79,7 @@ import {
   UpsertCustomerDocument,
   type UpsertResult,
   UpsertTenantDocument,
+  UpsertThreadFieldDocument,
   UserByEmailDocument,
   type UserPartsFragment,
   WebhookTargetDocument,
@@ -757,6 +761,58 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.createThreadEvent.threadEvent));
+  }
+
+  async upsertThreadField(
+    input: VariablesOf<typeof UpsertThreadFieldDocument>['input']
+  ): SDKResult<ThreadFieldPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: UpsertThreadFieldDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.upsertThreadField.threadField));
+  }
+
+  async deleteThreadField(
+    input: VariablesOf<typeof DeleteThreadFieldDocument>['input']
+  ): SDKResult<null> {
+    const res = await request(this.#ctx, {
+      query: DeleteThreadFieldDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, () => null);
+  }
+
+  /**
+   * Get a paginated list of label types
+   */
+  async getThreadFieldsByThreadId(
+    variables: VariablesOf<typeof ThreadFieldsByThreadIdDocument>
+  ): SDKResult<{
+    threadFields: ThreadFieldPartsFragment[];
+    pageInfo: PageInfoPartsFragment;
+  } | null> {
+    const res = await request(this.#ctx, {
+      query: ThreadFieldsByThreadIdDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => {
+      if (q.thread === null) {
+        return null;
+      }
+
+      return {
+        threadFields: q.thread.threadFields.edges.map((edge) => edge.node),
+        pageInfo: q.thread.threadFields.pageInfo,
+      };
+    });
   }
 
   async createWebhookTarget(

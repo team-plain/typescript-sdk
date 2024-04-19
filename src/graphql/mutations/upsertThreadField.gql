@@ -1,0 +1,11 @@
+mutation upsertThreadField($input: UpsertThreadFieldInput!) {
+  upsertThreadField(input: $input) {
+    result
+    threadField {
+      ...ThreadFieldParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

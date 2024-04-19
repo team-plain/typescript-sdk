@@ -24,6 +24,7 @@ export {
   ThreadStatus,
   ThreadsSortField,
   UserStatus,
+  ThreadFieldSchemaType,
 } from './graphql/types';
 
 export type {

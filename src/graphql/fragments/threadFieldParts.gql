@@ -1,0 +1,22 @@
+fragment ThreadFieldParts on ThreadField {
+  __typename
+  id
+  key
+  type
+  threadId
+  stringValue
+  booleanValue
+  isAiGenerated
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...InternalActorParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+  updatedBy {
+    ...InternalActorParts
+  }
+}

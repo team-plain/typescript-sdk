@@ -1,0 +1,7 @@
+mutation deleteThreadField($input: DeleteThreadFieldInput!) {
+  deleteThreadField(input: $input) {
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
