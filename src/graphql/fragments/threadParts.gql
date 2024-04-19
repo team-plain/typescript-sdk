@@ -19,6 +19,9 @@ fragment ThreadParts on Thread {
   labels {
     ...LabelParts
   }
+  threadFields {
+    ...ThreadFieldParts
+  }
 
   assignedAt {
     ...DateTimeParts

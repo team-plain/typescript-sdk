@@ -66,7 +66,6 @@ import {
   ThreadDocument,
   type ThreadEventPartsFragment,
   type ThreadFieldPartsFragment,
-  ThreadFieldsByThreadIdDocument,
   type ThreadPartsFragment,
   ThreadsDocument,
   TierDocument,
@@ -787,32 +786,6 @@ export class PlainClient {
     });
 
     return unwrapData(res, () => null);
-  }
-
-  /**
-   * Get a paginated list of thread fields
-   */
-  async getThreadFieldsByThreadId(
-    variables: VariablesOf<typeof ThreadFieldsByThreadIdDocument>
-  ): SDKResult<{
-    threadFields: ThreadFieldPartsFragment[];
-    pageInfo: PageInfoPartsFragment;
-  } | null> {
-    const res = await request(this.#ctx, {
-      query: ThreadFieldsByThreadIdDocument,
-      variables,
-    });
-
-    return unwrapData(res, (q) => {
-      if (q.thread === null) {
-        return null;
-      }
-
-      return {
-        threadFields: q.thread.threadFields.edges.map((edge) => edge.node),
-        pageInfo: q.thread.threadFields.pageInfo,
-      };
-    });
   }
 
   async createWebhookTarget(
