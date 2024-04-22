@@ -1,4 +1,4 @@
-import { AttachmentType, PlainClient } from '../';
+import { AttachmentType, PlainClient } from '../index';
 
 export async function createAttachmentUploadUrl() {
   const client = new PlainClient({ apiKey: process.env.API_KEY || '' });
