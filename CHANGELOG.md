@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.2.0
+
+### Minor Changes
+
+- 22e0d28: Added support for setting the company and tenant tier directly via `updateTenantTier` and `updateCompanyTier` respectively. Also expanded return types of tier and membership related mutations.
+
 ## 4.1.0
 
 ### Minor Changes
