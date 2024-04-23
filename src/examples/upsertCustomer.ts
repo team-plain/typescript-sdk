@@ -1,4 +1,4 @@
-import { PlainClient } from '../client';
+import { PlainClient } from '../index';
 
 export async function createCustomer() {
   const client = new PlainClient({ apiKey: process.env.API_KEY || '' });

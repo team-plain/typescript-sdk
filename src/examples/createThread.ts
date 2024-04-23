@@ -1,6 +1,4 @@
-import { PlainClient } from '../client';
-import { ComponentTextColor, ComponentTextSize } from '../graphql/types';
-import { uiComponent } from '../ui-components';
+import { ComponentTextColor, ComponentTextSize, PlainClient, uiComponent } from '../index';
 
 export async function createThread() {
   const client = new PlainClient({ apiKey: 'XXX' });

@@ -1,4 +1,4 @@
-import { PlainClient } from '../client';
+import { PlainClient } from '../index';
 
 export async function assignThread() {
   const client = new PlainClient({

@@ -1,5 +1,4 @@
-import { PlainClient } from '../client';
-import { ThreadFieldSchemaType } from '../graphql/types';
+import { PlainClient, ThreadFieldSchemaType } from '../index';
 
 const client = new PlainClient({
   apiKey: process.env.API_KEY || '',
