@@ -13,6 +13,7 @@ import {
   ChangeThreadPriorityDocument,
   CompaniesDocument,
   type CompanyPartsFragment,
+  type CompanyTierMembershipPartsFragment,
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
   CreateCustomerEventDocument,
@@ -62,6 +63,7 @@ import {
   TenantDocument,
   type TenantPartsFragment,
   TenantsDocument,
+  type TenantTierMembershipPartsFragment,
   ThreadByExternalIdDocument,
   ThreadDocument,
   type ThreadEventPartsFragment,
@@ -69,11 +71,14 @@ import {
   type ThreadPartsFragment,
   ThreadsDocument,
   TierDocument,
+  type TierMembershipPartsFragment,
   type TierPartsFragment,
   TiersDocument,
   UnassignThreadDocument,
+  UpdateCompanyTierDocument,
   UpdateCustomerCardConfigDocument,
   UpdateCustomerCompanyDocument,
+  UpdateTenantTierDocument,
   UpdateWebhookTargetDocument,
   UpsertCustomerDocument,
   type UpsertResult,
@@ -1037,7 +1042,7 @@ export class PlainClient {
 
   async addMembersToTier(
     input: VariablesOf<typeof AddMembersToTierDocument>['input']
-  ): SDKResult<null> {
+  ): SDKResult<TierMembershipPartsFragment[]> {
     const res = await request(this.#ctx, {
       query: AddMembersToTierDocument,
       variables: {
@@ -1045,7 +1050,7 @@ export class PlainClient {
       },
     });
 
-    return unwrapData(res, () => null);
+    return unwrapData(res, (q) => q.addMembersToTier.memberships);
   }
 
   async removeMembersFromTier(
@@ -1059,5 +1064,31 @@ export class PlainClient {
     });
 
     return unwrapData(res, () => null);
+  }
+
+  async updateTenantTier(
+    input: VariablesOf<typeof UpdateTenantTierDocument>['input']
+  ): SDKResult<TenantTierMembershipPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: UpdateTenantTierDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.updateTenantTier.tenantTierMembership));
+  }
+
+  async updateCompanyTier(
+    input: VariablesOf<typeof UpdateCompanyTierDocument>['input']
+  ): SDKResult<CompanyTierMembershipPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: UpdateCompanyTierDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.updateCompanyTier.companyTierMembership));
   }
 }

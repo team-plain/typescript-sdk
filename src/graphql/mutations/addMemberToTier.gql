@@ -1,5 +1,8 @@
 mutation addMembersToTier($input: AddMembersToTierInput!) {
   addMembersToTier(input: $input) {
+    memberships {
+      ...TierMembershipParts
+    }
     error {
       ...MutationErrorParts
     }

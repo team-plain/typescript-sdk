@@ -57,6 +57,9 @@ export type {
   CompanyPartsFragment,
   TenantPartsFragment,
   CustomerTenantMembershipPartsFragment,
+  TenantTierMembershipPartsFragment,
+  CompanyTierMembershipPartsFragment,
+  TierMembershipPartsFragment,
 
   // Query arguments
   CustomersFilter,
@@ -100,6 +103,8 @@ export type {
   CreateWebhookTargetInput,
   DeleteWebhookTargetInput,
   UpdateWebhookTargetInput,
+  UpdateTenantTierInput,
+  UpdateCompanyTierInput,
 } from './graphql/types';
 
 export type {

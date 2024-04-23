@@ -1,0 +1,10 @@
+mutation updateTenantTier($input: UpdateTenantTierInput!) {
+  updateTenantTier(input: $input) {
+    tenantTierMembership {
+      ...TenantTierMembershipParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
