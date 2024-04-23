@@ -1,0 +1,9 @@
+fragment TierMembershipParts on TierMembership {
+  __typename
+  ... on TenantTierMembership {
+    ...TenantTierMembershipParts
+  }
+  ... on CompanyTierMembership {
+    ...CompanyTierMembershipParts
+  }
+}

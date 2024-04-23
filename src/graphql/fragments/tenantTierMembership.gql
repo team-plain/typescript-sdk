@@ -1,0 +1,16 @@
+fragment TenantTierMembershipParts on TenantTierMembership {
+  __typename
+  id
+  createdAt {
+    ...DateTimeParts
+  }
+  createdBy {
+    ...InternalActorParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+  updatedBy {
+    ...InternalActorParts
+  }
+}

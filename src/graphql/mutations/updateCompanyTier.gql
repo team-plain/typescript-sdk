@@ -1,0 +1,10 @@
+mutation updateCompanyTier($input: UpdateCompanyTierInput!) {
+  updateCompanyTier(input: $input) {
+    companyTierMembership {
+      ...CompanyTierMembershipParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
