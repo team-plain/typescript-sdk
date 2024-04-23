@@ -1,5 +1,14 @@
 # @team-plain/typescript-sdk
 
+## 4.1.0
+
+### Minor Changes
+
+- c24b8ac: Add support for thread fields, adding and removing them: `upsertThreadField` and `deleteThreadField`
+- 1b43893: Changed the input type to removingMemberFromTier mutation.
+- 21b6db9: Updated types to reflect new way to filter threads by tier identifiers
+- 47871dc: Remove unused TimelineEntry from SDK
+
 ## 4.0.0
 
 ### Major Changes
