@@ -79,6 +79,7 @@ import {
   UpdateCustomerCardConfigDocument,
   UpdateCustomerCompanyDocument,
   UpdateTenantTierDocument,
+  UpdateThreadTenantDocument,
   UpdateWebhookTargetDocument,
   UpsertCustomerDocument,
   type UpsertResult,
@@ -611,6 +612,22 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.changeThreadPriority.thread));
+  }
+
+  /**
+   * Update a thread's tenant
+   */
+  async updateThreadTenant(
+    input: VariablesOf<typeof UpdateThreadTenantDocument>['input']
+  ): SDKResult<ThreadPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: UpdateThreadTenantDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.updateThreadTenant.thread));
   }
 
   /**
