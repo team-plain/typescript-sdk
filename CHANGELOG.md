@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.2.1
+
+### Patch Changes
+
+- 9822663: Added updateThreadTenant
+
 ## 4.2.0
 
 ### Minor Changes
