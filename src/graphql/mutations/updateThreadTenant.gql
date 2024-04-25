@@ -1,0 +1,10 @@
+mutation updateThreadTenant($input: UpdateThreadTenantInput!) {
+  updateThreadTenant(input: $input) {
+    thread {
+      ...ThreadParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
