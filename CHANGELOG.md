@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.2.2
+
+### Patch Changes
+
+- 23f457c: Update schema for tier membership endpoints
+
 ## 4.2.1
 
 ### Patch Changes
