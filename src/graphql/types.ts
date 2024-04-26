@@ -61,7 +61,7 @@ export type AddLabelsOutput = {
 
 export type AddMembersToTierInput = {
   memberIdentifiers: Array<TierMemberIdentifierInput>;
-  tierId: Scalars['ID'];
+  tierIdentifier: TierIdentifierInput;
 };
 
 export type AddMembersToTierOutput = {
@@ -1933,6 +1933,10 @@ export type ForkThreadOutput = {
   thread: Maybe<Thread>;
 };
 
+export type IntArrayInput = {
+  value: Array<Scalars['Int']>;
+};
+
 export type IntInput = {
   value: Scalars['Int'];
 };
@@ -2236,6 +2240,7 @@ export type Mutation = {
   updateCustomerGroup: UpdateCustomerGroupOutput;
   updateLabelType: UpdateLabelTypeOutput;
   updateMachineUser: UpdateMachineUserOutput;
+  updateServiceLevelAgreement: UpdateServiceLevelAgreementOutput;
   /** Updates a setting. */
   updateSetting: UpdateSettingOutput;
   updateSnippet: UpdateSnippetOutput;
@@ -2715,6 +2720,11 @@ export type MutationUpdateLabelTypeArgs = {
 
 export type MutationUpdateMachineUserArgs = {
   input: UpdateMachineUserInput;
+};
+
+
+export type MutationUpdateServiceLevelAgreementArgs = {
+  input: UpdateServiceLevelAgreementInput;
 };
 
 
@@ -3452,7 +3462,6 @@ export type RemoveLabelsOutput = {
 
 export type RemoveMembersFromTierInput = {
   memberIdentifiers: Array<TierMemberIdentifierInput>;
-  tierId?: InputMaybe<Scalars['ID']>;
 };
 
 export type RemoveMembersFromTierOutput = {
@@ -4754,6 +4763,25 @@ export type UpdateMachineUserOutput = {
   __typename?: 'UpdateMachineUserOutput';
   error: Maybe<MutationError>;
   machineUser: Maybe<MachineUser>;
+};
+
+export type UpdateServiceLevelAgreementInput = {
+  /** The actions to take when the SLA is about to breach and when it breaches. */
+  breachActions?: InputMaybe<Array<BreachActionInput>>;
+  /** This SLA will breach if it does not receive a first response within this many minutes. */
+  firstResponseTimeMinutes?: InputMaybe<IntInput>;
+  /** The ID of the SLA to update. */
+  serviceLevelAgreementId: Scalars['ID'];
+  /** This SLA can only be applied to a thread if it has one of these priority values. If not provided, it defaults to all priorities (0, 1, 2 and 3). */
+  threadPriorityFilter?: InputMaybe<IntArrayInput>;
+  /** If true, the SLA will only be tracked during your workspace's business hours. If false, the SLA will tracked 24/7. */
+  useBusinessHoursOnly?: InputMaybe<BooleanInput>;
+};
+
+export type UpdateServiceLevelAgreementOutput = {
+  __typename?: 'UpdateServiceLevelAgreementOutput';
+  error: Maybe<MutationError>;
+  serviceLevelAgreement: Maybe<ServiceLevelAgreement>;
 };
 
 /** An input provided to the `updateSetting` mutation. */
