@@ -222,6 +222,22 @@ export type BreachActionInput = {
   onBreachAction?: InputMaybe<OnBreachActionInput>;
 };
 
+export type BulkUpsertThreadFieldResult = {
+  __typename?: 'BulkUpsertThreadFieldResult';
+  result: Maybe<UpsertResult>;
+  threadField: Maybe<ThreadField>;
+};
+
+export type BulkUpsertThreadFieldsInput = {
+  inputs: Array<UpsertThreadFieldInput>;
+};
+
+export type BulkUpsertThreadFieldsOutput = {
+  __typename?: 'BulkUpsertThreadFieldsOutput';
+  error: Maybe<MutationError>;
+  results: Array<BulkUpsertThreadFieldResult>;
+};
+
 /**
  * Represents the times in which you are open for business during a week. If a day is null, it means that day you are not
  * open for business.
@@ -821,6 +837,13 @@ export type CreateThreadEventOutput = {
   threadEvent: Maybe<ThreadEvent>;
 };
 
+export type CreateThreadFieldOnThreadInput = {
+  booleanValue?: InputMaybe<Scalars['Boolean']>;
+  key: Scalars['String'];
+  stringValue?: InputMaybe<Scalars['String']>;
+  type: ThreadFieldSchemaType;
+};
+
 export type CreateThreadFieldSchemaInput = {
   dependsOnThreadField?: InputMaybe<DependsOnThreadFieldInput>;
   description: Scalars['String'];
@@ -861,6 +884,8 @@ export type CreateThreadInput = {
   priority?: InputMaybe<Scalars['Int']>;
   /** A thread may be assigned to a specific tenant. */
   tenantIdentifier?: InputMaybe<TenantIdentifierInput>;
+  /** An array of thread fields to attach to the thread upon creation. */
+  threadFields?: InputMaybe<Array<CreateThreadFieldOnThreadInput>>;
   /** The title of the thread. */
   title: Scalars['String'];
 };
@@ -2122,6 +2147,7 @@ export type Mutation = {
   archiveLabelType: ArchiveLabelTypeOutput;
   assignRolesToUser: AssignRolesToUserOutput;
   assignThread: AssignThreadOutput;
+  bulkUpsertThreadFields: BulkUpsertThreadFieldsOutput;
   changeThreadPriority: ChangeThreadPriorityOutput;
   changeUserStatus: ChangeUserStatusOutput;
   completeServiceAuthorization: CompleteServiceAuthorizationOutput;
@@ -2310,6 +2336,11 @@ export type MutationAssignRolesToUserArgs = {
 
 export type MutationAssignThreadArgs = {
   input: AssignThreadInput;
+};
+
+
+export type MutationBulkUpsertThreadFieldsArgs = {
+  input: BulkUpsertThreadFieldsInput;
 };
 
 
