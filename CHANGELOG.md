@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.2.3
+
+### Patch Changes
+
+- 31e5f27: Updated webhook schema
+
 ## 4.2.2
 
 ### Patch Changes
