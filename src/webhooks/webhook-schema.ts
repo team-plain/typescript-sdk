@@ -5,9 +5,9 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+export type Datetime = string;
 export type Id = string;
 export type EmailAddress = string;
-export type Datetime = string;
 export type InternalActor = UserActor | MachineUserActor | SystemActor;
 export type CustomerGroupMemberships = CustomerGroupMembership[];
 export type Actor = UserActor | MachineUserActor | SystemActor | CustomerActor;
@@ -73,28 +73,29 @@ export type CustomerGroupChangedPayload =
       eventType: "customer.customer_group_changed";
       previousCustomerGroup: CustomerGroup;
     };
+export type ThreadPriority = number;
 export type ThreadStatus = "TODO" | "DONE" | "SNOOZED";
 export type ThreadStatusDetail =
   | {
       type: "CREATED";
-      createdAt: string | string | unknown;
+      createdAt: Datetime;
     }
   | {
       type: "SNOOZED";
-      snoozedAt: string | string | unknown;
-      snoozedUntil: string | string | unknown;
+      snoozedAt: Datetime;
+      snoozedUntil: Datetime;
     }
   | {
       type: "UNSNOOZED";
-      snoozedAt: string | string | unknown;
+      snoozedAt: Datetime;
     }
   | {
       type: "NEW_REPLY";
-      newReplyAt: string | string | unknown;
+      newReplyAt: Datetime;
     }
   | {
       type: "LINK_LINEAR_UPDATED";
-      updatedAt: string | string | unknown;
+      updatedAt: Datetime;
       linearIssueId: string;
     };
 export type ThreadAssignee =
@@ -103,12 +104,38 @@ export type ThreadAssignee =
   | {
       id: string;
     };
+export type ServiceLevelAgreementStatusDetail =
+  | {
+      breachTime: Datetime;
+      status: "PENDING";
+    }
+  | {
+      achievedAt: Datetime;
+      status: "ACHIEVED";
+    }
+  | {
+      breachTime: Datetime;
+      status: "IMMINENT_BREACH";
+    }
+  | {
+      breachedAt: Datetime;
+      status: "BREACHING";
+    }
+  | {
+      breachedAt: Datetime;
+      completedAt: Datetime;
+      status: "BREACHED";
+    }
+  | {
+      cancelledAt: Datetime;
+      status: "CANCELLED";
+    };
 
 /**
  * Webhook request
  */
 export interface WebhooksSchemaDefinition {
-  timestamp: unknown;
+  timestamp: Datetime;
   workspaceId: Id;
   payload:
     | CustomerChangedPayload
@@ -126,6 +153,7 @@ export interface WebhooksSchemaDefinition {
     | ThreadFieldUpdatedPublicEventPayload
     | ThreadFieldDeletedPublicEventPayload
     | ThreadChatSentPublicEventPayload
+    | ThreadServiceLevelAgreementStatusTransitionedPayload
     | CustomerCreatedPublicEventPayload
     | CustomerUpdatedPublicEventPayload
     | CustomerDeletedPublicEventPayload;
@@ -143,6 +171,7 @@ export interface WebhooksSchemaDefinition {
     | "thread.thread_field_created"
     | "thread.thread_field_updated"
     | "thread.thread_field_deleted"
+    | "thread.service_level_agreement_status_transitioned"
     | "customer.customer_created"
     | "customer.customer_updated"
     | "customer.customer_deleted"
@@ -425,7 +454,7 @@ export interface Thread {
   customer: Customer1;
   title: string;
   previewText?: string | null;
-  priority: number;
+  priority: ThreadPriority;
   externalId: string | null;
   status: ThreadStatus;
   statusChangedAt: Datetime | null;
@@ -477,7 +506,7 @@ export interface LabelType {
   updatedBy: InternalActor;
 }
 export interface ThreadMessageInfo {
-  timestamp: string | string | unknown;
+  timestamp: Datetime;
   messageSource: "CHAT" | "EMAIL" | "API" | "SLACK";
 }
 export interface ThreadStatusTransitionedPublicEventPayload {
@@ -587,6 +616,40 @@ export interface Chat {
   createdBy: Actor;
   updatedAt: Datetime;
   updatedBy: Actor;
+}
+export interface ThreadServiceLevelAgreementStatusTransitionedPayload {
+  eventType: "thread.service_level_agreement_status_transitioned";
+  thread: Thread;
+  serviceLevelAgreement: ServiceLevelAgreement;
+  previousServiceLevelAgreementStatusDetail: ServiceLevelAgreementStatusDetail;
+  serviceLevelAgreementStatusDetail: ServiceLevelAgreementStatusDetail;
+}
+export interface ServiceLevelAgreement {
+  id: Id;
+  type: "FIRST_RESPONSE_TIME";
+  tier: Tier;
+  firstResponseTimeMinutes: number;
+  useBusinessHoursOnly: boolean;
+  /**
+   * @minItems 1
+   */
+  threadPriorityFilter: [ThreadPriority, ...ThreadPriority[]];
+  createdAt: Datetime;
+  createdBy: InternalActor;
+  updatedAt: Datetime;
+  updatedBy: InternalActor;
+}
+export interface Tier {
+  id: Id;
+  name: string;
+  externalId: string | null;
+  color: string;
+  defaultThreadPriority?: number;
+  isDefault: boolean;
+  createdAt: Datetime;
+  createdBy: InternalActor;
+  updatedAt: Datetime;
+  updatedBy: InternalActor;
 }
 /**
  * A customer has been created

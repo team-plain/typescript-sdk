@@ -3,7 +3,7 @@
   "type": "object",
   "properties": {
     "timestamp": {
-      "$ref": "#/definitions/threadMessageInfo/properties/timestamp"
+      "$ref": "#/definitions/datetime"
     },
     "workspaceId": {
       "$ref": "#/definitions/id"
@@ -56,6 +56,9 @@
           "$ref": "#/definitions/threadChatSentPublicEventPayload"
         },
         {
+          "$ref": "#/definitions/threadServiceLevelAgreementStatusTransitionedPayload"
+        },
+        {
           "$ref": "#/definitions/customerCreatedPublicEventPayload"
         },
         {
@@ -84,6 +87,7 @@
         "thread.thread_field_created",
         "thread.thread_field_updated",
         "thread.thread_field_deleted",
+        "thread.service_level_agreement_status_transitioned",
         "customer.customer_created",
         "customer.customer_updated",
         "customer.customer_deleted",
@@ -1553,6 +1557,9 @@
       ],
       "additionalProperties": false
     },
+    "threadPriority": {
+      "type": "number"
+    },
     "threadAssignee": {
       "anyOf": [
         {
@@ -1587,16 +1594,7 @@
       "type": "object",
       "properties": {
         "timestamp": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "string",
-              "format": "date-time"
-            },
-            {}
-          ]
+          "$ref": "#/definitions/datetime"
         },
         "messageSource": {
           "type": "string",
@@ -1624,7 +1622,7 @@
               "const": "CREATED"
             },
             "createdAt": {
-              "$ref": "#/definitions/threadMessageInfo/properties/timestamp"
+              "$ref": "#/definitions/datetime"
             }
           },
           "required": [
@@ -1641,10 +1639,10 @@
               "const": "SNOOZED"
             },
             "snoozedAt": {
-              "$ref": "#/definitions/threadMessageInfo/properties/timestamp"
+              "$ref": "#/definitions/datetime"
             },
             "snoozedUntil": {
-              "$ref": "#/definitions/threadMessageInfo/properties/timestamp"
+              "$ref": "#/definitions/datetime"
             }
           },
           "required": [
@@ -1662,7 +1660,7 @@
               "const": "UNSNOOZED"
             },
             "snoozedAt": {
-              "$ref": "#/definitions/threadMessageInfo/properties/timestamp"
+              "$ref": "#/definitions/datetime"
             }
           },
           "required": [
@@ -1679,7 +1677,7 @@
               "const": "NEW_REPLY"
             },
             "newReplyAt": {
-              "$ref": "#/definitions/threadMessageInfo/properties/timestamp"
+              "$ref": "#/definitions/datetime"
             }
           },
           "required": [
@@ -1696,7 +1694,7 @@
               "const": "LINK_LINEAR_UPDATED"
             },
             "updatedAt": {
-              "$ref": "#/definitions/threadMessageInfo/properties/timestamp"
+              "$ref": "#/definitions/datetime"
             },
             "linearIssueId": {
               "type": "string",
@@ -1790,7 +1788,7 @@
           "default": null
         },
         "priority": {
-          "type": "number"
+          "$ref": "#/definitions/threadPriority"
         },
         "externalId": {
           "anyOf": [
@@ -2250,6 +2248,232 @@
         "timestamp",
         "actor",
         "entry"
+      ],
+      "additionalProperties": false
+    },
+    "tier": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "color": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "defaultThreadPriority": {
+          "$ref": "#/definitions/threadPriority",
+          "default": 2
+        },
+        "isDefault": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "createdBy": {
+          "$ref": "#/definitions/internalActor"
+        },
+        "updatedAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "updatedBy": {
+          "$ref": "#/definitions/internalActor"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "externalId",
+        "color",
+        "isDefault",
+        "createdAt",
+        "createdBy",
+        "updatedAt",
+        "updatedBy"
+      ],
+      "additionalProperties": false
+    },
+    "serviceLevelAgreementStatusDetail": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "breachTime": {
+              "$ref": "#/definitions/datetime"
+            },
+            "status": {
+              "type": "string",
+              "const": "PENDING"
+            }
+          },
+          "required": [
+            "breachTime",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "achievedAt": {
+              "$ref": "#/definitions/datetime"
+            },
+            "status": {
+              "type": "string",
+              "const": "ACHIEVED"
+            }
+          },
+          "required": [
+            "achievedAt",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "breachTime": {
+              "$ref": "#/definitions/datetime"
+            },
+            "status": {
+              "type": "string",
+              "const": "IMMINENT_BREACH"
+            }
+          },
+          "required": [
+            "breachTime",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "breachedAt": {
+              "$ref": "#/definitions/datetime"
+            },
+            "status": {
+              "type": "string",
+              "const": "BREACHING"
+            }
+          },
+          "required": [
+            "breachedAt",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "breachedAt": {
+              "$ref": "#/definitions/datetime"
+            },
+            "completedAt": {
+              "$ref": "#/definitions/datetime"
+            },
+            "status": {
+              "type": "string",
+              "const": "BREACHED"
+            }
+          },
+          "required": [
+            "breachedAt",
+            "completedAt",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "cancelledAt": {
+              "$ref": "#/definitions/datetime"
+            },
+            "status": {
+              "type": "string",
+              "const": "CANCELLED"
+            }
+          },
+          "required": [
+            "cancelledAt",
+            "status"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "serviceLevelAgreement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "FIRST_RESPONSE_TIME"
+          ]
+        },
+        "tier": {
+          "$ref": "#/definitions/tier"
+        },
+        "firstResponseTimeMinutes": {
+          "type": "number"
+        },
+        "useBusinessHoursOnly": {
+          "type": "boolean"
+        },
+        "threadPriorityFilter": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/threadPriority"
+          },
+          "minItems": 1
+        },
+        "createdAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "createdBy": {
+          "$ref": "#/definitions/internalActor"
+        },
+        "updatedAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "updatedBy": {
+          "$ref": "#/definitions/internalActor"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "tier",
+        "firstResponseTimeMinutes",
+        "useBusinessHoursOnly",
+        "threadPriorityFilter",
+        "createdAt",
+        "createdBy",
+        "updatedAt",
+        "updatedBy"
       ],
       "additionalProperties": false
     },
@@ -2809,6 +3033,35 @@
         "eventType",
         "thread",
         "note"
+      ],
+      "additionalProperties": false
+    },
+    "threadServiceLevelAgreementStatusTransitionedPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.service_level_agreement_status_transitioned"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "serviceLevelAgreement": {
+          "$ref": "#/definitions/serviceLevelAgreement"
+        },
+        "previousServiceLevelAgreementStatusDetail": {
+          "$ref": "#/definitions/serviceLevelAgreementStatusDetail"
+        },
+        "serviceLevelAgreementStatusDetail": {
+          "$ref": "#/definitions/serviceLevelAgreementStatusDetail"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "serviceLevelAgreement",
+        "previousServiceLevelAgreementStatusDetail",
+        "serviceLevelAgreementStatusDetail"
       ],
       "additionalProperties": false
     },
