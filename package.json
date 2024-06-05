@@ -1,6 +1,6 @@
 {
   "name": "@team-plain/typescript-sdk-dev",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "description": "Typescript SDK for Plain's Core GraphQL API",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
