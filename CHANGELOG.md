@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- 5ebe2c5: Publish latest version of repo to npm
+- 5ebe2c5: Test automatic release process
 
 ## 4.3.1
 
