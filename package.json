@@ -17,7 +17,7 @@
     "lint:prettier": "prettier --config=.prettierrc --ignore-path=.prettierignore --check '**/*.{ts,tsx,gql,js}'",
     "test": "vitest",
     "changeset": "changeset",
-    "release": "npm whoami && npm run build && changeset publish"
+    "release": "npm run build && changeset publish"
   },
   "license": "MIT",
   "devDependencies": {
