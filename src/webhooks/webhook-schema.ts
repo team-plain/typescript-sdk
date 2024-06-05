@@ -104,6 +104,35 @@ export type ThreadAssignee =
   | {
       id: string;
     };
+export type ServiceLevelAgreement =
+  | {
+      id: Id;
+      tier: Tier;
+      useBusinessHoursOnly: boolean;
+      threadPriorityFilter: ThreadPriorityFilter;
+      createdAt: Datetime;
+      createdBy: InternalActor;
+      updatedAt: Datetime;
+      updatedBy: InternalActor;
+      type: "FIRST_RESPONSE_TIME";
+      firstResponseTimeMinutes: number;
+    }
+  | {
+      id: Id;
+      tier: Tier;
+      useBusinessHoursOnly: boolean;
+      threadPriorityFilter: ThreadPriorityFilter;
+      createdAt: Datetime;
+      createdBy: InternalActor;
+      updatedAt: Datetime;
+      updatedBy: InternalActor;
+      type: "NEXT_RESPONSE_TIME";
+      nextResponseTimeMinutes: number;
+    };
+/**
+ * @minItems 1
+ */
+export type ThreadPriorityFilter = [ThreadPriority, ...ThreadPriority[]];
 export type ServiceLevelAgreementStatusDetail =
   | {
       breachTime: Datetime;
@@ -623,21 +652,6 @@ export interface ThreadServiceLevelAgreementStatusTransitionedPayload {
   serviceLevelAgreement: ServiceLevelAgreement;
   previousServiceLevelAgreementStatusDetail: ServiceLevelAgreementStatusDetail;
   serviceLevelAgreementStatusDetail: ServiceLevelAgreementStatusDetail;
-}
-export interface ServiceLevelAgreement {
-  id: Id;
-  type: "FIRST_RESPONSE_TIME";
-  tier: Tier;
-  firstResponseTimeMinutes: number;
-  useBusinessHoursOnly: boolean;
-  /**
-   * @minItems 1
-   */
-  threadPriorityFilter: [ThreadPriority, ...ThreadPriority[]];
-  createdAt: Datetime;
-  createdBy: InternalActor;
-  updatedAt: Datetime;
-  updatedBy: InternalActor;
 }
 export interface Tier {
   id: Id;
