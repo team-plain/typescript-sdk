@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.4.0
+
+### Minor Changes
+
+- f69fc2d: Fixed webhook schema definition
+
 ## 4.3.2
 
 ### Patch Changes
