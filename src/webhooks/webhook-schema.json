@@ -2423,59 +2423,114 @@
       ]
     },
     "serviceLevelAgreement": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/id"
-        },
-        "type": {
-          "type": "string",
-          "enum": [
-            "FIRST_RESPONSE_TIME"
-          ]
-        },
-        "tier": {
-          "$ref": "#/definitions/tier"
-        },
-        "firstResponseTimeMinutes": {
-          "type": "number"
-        },
-        "useBusinessHoursOnly": {
-          "type": "boolean"
-        },
-        "threadPriorityFilter": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/threadPriority"
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/definitions/id"
+            },
+            "tier": {
+              "$ref": "#/definitions/tier"
+            },
+            "useBusinessHoursOnly": {
+              "type": "boolean"
+            },
+            "threadPriorityFilter": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/threadPriority"
+              },
+              "minItems": 1
+            },
+            "createdAt": {
+              "$ref": "#/definitions/datetime"
+            },
+            "createdBy": {
+              "$ref": "#/definitions/internalActor"
+            },
+            "updatedAt": {
+              "$ref": "#/definitions/datetime"
+            },
+            "updatedBy": {
+              "$ref": "#/definitions/internalActor"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "FIRST_RESPONSE_TIME"
+              ]
+            },
+            "firstResponseTimeMinutes": {
+              "type": "number"
+            }
           },
-          "minItems": 1
+          "required": [
+            "id",
+            "tier",
+            "useBusinessHoursOnly",
+            "threadPriorityFilter",
+            "createdAt",
+            "createdBy",
+            "updatedAt",
+            "updatedBy",
+            "type",
+            "firstResponseTimeMinutes"
+          ],
+          "additionalProperties": false
         },
-        "createdAt": {
-          "$ref": "#/definitions/datetime"
-        },
-        "createdBy": {
-          "$ref": "#/definitions/internalActor"
-        },
-        "updatedAt": {
-          "$ref": "#/definitions/datetime"
-        },
-        "updatedBy": {
-          "$ref": "#/definitions/internalActor"
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/definitions/id"
+            },
+            "tier": {
+              "$ref": "#/definitions/tier"
+            },
+            "useBusinessHoursOnly": {
+              "$ref": "#/definitions/serviceLevelAgreement/anyOf/0/properties/useBusinessHoursOnly"
+            },
+            "threadPriorityFilter": {
+              "$ref": "#/definitions/serviceLevelAgreement/anyOf/0/properties/threadPriorityFilter"
+            },
+            "createdAt": {
+              "$ref": "#/definitions/datetime"
+            },
+            "createdBy": {
+              "$ref": "#/definitions/internalActor"
+            },
+            "updatedAt": {
+              "$ref": "#/definitions/datetime"
+            },
+            "updatedBy": {
+              "$ref": "#/definitions/internalActor"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "NEXT_RESPONSE_TIME"
+              ]
+            },
+            "nextResponseTimeMinutes": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "id",
+            "tier",
+            "useBusinessHoursOnly",
+            "threadPriorityFilter",
+            "createdAt",
+            "createdBy",
+            "updatedAt",
+            "updatedBy",
+            "type",
+            "nextResponseTimeMinutes"
+          ],
+          "additionalProperties": false
         }
-      },
-      "required": [
-        "id",
-        "type",
-        "tier",
-        "firstResponseTimeMinutes",
-        "useBusinessHoursOnly",
-        "threadPriorityFilter",
-        "createdAt",
-        "createdBy",
-        "updatedAt",
-        "updatedBy"
-      ],
-      "additionalProperties": false
+      ]
     },
     "customerChangedPayload": {
       "type": "object",
