@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.3.0
+
+### Minor Changes
+
+- cade7ea: Update Plain webhook schemas
+
 ## 4.2.3
 
 ### Patch Changes
