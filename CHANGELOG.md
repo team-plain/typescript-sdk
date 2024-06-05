@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.3.2
+
+### Patch Changes
+
+- 5ebe2c5: Publish latest version of repo to npm
+
 ## 4.3.1
 
 ### Patch Changes
