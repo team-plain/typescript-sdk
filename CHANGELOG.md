@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.4.1
+
+### Patch Changes
+
+- 9098a32: Testing automated release process
+
 ## 4.4.0
 
 ### Minor Changes
