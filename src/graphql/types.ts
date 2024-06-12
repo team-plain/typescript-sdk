@@ -174,20 +174,75 @@ export type AttachmentUploadUrl = {
   uploadFormUrl: Scalars['String'];
 };
 
+export enum AttachmentVirusScanResult {
+  /** The attachment is clean and safe to download. */
+  Clean = 'CLEAN',
+  /** The virus scan failed. */
+  Failed = 'FAILED',
+  /** The attachment is infected and should not be downloaded. */
+  Infected = 'INFECTED',
+  /** The virus scan is still pending. */
+  Pending = 'PENDING'
+}
+
 export type Autoresponder = {
   __typename?: 'Autoresponder';
+  conditions: Array<AutoresponderCondition>;
   createdAt: DateTime;
   createdBy: InternalActor;
+  id: Scalars['ID'];
   isEnabled: Scalars['Boolean'];
   markdownContent: Maybe<Scalars['String']>;
+  messageSources: Array<AutoresponderMessageSource>;
+  name: Scalars['String'];
+  order: Scalars['Int'];
+  responseDelaySeconds: Scalars['Int'];
   textContent: Scalars['String'];
   updatedAt: DateTime;
   updatedBy: InternalActor;
 };
 
+export type AutoresponderBusinessHoursCondition = {
+  __typename?: 'AutoresponderBusinessHoursCondition';
+  isOutsideBusinessHours: Scalars['Boolean'];
+};
+
+export type AutoresponderCondition = AutoresponderBusinessHoursCondition | AutoresponderTierCondition;
+
+export type AutoresponderConditionInput = {
+  isOutsideBusinessHours?: InputMaybe<Scalars['Boolean']>;
+  tierId?: InputMaybe<Scalars['ID']>;
+};
+
+export type AutoresponderConnection = {
+  __typename?: 'AutoresponderConnection';
+  edges: Array<AutoresponderEdge>;
+  pageInfo: PageInfo;
+};
+
+export type AutoresponderEdge = {
+  __typename?: 'AutoresponderEdge';
+  cursor: Scalars['String'];
+  node: Autoresponder;
+};
+
+export enum AutoresponderMessageSource {
+  Api = 'API',
+  Email = 'EMAIL'
+}
+
+export type AutoresponderOrderInput = {
+  autoresponderId: Scalars['ID'];
+  order: Scalars['Int'];
+};
+
+export type AutoresponderTierCondition = {
+  __typename?: 'AutoresponderTierCondition';
+  tierId: Scalars['ID'];
+};
+
 export type BeforeBreachAction = {
   __typename?: 'BeforeBreachAction';
-  alertIntegrationId: Scalars['ID'];
   beforeBreachMinutes: Scalars['Int'];
   createdAt: DateTime;
   createdBy: InternalActor;
@@ -196,7 +251,6 @@ export type BeforeBreachAction = {
 };
 
 export type BeforeBreachActionInput = {
-  alertIntegrationId: Scalars['ID'];
   beforeBreachMinutes: Scalars['Int'];
 };
 
@@ -215,11 +269,10 @@ export type BooleanSetting = {
   scope: SettingScope;
 };
 
-export type BreachAction = BeforeBreachAction | OnBreachAction;
+export type BreachAction = BeforeBreachAction;
 
 export type BreachActionInput = {
   beforeBreachAction?: InputMaybe<BeforeBreachActionInput>;
-  onBreachAction?: InputMaybe<OnBreachActionInput>;
 };
 
 export type BulkUpsertThreadFieldResult = {
@@ -334,12 +387,16 @@ export type ChatEntry = {
   text: Maybe<Scalars['String']>;
 };
 
+export type CompaniesFilter = {
+  companyIds?: InputMaybe<Array<Scalars['ID']>>;
+};
+
 /** Query to search for companies. */
 export type CompaniesSearchQuery = {
   /**
    * The term to search for. It must be at least 2 characters long. The search is case-insensitive on these two fields:
-   *   - the company name (partial match)
-   *   - the company domain name (partial match)
+   * - the company name (partial match)
+   * - the company domain name (partial match)
    */
   term: Scalars['String'];
 };
@@ -651,6 +708,8 @@ export type CreateAttachmentDownloadUrlInput = {
 export type CreateAttachmentDownloadUrlOutput = {
   __typename?: 'CreateAttachmentDownloadUrlOutput';
   attachmentDownloadUrl: Maybe<AttachmentDownloadUrl>;
+  /** The result of the virus scan on this attachment. If this is null, it means that your workspace does not have virus scan checks enabled. */
+  attachmentVirusScanResult: Maybe<AttachmentVirusScanResult>;
   error: Maybe<MutationError>;
 };
 
@@ -664,6 +723,23 @@ export type CreateAttachmentUploadUrlInput = {
 export type CreateAttachmentUploadUrlOutput = {
   __typename?: 'CreateAttachmentUploadUrlOutput';
   attachmentUploadUrl: Maybe<AttachmentUploadUrl>;
+  error: Maybe<MutationError>;
+};
+
+export type CreateAutoresponderInput = {
+  conditions: Array<AutoresponderConditionInput>;
+  isEnabled: Scalars['Boolean'];
+  markdownContent?: InputMaybe<Scalars['String']>;
+  messageSources: Array<AutoresponderMessageSource>;
+  name: Scalars['String'];
+  order: Scalars['Int'];
+  responseDelaySeconds?: InputMaybe<Scalars['Int']>;
+  textContent: Scalars['String'];
+};
+
+export type CreateAutoresponderOutput = {
+  __typename?: 'CreateAutoresponderOutput';
+  autoresponder: Maybe<Autoresponder>;
   error: Maybe<MutationError>;
 };
 
@@ -845,6 +921,8 @@ export type CreateThreadFieldOnThreadInput = {
 };
 
 export type CreateThreadFieldSchemaInput = {
+  defaultBooleanValue?: InputMaybe<Scalars['Boolean']>;
+  defaultStringValue?: InputMaybe<Scalars['String']>;
   dependsOnThreadField?: InputMaybe<DependsOnThreadFieldInput>;
   description: Scalars['String'];
   enumValues: Array<Scalars['String']>;
@@ -887,7 +965,7 @@ export type CreateThreadInput = {
   /** An array of thread fields to attach to the thread upon creation. */
   threadFields?: InputMaybe<Array<CreateThreadFieldOnThreadInput>>;
   /** The title of the thread. */
-  title: Scalars['String'];
+  title?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateThreadLinkInput = {
@@ -910,11 +988,7 @@ export type CreateThreadOutput = {
 export type CreateTierInput = {
   /** The color to assign to this tier, given by its hex code (e.g. #FABADA). This color is used in Plain's UI to represent this tier. */
   color: Scalars['String'];
-  /**
-   * Any thread created in this tier will have this priority by default, unless a different priority is specified while creating it. If not provided, it defaults to 2 (normal priority).
-   * @deprecated Use defaultThreadPriority instead
-   */
-  defaultPriority?: InputMaybe<Scalars['Int']>;
+  /** Any thread created in this tier will have this priority by default, unless a different priority is specified while creating it. If not provided, it defaults to 2 (normal priority). */
   defaultThreadPriority?: InputMaybe<Scalars['Int']>;
   /** The external ID of this tier. You can use this field to store your own unique identifier for this tier. This must be unique in your workspace. */
   externalId: Scalars['String'];
@@ -929,8 +1003,6 @@ export type CreateTierInput = {
   memberIdentifiers: Array<TierMemberIdentifierInput>;
   /** The name of this tier. */
   name: Scalars['String'];
-  /** @deprecated Use CreateServiceLevelAgreement instead */
-  serviceLevelAgreement?: InputMaybe<ServiceLevelAgreementInput>;
 };
 
 export type CreateTierOutput = {
@@ -1202,6 +1274,8 @@ export type CustomerCardInstance = {
   customerId: Scalars['ID'];
   /** The ID of the customer card instance. A new ID is generated for each load. */
   id: Scalars['ID'];
+  /** The thread the instance is for. Null if this card is not loaded in a thread context. */
+  threadId: Maybe<Scalars['ID']>;
   updatedAt: DateTime;
   updatedBy: Actor;
 };
@@ -1226,6 +1300,8 @@ export type CustomerCardInstanceError = CustomerCardInstance & {
   errorDetail: CustomerCardInstanceErrorDetail;
   /** The ID of the customer card instance. A new ID is generated for each load. */
   id: Scalars['ID'];
+  /** The thread the instance is for. Null if this card is not loaded in a thread context. */
+  threadId: Maybe<Scalars['ID']>;
   updatedAt: DateTime;
   updatedBy: Actor;
 };
@@ -1249,6 +1325,8 @@ export type CustomerCardInstanceLoaded = CustomerCardInstance & {
   id: Scalars['ID'];
   /** When the customer card was received from the API. */
   loadedAt: DateTime;
+  /** The thread the instance is for. Null if this card is not loaded in a thread context. */
+  threadId: Maybe<Scalars['ID']>;
   updatedAt: DateTime;
   updatedBy: Actor;
 };
@@ -1267,6 +1345,8 @@ export type CustomerCardInstanceLoading = CustomerCardInstance & {
   customerId: Scalars['ID'];
   /** The ID of the customer card instance. A new ID is generated for each load. */
   id: Scalars['ID'];
+  /** The thread the instance is for. Null if this card is not loaded in a thread context. */
+  threadId: Maybe<Scalars['ID']>;
   updatedAt: DateTime;
   updatedBy: Actor;
 };
@@ -1548,6 +1628,16 @@ export type DeleteApiKeyInput = {
 export type DeleteApiKeyOutput = {
   __typename?: 'DeleteApiKeyOutput';
   apiKey: Maybe<ApiKey>;
+  error: Maybe<MutationError>;
+};
+
+export type DeleteAutoresponderInput = {
+  autoresponderId: Scalars['ID'];
+};
+
+export type DeleteAutoresponderOutput = {
+  __typename?: 'DeleteAutoresponderOutput';
+  autoresponder: Maybe<Autoresponder>;
   error: Maybe<MutationError>;
 };
 
@@ -1909,7 +1999,7 @@ export type EmailSignature = {
 };
 
 /** A union of all possible entries that can appear in a timeline. */
-export type Entry = ChatEntry | CustomEntry | CustomerEventEntry | EmailEntry | LinearIssueThreadLinkStateTransitionedEntry | NoteEntry | ServiceLevelAgreementStatusTransitionedEntry | SlackMessageEntry | SlackReplyEntry | ThreadAssignmentTransitionedEntry | ThreadEventEntry | ThreadLabelsChangedEntry | ThreadPriorityChangedEntry | ThreadStatusTransitionedEntry;
+export type Entry = ChatEntry | CustomEntry | CustomerEventEntry | EmailEntry | LinearIssueThreadLinkStateTransitionedEntry | NoteEntry | ServiceLevelAgreementStatusTransitionedEntry | SlackMessageEntry | SlackReplyEntry | ThreadAssignmentTransitionedEntry | ThreadDiscussionEntry | ThreadEventEntry | ThreadLabelsChangedEntry | ThreadPriorityChangedEntry | ThreadStatusTransitionedEntry;
 
 export type EventComponent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
 
@@ -1939,8 +2029,6 @@ export type FirstResponseTimeServiceLevelAgreement = ServiceLevelAgreement & {
   /** This SLA will breach if it does not receive a first response within this many minutes. */
   firstResponseTimeMinutes: Scalars['Int'];
   id: Scalars['ID'];
-  /** @deprecated Use threadPriorityFilter instead. */
-  priorityFilter: Array<Scalars['Int']>;
   threadPriorityFilter: Array<Scalars['Int']>;
   updatedAt: DateTime;
   updatedBy: InternalActor;
@@ -2135,6 +2223,23 @@ export enum MessageSource {
   Slack = 'SLACK'
 }
 
+export type MetricDimension = {
+  __typename?: 'MetricDimension';
+  type: MetricDimensionType;
+  value: Scalars['String'];
+};
+
+export enum MetricDimensionType {
+  Agent = 'AGENT',
+  Company = 'COMPANY',
+  CustomerGroup = 'CUSTOMER_GROUP',
+  LabelType = 'LABEL_TYPE',
+  MessageSource = 'MESSAGE_SOURCE',
+  Priority = 'PRIORITY',
+  ThreadField = 'THREAD_FIELD',
+  Tier = 'TIER'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   acceptWorkspaceInvite: AcceptWorkspaceInviteOutput;
@@ -2154,6 +2259,7 @@ export type Mutation = {
   createApiKey: CreateApiKeyOutput;
   createAttachmentDownloadUrl: CreateAttachmentDownloadUrlOutput;
   createAttachmentUploadUrl: CreateAttachmentUploadUrlOutput;
+  createAutoresponder: CreateAutoresponderOutput;
   /** Creates a customer card config. A maximum of 25 card configs can be created. */
   createCustomerCardConfig: CreateCustomerCardConfigOutput;
   /** Create a new customer event. */
@@ -2184,6 +2290,7 @@ export type Mutation = {
   createWorkspaceSlackChannelIntegration: CreateWorkspaceSlackChannelIntegrationOutput;
   createWorkspaceSlackIntegration: CreateWorkspaceSlackIntegrationOutput;
   deleteApiKey: DeleteApiKeyOutput;
+  deleteAutoresponder: DeleteAutoresponderOutput;
   deleteBusinessHours: DeleteBusinessHoursOutput;
   /** Deletes a customer and all of their data stored on Plain. This action cannot be reversed. */
   deleteCustomer: DeleteCustomerOutput;
@@ -2229,6 +2336,7 @@ export type Mutation = {
   removeLabels: RemoveLabelsOutput;
   removeMembersFromTier: RemoveMembersFromTierOutput;
   removeWorkspaceAlternateSupportEmailAddress: RemoveWorkspaceAlternateSupportEmailAddressOutput;
+  reorderAutoresponders: ReorderAutorespondersOutput;
   /**
    * Reorders customer card configs.
    *
@@ -2257,6 +2365,7 @@ export type Mutation = {
   unassignThread: UnassignThreadOutput;
   /** Removes the spam mark from a customer. */
   unmarkCustomerAsSpam: UnmarkCustomerAsSpamOutput;
+  updateAutoresponder: UpdateAutoresponderOutput;
   updateCompanyTier: UpdateCompanyTierOutput;
   /** Partially updates a customer card config. */
   updateCustomerCardConfig: UpdateCustomerCardConfigOutput;
@@ -2279,7 +2388,6 @@ export type Mutation = {
   updateWebhookTarget: UpdateWebhookTargetOutput;
   updateWorkspace: UpdateWorkspaceOutput;
   updateWorkspaceEmailSettings: UpdateWorkspaceEmailSettingsOutput;
-  upsertAutoresponder: UpsertAutoresponderOutput;
   upsertBusinessHours: UpsertBusinessHoursOutput;
   upsertCompany: UpsertCompanyOutput;
   /** Creates or updates a customer. */
@@ -2371,6 +2479,11 @@ export type MutationCreateAttachmentDownloadUrlArgs = {
 
 export type MutationCreateAttachmentUploadUrlArgs = {
   input: CreateAttachmentUploadUrlInput;
+};
+
+
+export type MutationCreateAutoresponderArgs = {
+  input: CreateAutoresponderInput;
 };
 
 
@@ -2496,6 +2609,11 @@ export type MutationCreateWorkspaceSlackIntegrationArgs = {
 
 export type MutationDeleteApiKeyArgs = {
   input: DeleteApiKeyInput;
+};
+
+
+export type MutationDeleteAutoresponderArgs = {
+  input: DeleteAutoresponderInput;
 };
 
 
@@ -2649,6 +2767,11 @@ export type MutationRemoveWorkspaceAlternateSupportEmailAddressArgs = {
 };
 
 
+export type MutationReorderAutorespondersArgs = {
+  input: ReorderAutorespondersInput;
+};
+
+
 export type MutationReorderCustomerCardConfigsArgs = {
   input: ReorderCustomerCardConfigsInput;
 };
@@ -2721,6 +2844,11 @@ export type MutationUnassignThreadArgs = {
 
 export type MutationUnmarkCustomerAsSpamArgs = {
   input: UnmarkCustomerAsSpamInput;
+};
+
+
+export type MutationUpdateAutoresponderArgs = {
+  input: UpdateAutoresponderInput;
 };
 
 
@@ -2809,11 +2937,6 @@ export type MutationUpdateWorkspaceEmailSettingsArgs = {
 };
 
 
-export type MutationUpsertAutoresponderArgs = {
-  input: UpsertAutoresponderInput;
-};
-
-
 export type MutationUpsertBusinessHoursArgs = {
   input: UpsertBusinessHoursInput;
 };
@@ -2897,6 +3020,20 @@ export enum MutationFieldErrorType {
   Validation = 'VALIDATION'
 }
 
+export type NextResponseTimeServiceLevelAgreement = ServiceLevelAgreement & {
+  __typename?: 'NextResponseTimeServiceLevelAgreement';
+  breachActions: Array<BreachAction>;
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  id: Scalars['ID'];
+  /** This SLA will breach if it does not receive a next response within this many minutes. */
+  nextResponseTimeMinutes: Scalars['Int'];
+  threadPriorityFilter: Array<Scalars['Int']>;
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+  useBusinessHoursOnly: Scalars['Boolean'];
+};
+
 export type Note = {
   __typename?: 'Note';
   createdAt: DateTime;
@@ -2919,17 +3056,8 @@ export type NoteEntry = {
   text: Scalars['String'];
 };
 
-export type OnBreachAction = {
-  __typename?: 'OnBreachAction';
-  alertIntegrationId: Scalars['ID'];
-  createdAt: DateTime;
-  createdBy: InternalActor;
-  updatedAt: DateTime;
-  updatedBy: InternalActor;
-};
-
-export type OnBreachActionInput = {
-  alertIntegrationId: Scalars['ID'];
+export type OptionalBooleanInput = {
+  value?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type OptionalDependsOnThreadFieldInput = {
@@ -2956,6 +3084,7 @@ export type Permissions = {
 export type Query = {
   __typename?: 'Query';
   autoresponder: Maybe<Autoresponder>;
+  autoresponders: AutoresponderConnection;
   businessHours: Maybe<BusinessHours>;
   companies: CompanyConnection;
   company: Maybe<Company>;
@@ -3006,10 +3135,16 @@ export type Query = {
    */
   searchCustomers: CustomerSearchConnection;
   searchTenants: TenantSearchResultConnection;
+  /**
+   * Searches for slack users in a thread based on a search term.
+   * The search term can be part of either the slack's handle or full name.
+   */
+  searchThreadSlackUsers: SlackUserConnection;
   searchThreads: ThreadSearchResultConnection;
   serviceAuthorizations: ServiceAuthorizationConnection;
   /** Gets a single setting based on the code and the scope. */
   setting: Maybe<Setting>;
+  singleValueMetric: Maybe<SingleValueMetric>;
   snippet: Maybe<Snippet>;
   snippets: SnippetConnection;
   /** List all the events types you can subscribe to. */
@@ -3022,11 +3157,8 @@ export type Query = {
   threadByExternalId: Maybe<Thread>;
   threadFieldSchema: Maybe<ThreadFieldSchema>;
   threadFieldSchemas: ThreadFieldSchemaConnection;
-  /**
-   * Gets all slack users involved in a thread
-   * Note: This endpoint currently only returns a max of 25 users, pagination is NYI.
-   */
-  threadSlackUsers: SlackUserConnection;
+  /** Gets a single slack user within a thread based on their slack user ID. */
+  threadSlackUser: Maybe<SlackUser>;
   threads: ThreadConnection;
   tier: Maybe<Tier>;
   tiers: TierConnection;
@@ -3063,9 +3195,23 @@ export type Query = {
 };
 
 
+export type QueryAutoresponderArgs = {
+  autoresponderId: Scalars['ID'];
+};
+
+
+export type QueryAutorespondersArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryCompaniesArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<CompaniesFilter>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -3214,6 +3360,16 @@ export type QuerySearchTenantsArgs = {
 };
 
 
+export type QuerySearchThreadSlackUsersArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  searchQuery: Scalars['String'];
+  threadId: Scalars['ID'];
+};
+
+
 export type QuerySearchThreadsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -3234,6 +3390,12 @@ export type QueryServiceAuthorizationsArgs = {
 export type QuerySettingArgs = {
   code: Scalars['String'];
   scope: SettingScopeInput;
+};
+
+
+export type QuerySingleValueMetricArgs = {
+  name: Scalars['String'];
+  options?: InputMaybe<SingleValueMetricOptions>;
 };
 
 
@@ -3287,11 +3449,8 @@ export type QueryThreadFieldSchemasArgs = {
 };
 
 
-export type QueryThreadSlackUsersArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
+export type QueryThreadSlackUserArgs = {
+  slackUserId: Scalars['ID'];
   threadId: Scalars['ID'];
 };
 
@@ -3511,6 +3670,16 @@ export type RemoveWorkspaceAlternateSupportEmailAddressOutput = {
   workspaceEmailDomainSettings: Maybe<WorkspaceEmailDomainSettings>;
 };
 
+export type ReorderAutorespondersInput = {
+  autorespondersOrder: Array<AutoresponderOrderInput>;
+};
+
+export type ReorderAutorespondersOutput = {
+  __typename?: 'ReorderAutorespondersOutput';
+  autoresponders: Maybe<Array<Autoresponder>>;
+  error: Maybe<MutationError>;
+};
+
 export type ReorderCustomerCardConfigsInput = {
   /** An array of ordering updates. */
   customerCardConfigOrders: Array<CustomerCardConfigOrderInput>;
@@ -3698,14 +3867,8 @@ export type ServiceLevelAgreement = {
   breachActions: Array<BreachAction>;
   createdAt: DateTime;
   createdBy: InternalActor;
-  /** @deprecated Query FirstResponseTimeServiceLevelAgreement instead. */
-  firstResponseTimeMinutes: Scalars['Int'];
   id: Scalars['ID'];
-  /**
-   * This SLA can only be applied to a thread if it has one of these priority values.
-   * @deprecated Use threadPriorityFilter instead.
-   */
-  priorityFilter: Array<Scalars['Int']>;
+  /** This SLA can only be applied to a thread if it has one of these priority values. */
   threadPriorityFilter: Array<Scalars['Int']>;
   updatedAt: DateTime;
   updatedBy: InternalActor;
@@ -3713,16 +3876,19 @@ export type ServiceLevelAgreement = {
   useBusinessHoursOnly: Scalars['Boolean'];
 };
 
+export type ServiceLevelAgreementFilter = {
+  statuses?: InputMaybe<Array<ServiceLevelAgreementStatus>>;
+  types?: InputMaybe<Array<ServiceLevelAgreementType>>;
+};
+
 export type ServiceLevelAgreementInput = {
   /** The actions to take when the SLA is about to breach and when it breaches. */
   breachActions: Array<BreachActionInput>;
-  /** Set this to configure the FRT SLA. */
-  firstResponseTimeMinutes: Scalars['Int'];
-  /**
-   * This SLA can only be applied to a thread if it has one of these priority values. If not provided, it defaults to all priorities (0, 1, 2 and 3).
-   * @deprecated Use threadPriorityFilter instead.
-   */
-  priorityFilter?: InputMaybe<Array<Scalars['Int']>>;
+  /** Set this to configure the firt response time SLA. */
+  firstResponseTimeMinutes?: InputMaybe<Scalars['Int']>;
+  /** Set this to configure an SLA for next responses. */
+  nextResponseTimeMinutes?: InputMaybe<Scalars['Int']>;
+  /** This SLA can only be applied to a thread if it has one of these priority values. If not provided, it defaults to all priorities (0, 1, 2 and 3). */
   threadPriorityFilter?: InputMaybe<Array<Scalars['Int']>>;
   /** If true, the SLA will only be tracked during your workspace's business hours. If false, the SLA will tracked 24/7. */
   useBusinessHoursOnly: Scalars['Boolean'];
@@ -3779,8 +3945,8 @@ export type ServiceLevelAgreementStatusDetailPending = {
 
 export type ServiceLevelAgreementStatusSummary = {
   __typename?: 'ServiceLevelAgreementStatusSummary';
-  firstResponseTime: ServiceLevelAgreementStatusDetail;
-  firstResponseTimeObjective: ServiceLevelObjectiveStatus;
+  firstResponseTime: Maybe<ServiceLevelAgreementStatusDetail>;
+  nextResponseTime: Maybe<ServiceLevelAgreementStatusDetail>;
 };
 
 export type ServiceLevelAgreementStatusTransitionedEntry = {
@@ -3790,45 +3956,10 @@ export type ServiceLevelAgreementStatusTransitionedEntry = {
   serviceLevelAgreement: Maybe<ServiceLevelAgreement>;
 };
 
-export type ServiceLevelObjectiveStatus = ServiceLevelObjectiveStatusAchieved | ServiceLevelObjectiveStatusBreached | ServiceLevelObjectiveStatusBreaching | ServiceLevelObjectiveStatusCancelled | ServiceLevelObjectiveStatusImminentBreach | ServiceLevelObjectiveStatusPending;
-
-export type ServiceLevelObjectiveStatusAchieved = {
-  __typename?: 'ServiceLevelObjectiveStatusAchieved';
-  /** The time when this objective was achieved. */
-  achievedAt: DateTime;
-};
-
-export type ServiceLevelObjectiveStatusBreached = {
-  __typename?: 'ServiceLevelObjectiveStatusBreached';
-  /** The time when this objective breached. */
-  breachedAt: DateTime;
-  /** The time when we completed this breached objective. */
-  completedAt: DateTime;
-};
-
-export type ServiceLevelObjectiveStatusBreaching = {
-  __typename?: 'ServiceLevelObjectiveStatusBreaching';
-  /** The time when this objective breached. */
-  breachedAt: DateTime;
-};
-
-export type ServiceLevelObjectiveStatusCancelled = {
-  __typename?: 'ServiceLevelObjectiveStatusCancelled';
-  /** The time when this objective was cancelled. */
-  cancelledAt: DateTime;
-};
-
-export type ServiceLevelObjectiveStatusImminentBreach = {
-  __typename?: 'ServiceLevelObjectiveStatusImminentBreach';
-  /** The time when this objective will breach. */
-  breachingAt: DateTime;
-};
-
-export type ServiceLevelObjectiveStatusPending = {
-  __typename?: 'ServiceLevelObjectiveStatusPending';
-  /** The time when this objective will breach. */
-  breachingAt: DateTime;
-};
+export enum ServiceLevelAgreementType {
+  FirstResponseTime = 'FIRST_RESPONSE_TIME',
+  NextResponseTime = 'NEXT_RESPONSE_TIME'
+}
 
 export type SetCustomerTenantsInput = {
   customerIdentifier: CustomerIdentifierInput;
@@ -3908,6 +4039,24 @@ export type SettingValueInput = {
   string?: InputMaybe<Scalars['String']>;
 };
 
+export type SingleValueMetric = {
+  __typename?: 'SingleValueMetric';
+  values: Array<SingleValueMetricValue>;
+};
+
+export type SingleValueMetricOptions = {
+  dimension?: InputMaybe<MetricDimensionType>;
+  /** Defaults to 24 hours ago. */
+  from?: InputMaybe<Scalars['String']>;
+  to?: InputMaybe<Scalars['String']>;
+};
+
+export type SingleValueMetricValue = {
+  __typename?: 'SingleValueMetricValue';
+  dimension: Maybe<MetricDimension>;
+  value: Maybe<Scalars['Float']>;
+};
+
 export type SlackMessageEntry = {
   __typename?: 'SlackMessageEntry';
   attachments: Array<Attachment>;
@@ -3945,10 +4094,16 @@ export type SlackReplyEntry = {
 
 export type SlackUser = {
   __typename?: 'SlackUser';
+  createdAt: DateTime;
+  createdBy: InternalActor;
   fullName: Scalars['String'];
-  handle: Scalars['String'];
+  id: Scalars['ID'];
+  isInChannel: Scalars['Boolean'];
   slackAvatarUrl72px: Maybe<Scalars['String']>;
+  slackHandle: Scalars['String'];
   slackUserId: Scalars['ID'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
 };
 
 export type SlackUserConnection = {
@@ -4158,8 +4313,8 @@ export type TenantTierMembership = {
 export type TenantsSearchQuery = {
   /**
    * The term to search for. It must be at least 2 characters long. The search is case-insensitive on these two fields:
-   *   - the tenant name (partial match)
-   *   - the tenant external id (exact match)
+   * - the tenant name (partial match)
+   * - the tenant external id (exact match)
    */
   term: Scalars['String'];
 };
@@ -4200,7 +4355,7 @@ export type Thread = {
   /** The priority of the thread. Valid values are 0, 1, 2, 3, from most to least urgent. */
   priority: Scalars['Int'];
   /** If this thread has a linked SLA, this will inform on the status of its objectives. */
-  serviceLevelAgreementStatus: Maybe<ServiceLevelAgreementStatusSummary>;
+  serviceLevelAgreementStatusSummary: ServiceLevelAgreementStatusSummary;
   /** The status of this thread. */
   status: ThreadStatus;
   /** The datetime when the status of this thread was last changed. */
@@ -4217,6 +4372,8 @@ export type Thread = {
   supportEmailAddresses: Array<Scalars['String']>;
   /** The tenant this thread is associated with. */
   tenant: Maybe<Tenant>;
+  /** The thread discussions attached to this thread. */
+  threadDiscussions: Array<ThreadDiscussion>;
   /** The thread fields attached to this thread. */
   threadFields: Array<ThreadField>;
   /** The tier this thread is associated with. Tiers mandate the SLAs for this thread. */
@@ -4268,6 +4425,27 @@ export type ThreadConnection = {
   edges: Array<ThreadEdge>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int'];
+};
+
+export type ThreadDiscussion = {
+  __typename?: 'ThreadDiscussion';
+  createdAt: DateTime;
+  createdBy: Actor;
+  id: Scalars['ID'];
+  slackChannelName: Scalars['String'];
+  slackMessageLink: Scalars['String'];
+  threadId: Scalars['ID'];
+  title: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: Actor;
+};
+
+export type ThreadDiscussionEntry = {
+  __typename?: 'ThreadDiscussionEntry';
+  customerId: Scalars['ID'];
+  slackChannelName: Scalars['String'];
+  slackMessageLink: Scalars['String'];
+  threadDiscussionId: Scalars['ID'];
 };
 
 export type ThreadEdge = {
@@ -4332,6 +4510,8 @@ export type ThreadFieldSchema = {
   __typename?: 'ThreadFieldSchema';
   createdAt: DateTime;
   createdBy: InternalActor;
+  defaultBooleanValue: Maybe<Scalars['Boolean']>;
+  defaultStringValue: Maybe<Scalars['String']>;
   dependsOnThreadField: Maybe<DependsOnThreadFieldType>;
   description: Scalars['String'];
   enumValues: Array<Scalars['String']>;
@@ -4492,6 +4672,7 @@ export type ThreadsFilter = {
   isMarkedAsSpam?: InputMaybe<Scalars['Boolean']>;
   labelTypeIds?: InputMaybe<Array<Scalars['ID']>>;
   priorities?: InputMaybe<Array<Scalars['Int']>>;
+  serviceLevelAgreements?: InputMaybe<ServiceLevelAgreementFilter>;
   statuses?: InputMaybe<Array<ThreadStatus>>;
   supportEmailAddresses?: InputMaybe<Array<Scalars['String']>>;
   tenantIdentifiers?: InputMaybe<Array<TenantIdentifierInput>>;
@@ -4544,7 +4725,6 @@ export type Tier = {
   memberships: TierMembershipConnection;
   /** The name of this tier. */
   name: Scalars['String'];
-  serviceLevelAgreement: Maybe<ServiceLevelAgreement>;
   serviceLevelAgreements: Array<ServiceLevelAgreement>;
   updatedAt: DateTime;
   updatedBy: InternalActor;
@@ -4612,9 +4792,14 @@ export type TimeSeriesMetricDimension = {
 };
 
 export enum TimeSeriesMetricDimensionType {
+  Agent = 'AGENT',
+  Company = 'COMPANY',
   CustomerGroup = 'CUSTOMER_GROUP',
   LabelType = 'LABEL_TYPE',
-  MessageSource = 'MESSAGE_SOURCE'
+  MessageSource = 'MESSAGE_SOURCE',
+  Priority = 'PRIORITY',
+  ThreadField = 'THREAD_FIELD',
+  Tier = 'TIER'
 }
 
 export type TimeSeriesMetricInterval = {
@@ -4703,6 +4888,24 @@ export type UnmarkCustomerAsSpamInput = {
 export type UnmarkCustomerAsSpamOutput = {
   __typename?: 'UnmarkCustomerAsSpamOutput';
   customer: Maybe<Customer>;
+  error: Maybe<MutationError>;
+};
+
+export type UpdateAutoresponderInput = {
+  autoresponderId: Scalars['ID'];
+  conditions?: InputMaybe<Array<AutoresponderConditionInput>>;
+  isEnabled?: InputMaybe<BooleanInput>;
+  markdownContent?: InputMaybe<OptionalStringInput>;
+  messageSources?: InputMaybe<Array<AutoresponderMessageSource>>;
+  name?: InputMaybe<StringInput>;
+  order?: InputMaybe<IntInput>;
+  responseDelaySeconds?: InputMaybe<IntInput>;
+  textContent?: InputMaybe<StringInput>;
+};
+
+export type UpdateAutoresponderOutput = {
+  __typename?: 'UpdateAutoresponderOutput';
+  autoresponder: Maybe<Autoresponder>;
   error: Maybe<MutationError>;
 };
 
@@ -4799,8 +5002,10 @@ export type UpdateMachineUserOutput = {
 export type UpdateServiceLevelAgreementInput = {
   /** The actions to take when the SLA is about to breach and when it breaches. */
   breachActions?: InputMaybe<Array<BreachActionInput>>;
-  /** This SLA will breach if it does not receive a first response within this many minutes. */
+  /** This SLA will breach if it does not receive a first response within this many minutes. May only be provided if the service level agreement is a first response time SLA. */
   firstResponseTimeMinutes?: InputMaybe<IntInput>;
+  /** This SLA will breach if it does not receive a next response within this many minutes. May only be provided if the service level agreement is a next response time SLA. */
+  nextResponseTimeMinutes?: InputMaybe<IntInput>;
   /** The ID of the SLA to update. */
   serviceLevelAgreementId: Scalars['ID'];
   /** This SLA can only be applied to a thread if it has one of these priority values. If not provided, it defaults to all priorities (0, 1, 2 and 3). */
@@ -4861,6 +5066,8 @@ export type UpdateTenantTierOutput = {
 };
 
 export type UpdateThreadFieldSchemaInput = {
+  defaultBooleanValue?: InputMaybe<OptionalBooleanInput>;
+  defaultStringValue?: InputMaybe<OptionalStringInput>;
   dependsOnThreadField?: InputMaybe<OptionalDependsOnThreadFieldInput>;
   description?: InputMaybe<StringInput>;
   enumValues?: InputMaybe<Array<Scalars['String']>>;
@@ -4901,8 +5108,6 @@ export type UpdateThreadTitleOutput = {
 
 export type UpdateTierInput = {
   color?: InputMaybe<StringInput>;
-  /** @deprecated Use defaultThreadPriority instead. */
-  defaultPriority?: InputMaybe<IntInput>;
   defaultThreadPriority?: InputMaybe<IntInput>;
   externalId?: InputMaybe<OptionalStringInput>;
   isDefault?: InputMaybe<BooleanInput>;
@@ -4955,19 +5160,6 @@ export type UploadFormData = {
   __typename?: 'UploadFormData';
   key: Scalars['String'];
   value: Scalars['String'];
-};
-
-export type UpsertAutoresponderInput = {
-  isEnabled: Scalars['Boolean'];
-  markdownContent?: InputMaybe<Scalars['String']>;
-  textContent: Scalars['String'];
-};
-
-export type UpsertAutoresponderOutput = {
-  __typename?: 'UpsertAutoresponderOutput';
-  autoresponder: Maybe<Autoresponder>;
-  error: Maybe<MutationError>;
-  result: Maybe<UpsertResult>;
 };
 
 export type UpsertBusinessHoursInput = {
