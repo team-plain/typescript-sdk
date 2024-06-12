@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.5.0
+
+### Minor Changes
+
+- c4e3c9c: You can now omit the thread title when creating a thread and AI will generate it for you (if you have this enabled in your settings)
+
 ## 4.4.1
 
 ### Patch Changes
