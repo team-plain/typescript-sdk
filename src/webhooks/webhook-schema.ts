@@ -193,6 +193,8 @@ export interface WebhooksSchemaDefinition {
     | "thread.thread_assignment_transitioned"
     | "thread.email_received"
     | "thread.email_sent"
+    | "thread.slack_message_received"
+    | "thread.slack_message_sent"
     | "thread.chat_sent"
     | "thread.note_created"
     | "thread.thread_labels_changed"
@@ -537,6 +539,8 @@ export interface LabelType {
 export interface ThreadMessageInfo {
   timestamp: Datetime;
   messageSource: "CHAT" | "EMAIL" | "API" | "SLACK";
+  actorId?: string | null;
+  actorType?: ("user" | "machineUser" | "customer" | "system") | null;
 }
 export interface ThreadStatusTransitionedPublicEventPayload {
   eventType: "thread.thread_status_transitioned";
