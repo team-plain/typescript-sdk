@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- bb3cb38: Fix generated webhook types
+- bb3cb38: Fix generated webhook types to include payloads for slack webhooks
 
 ## 4.6.0
 
