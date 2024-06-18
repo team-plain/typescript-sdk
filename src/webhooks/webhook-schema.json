@@ -80,6 +80,8 @@
         "thread.thread_assignment_transitioned",
         "thread.email_received",
         "thread.email_sent",
+        "thread.slack_message_received",
+        "thread.slack_message_sent",
         "thread.chat_sent",
         "thread.note_created",
         "thread.thread_labels_changed",
@@ -1604,6 +1606,30 @@
             "API",
             "SLACK"
           ]
+        },
+        "actorId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "actorType": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "user",
+                "machineUser",
+                "customer",
+                "system"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -2532,6 +2558,65 @@
         }
       ]
     },
+    "slackMessage": {
+      "type": "object",
+      "properties": {
+        "timelineEntryId": {
+          "$ref": "#/definitions/id"
+        },
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "text": {
+          "type": "string"
+        },
+        "resolvedText": {
+          "type": "string",
+          "default": ""
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
+          }
+        },
+        "slackChannelId": {
+          "type": "string"
+        },
+        "slackChannelName": {
+          "type": "string"
+        },
+        "slackMessageLink": {
+          "type": "string"
+        },
+        "createdAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "createdBy": {
+          "$ref": "#/definitions/actor"
+        },
+        "updatedAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "updatedBy": {
+          "$ref": "#/definitions/actor"
+        }
+      },
+      "required": [
+        "timelineEntryId",
+        "id",
+        "text",
+        "attachments",
+        "slackChannelId",
+        "slackChannelName",
+        "slackMessageLink",
+        "createdAt",
+        "createdBy",
+        "updatedAt",
+        "updatedBy"
+      ],
+      "additionalProperties": false
+    },
     "customerChangedPayload": {
       "type": "object",
       "properties": {
@@ -3117,6 +3202,48 @@
         "serviceLevelAgreement",
         "previousServiceLevelAgreementStatusDetail",
         "serviceLevelAgreementStatusDetail"
+      ],
+      "additionalProperties": false
+    },
+    "threadSlackMessageReceivedEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.slack_message_received"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "slackMessage": {
+          "$ref": "#/definitions/slackMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "slackMessage"
+      ],
+      "additionalProperties": false
+    },
+    "threadSlackMessageSentEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.slack_message_sent"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "slackMessage": {
+          "$ref": "#/definitions/slackMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "slackMessage"
       ],
       "additionalProperties": false
     },
