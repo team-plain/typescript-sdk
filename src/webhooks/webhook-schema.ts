@@ -176,6 +176,8 @@ export interface WebhooksSchemaDefinition {
     | ThreadAssignmentTransitionedPublicEventPayload
     | ThreadEmailReceivedPublicEventPayload
     | ThreadEmailSentPublicEventPayload
+    | ThreadSlackMessageReceivedEventPayload
+    | ThreadSlackMessageSentEventPayload
     | ThreadLabelsChangedPublicEventPayload
     | ThreadPriorityChangedPublicEventPayload
     | ThreadFieldCreatedPublicEventPayload
@@ -594,6 +596,30 @@ export interface ThreadEmailSentPublicEventPayload {
   eventType: "thread.email_sent";
   thread: Thread;
   email: Email1;
+}
+export interface ThreadSlackMessageReceivedEventPayload {
+  eventType: "thread.slack_message_received";
+  thread: Thread;
+  slackMessage: SlackMessage;
+}
+export interface SlackMessage {
+  timelineEntryId: Id;
+  id: Id;
+  text: string;
+  resolvedText?: string;
+  attachments: Attachment[];
+  slackChannelId: string;
+  slackChannelName: string;
+  slackMessageLink: string;
+  createdAt: Datetime;
+  createdBy: Actor;
+  updatedAt: Datetime;
+  updatedBy: Actor;
+}
+export interface ThreadSlackMessageSentEventPayload {
+  eventType: "thread.slack_message_sent";
+  thread: Thread;
+  slackMessage: SlackMessage;
 }
 export interface ThreadLabelsChangedPublicEventPayload {
   eventType: "thread.thread_labels_changed";

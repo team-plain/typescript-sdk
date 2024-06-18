@@ -38,6 +38,12 @@
           "$ref": "#/definitions/threadEmailSentPublicEventPayload"
         },
         {
+          "$ref": "#/definitions/threadSlackMessageReceivedEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadSlackMessageSentEventPayload"
+        },
+        {
           "$ref": "#/definitions/threadLabelsChangedPublicEventPayload"
         },
         {
