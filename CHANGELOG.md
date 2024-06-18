@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.6.0
+
+### Minor Changes
+
+- 3d158d5: Regenerate types for slack webhooks (`thread.slack_message_received` and `thread.slack_message_sent`)
+
 ## 4.5.0
 
 ### Minor Changes
