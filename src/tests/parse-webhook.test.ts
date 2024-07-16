@@ -17,6 +17,15 @@ describe('Parse webhook', () => {
     threadStatusTransitionedPayload,
   ].forEach((payload: { type: string }) => {
     test(`should validate the ${payload?.type} payload successfully`, () => {
+
+
+      const res = parsePlainWebhook(payload).data;
+
+      if(res && res.payload.eventType === 'thread.email_received') {
+        console.log(res.payload.thread.customer.externalId);
+      }
+
+
       expect(parsePlainWebhook(payload).data).toBeTruthy();
     });
   });
