@@ -3,6 +3,30 @@
 export { PlainClient } from './client';
 
 export { parsePlainWebhook } from './webhooks';
+export type {
+  WebhooksSchemaDefinition,
+  CustomerChangedPayload,
+  CustomerGroupMembershipsChangedPayload,
+  TimelineEntryChangedPayload,
+  CustomerGroupChangedPayload,
+  ThreadCreatedPublicEventPayload,
+  ThreadStatusTransitionedPublicEventPayload,
+  ThreadAssignmentTransitionedPublicEventPayload,
+  ThreadEmailReceivedPublicEventPayload,
+  ThreadEmailSentPublicEventPayload,
+  ThreadSlackMessageReceivedEventPayload,
+  ThreadSlackMessageSentEventPayload,
+  ThreadLabelsChangedPublicEventPayload,
+  ThreadPriorityChangedPublicEventPayload,
+  ThreadFieldCreatedPublicEventPayload,
+  ThreadFieldUpdatedPublicEventPayload,
+  ThreadFieldDeletedPublicEventPayload,
+  ThreadChatSentPublicEventPayload,
+  ThreadServiceLevelAgreementStatusTransitionedPayload,
+  CustomerCreatedPublicEventPayload,
+  CustomerUpdatedPublicEventPayload,
+  CustomerDeletedPublicEventPayload,
+} from './webhooks';
 
 export { uiComponent } from './ui-components';
 
@@ -60,14 +84,12 @@ export type {
   TenantTierMembershipPartsFragment,
   CompanyTierMembershipPartsFragment,
   TierMembershipPartsFragment,
-
   // Query arguments
   CustomersFilter,
   CustomersSort,
   CustomerGroupMembershipsFilter,
   CompaniesSearchQuery,
   TenantsSearchQuery,
-
   // Input types
   AddLabelsInput,
   AddCustomerToTenantsInput,
