@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.7.0
+
+### Minor Changes
+
+- 925fa35: Export all webhook typescript types for use when building things"
+
 ## 4.6.1
 
 ### Patch Changes
