@@ -15,6 +15,8 @@ export default {
         externalId: null,
         fullName: 'Peter Santos',
         shortName: 'Peter',
+        assignedAt: null,
+        assignedToUser: null,
         markedAsSpamAt: null,
         markedAsSpamBy: null,
         customerGroupMemberships: [],

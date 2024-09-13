@@ -9,8 +9,7 @@ export type Datetime = string;
 export type Id = string;
 export type EmailAddress = string;
 export type InternalActor = UserActor | MachineUserActor | SystemActor;
-export type CustomerGroupMemberships = CustomerGroupMembership[];
-export type Actor = UserActor | MachineUserActor | SystemActor | CustomerActor;
+export type Actor = CustomerActor | UserActor | MachineUserActor | SystemActor;
 export type EmailActor =
   | UserActor
   | CustomerActor
@@ -22,6 +21,7 @@ export type EmailActor =
       actorType: "deletedCustomer";
       customerId: Id;
     };
+export type EmailAuthenticity = "PASS" | "FAIL" | "UNKNOWN";
 export type Component =
   | ComponentText
   | ComponentPlainText
@@ -32,11 +32,8 @@ export type Component =
   | ComponentCopyButton
   | ComponentRow
   | ComponentContainer;
-export type ComponentTextSize = "S" | "M" | "L";
-export type ComponentTextColor = "NORMAL" | "MUTED" | "SUCCESS" | "WARNING" | "ERROR";
 export type ComponentPlainTextSize = "S" | "M" | "L";
 export type ComponentPlainTextColor = "NORMAL" | "MUTED" | "SUCCESS" | "WARNING" | "ERROR";
-export type ComponentSpacerSize = "XS" | "S" | "M" | "L" | "XL";
 export type ComponentDividerSpacingSize = "XS" | "S" | "M" | "L" | "XL";
 export type ComponentBadgeColor = "GREY" | "GREEN" | "YELLOW" | "RED" | "BLUE";
 export type ComponentRowContent =
@@ -97,6 +94,10 @@ export type ThreadStatusDetail =
       type: "LINK_LINEAR_UPDATED";
       updatedAt: Datetime;
       linearIssueId: string;
+    }
+  | {
+      type: "REPLIED";
+      repliedAt: Datetime;
     };
 export type ThreadAssignee =
   | User
@@ -109,7 +110,7 @@ export type ServiceLevelAgreement =
       id: Id;
       tier: Tier;
       useBusinessHoursOnly: boolean;
-      threadPriorityFilter: ThreadPriorityFilter;
+      threadPriorityFilter: ThreadPriority[];
       createdAt: Datetime;
       createdBy: InternalActor;
       updatedAt: Datetime;
@@ -121,7 +122,7 @@ export type ServiceLevelAgreement =
       id: Id;
       tier: Tier;
       useBusinessHoursOnly: boolean;
-      threadPriorityFilter: ThreadPriorityFilter;
+      threadPriorityFilter: ThreadPriority[];
       createdAt: Datetime;
       createdBy: InternalActor;
       updatedAt: Datetime;
@@ -129,10 +130,6 @@ export type ServiceLevelAgreement =
       type: "NEXT_RESPONSE_TIME";
       nextResponseTimeMinutes: number;
     };
-/**
- * @minItems 1
- */
-export type ThreadPriorityFilter = [ThreadPriority, ...ThreadPriority[]];
 export type ServiceLevelAgreementStatusDetail =
   | {
       breachTime: Datetime;
@@ -178,6 +175,8 @@ export interface WebhooksSchemaDefinition {
     | ThreadEmailSentPublicEventPayload
     | ThreadSlackMessageReceivedEventPayload
     | ThreadSlackMessageSentEventPayload
+    | ThreadMSTeamsMessageReceivedEventPayload
+    | ThreadMSTeamsMessageSentEventPayload
     | ThreadLabelsChangedPublicEventPayload
     | ThreadPriorityChangedPublicEventPayload
     | ThreadFieldCreatedPublicEventPayload
@@ -197,6 +196,8 @@ export interface WebhooksSchemaDefinition {
     | "thread.email_sent"
     | "thread.slack_message_received"
     | "thread.slack_message_sent"
+    | "thread.ms_teams_message_sent"
+    | "thread.ms_teams_message_received"
     | "thread.chat_sent"
     | "thread.note_created"
     | "thread.thread_labels_changed"
@@ -219,9 +220,6 @@ export interface WebhooksSchemaDefinition {
     webhookDeliveryAttemptTimestamp: Datetime;
   };
 }
-/**
- * A customer has been created or updated
- */
 export interface CustomerChangedPayload {
   changeType: "ADDED" | "UPDATED";
   eventType: "customer.customer_changed";
@@ -230,7 +228,11 @@ export interface CustomerChangedPayload {
 }
 export interface Customer {
   id: Id;
-  email: Email;
+  email: {
+    email: EmailAddress;
+    isVerified: boolean;
+    verifiedAt: Datetime | null;
+  };
   externalId: string | null;
   fullName: string;
   shortName: string | null;
@@ -238,16 +240,11 @@ export interface Customer {
   assignedToUser: User | null;
   markedAsSpamAt?: Datetime | null;
   markedAsSpamBy?: InternalActor | null;
-  customerGroupMemberships: CustomerGroupMemberships;
+  customerGroupMemberships: CustomerGroupMembership[];
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
   updatedBy: Actor;
-}
-export interface Email {
-  email: EmailAddress;
-  isVerified: boolean;
-  verifiedAt: Datetime | null;
 }
 export interface User {
   id: Id;
@@ -303,35 +300,12 @@ export interface CustomerActor {
 export interface CustomerGroupMembershipsChangedPayload {
   eventType: "customer.customer_group_memberships_changed";
   changeType: "ADDED" | "REMOVED";
-  customer: Customer1;
-  previousCustomer: Customer1;
+  customer: Customer;
+  previousCustomer: Customer;
 }
-export interface Customer1 {
-  id: Id;
-  email: Email;
-  externalId: string | null;
-  fullName: string;
-  shortName: string | null;
-  markedAsSpamAt?: Datetime | null;
-  markedAsSpamBy?: InternalActor | null;
-  customerGroupMemberships: CustomerGroupMemberships;
-  createdAt: Datetime;
-  createdBy: Actor;
-  updatedAt: Datetime;
-  updatedBy: Actor;
-}
-/**
- * A timeline entry has been added, updated or removed
- */
 export interface TimelineEntryChangedPayload {
   eventType: "timeline.timeline_entry_changed";
-  /**
-   * null if changeType=ADDED
-   */
   previousTimelineEntry: TimelineEntry | null;
-  /**
-   * null if changeType=REMOVED
-   */
   timelineEntry: TimelineEntry | null;
   changeType: "ADDED" | "UPDATED" | "REMOVED";
 }
@@ -380,7 +354,7 @@ export interface EmailEntry {
   hasMoreTextContent: boolean;
   markdownContent: string | null;
   hasMoreMarkdownContent: boolean;
-  authenticity: "PASS" | "FAIL" | "UNKNOWN";
+  authenticity: EmailAuthenticity;
   sentAt: Datetime | null;
   receivedAt: Datetime | null;
   attachments: EmailEntryAttachment[];
@@ -410,16 +384,13 @@ export interface CustomEntry {
   externalId: string | null;
   title: string;
   type: string | null;
-  /**
-   * @minItems 1
-   */
-  components: [Component, ...Component[]];
+  components: Component[];
   attachments: CustomEntryAttachment[];
 }
 export interface ComponentText {
   type: "text";
-  textSize: ComponentTextSize | null;
-  textColor: ComponentTextColor | null;
+  textSize: ComponentPlainTextSize | null;
+  textColor: ComponentPlainTextColor | null;
   text: string;
 }
 export interface ComponentPlainText {
@@ -429,7 +400,7 @@ export interface ComponentPlainText {
   type: "plainText";
 }
 export interface ComponentSpacer {
-  spacerSize: ComponentSpacerSize;
+  spacerSize: ComponentDividerSpacingSize;
   type: "spacer";
 }
 export interface ComponentDivider {
@@ -453,18 +424,12 @@ export interface ComponentCopyButton {
 }
 export interface ComponentRow {
   type: "row";
-  /**
-   * @minItems 1
-   */
-  rowMainContent: [ComponentRowContent, ...ComponentRowContent[]];
+  rowMainContent: ComponentRowContent[];
   rowAsideContent: ComponentRowContent[];
 }
 export interface ComponentContainer {
   type: "container";
-  /**
-   * @minItems 1
-   */
-  containerContent: [ComponentContainerContent, ...ComponentContainerContent[]];
+  containerContent: ComponentContainerContent[];
 }
 export interface CustomEntryAttachment {
   id: Id;
@@ -484,13 +449,13 @@ export interface ThreadCreatedPublicEventPayload {
 }
 export interface Thread {
   id: Id;
-  customer: Customer1;
+  customer: Customer;
   title: string;
   previewText?: string | null;
   priority: ThreadPriority;
   externalId: string | null;
   status: ThreadStatus;
-  statusChangedAt: Datetime | null;
+  statusChangedAt: Datetime;
   statusChangedBy?: Actor | null;
   statusDetail: ThreadStatusDetail | null;
   assignee: ThreadAssignee | null;
@@ -557,9 +522,9 @@ export interface ThreadAssignmentTransitionedPublicEventPayload {
 export interface ThreadEmailReceivedPublicEventPayload {
   eventType: "thread.email_received";
   thread: Thread;
-  email: Email1;
+  email: Email;
 }
-export interface Email1 {
+export interface Email {
   timelineEntryId: Id;
   id: Id;
   to: EmailParticipant;
@@ -570,7 +535,7 @@ export interface Email1 {
   subject: string | null;
   textContent: string | null;
   markdownContent: string | null;
-  authenticity: "PASS" | "FAIL" | "UNKNOWN";
+  authenticity: EmailAuthenticity;
   sentAt: Datetime | null;
   receivedAt: Datetime | null;
   attachments: Attachment[];
@@ -595,7 +560,7 @@ export interface Attachment {
 export interface ThreadEmailSentPublicEventPayload {
   eventType: "thread.email_sent";
   thread: Thread;
-  email: Email1;
+  email: Email;
 }
 export interface ThreadSlackMessageReceivedEventPayload {
   eventType: "thread.slack_message_received";
@@ -617,6 +582,30 @@ export interface SlackMessage {
   updatedBy: Actor;
 }
 export interface ThreadSlackMessageSentEventPayload {
+  eventType: "thread.ms_teams_message_sent";
+  thread: Thread;
+  msTeamsMessage: MsTeamsMessage;
+}
+export interface MsTeamsMessage {
+  timelineEntryId: Id;
+  threadId: Id;
+  msTeamsMessageId: string;
+  type: ("INBOUND" | "OUTBOUND" | "UNKNOWN_MS_TEAMS_MESSAGE_TYPE") | null;
+  text: string;
+  attachments: Attachment[];
+  lastEditedOnMsTeamsAt: Datetime | null;
+  deletedOnMsTeamsAt: Datetime | null;
+  createdAt: Datetime;
+  createdBy: Actor;
+  updatedAt: Datetime;
+  updatedBy: Actor;
+}
+export interface ThreadMSTeamsMessageReceivedEventPayload {
+  eventType: "thread.ms_teams_message_received";
+  thread: Thread;
+  msTeamsMessage: MsTeamsMessage;
+}
+export interface ThreadMSTeamsMessageSentEventPayload {
   eventType: "thread.slack_message_sent";
   thread: Thread;
   slackMessage: SlackMessage;
@@ -695,25 +684,16 @@ export interface Tier {
   updatedAt: Datetime;
   updatedBy: InternalActor;
 }
-/**
- * A customer has been created
- */
 export interface CustomerCreatedPublicEventPayload {
   eventType: "customer.customer_created";
-  customer: Customer1;
+  customer: Customer;
 }
-/**
- * A customer has been updated
- */
 export interface CustomerUpdatedPublicEventPayload {
   eventType: "customer.customer_updated";
-  customer: Customer1;
-  previousCustomer: Customer1;
+  customer: Customer;
+  previousCustomer: Customer;
 }
-/**
- * A customer has been deleted
- */
 export interface CustomerDeletedPublicEventPayload {
   eventType: "customer.customer_deleted";
-  previousCustomer: Customer1;
+  previousCustomer: Customer;
 }
