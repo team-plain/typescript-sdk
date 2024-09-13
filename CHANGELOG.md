@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.8.0
+
+### Minor Changes
+
+- a1499d2: Update graphql types
+
 ## 4.7.0
 
 ### Minor Changes
