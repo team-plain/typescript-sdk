@@ -15,6 +15,8 @@ export default {
       shortName: 'Peter',
       markedAsSpamAt: null,
       markedAsSpamBy: null,
+      assignedAt: null,
+      assignedToUser: null,
       customerGroupMemberships: [],
       createdAt: '2023-10-04T14:17:41.991Z',
       createdBy: {
