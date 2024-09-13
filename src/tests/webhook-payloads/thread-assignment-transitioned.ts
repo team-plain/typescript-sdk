@@ -72,6 +72,8 @@ export default {
         shortName: 'John',
         markedAsSpamAt: null,
         markedAsSpamBy: null,
+        assignedAt: null,
+        assignedToUser: null,
         customerGroupMemberships: [],
         createdAt: '2023-12-05T14:07:27.142Z',
         createdBy: { actorType: 'system', system: 'email_inbound_handler' },
