@@ -44,6 +44,12 @@
           "$ref": "#/definitions/threadSlackMessageSentEventPayload"
         },
         {
+          "$ref": "#/definitions/threadMSTeamsMessageReceivedEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadMSTeamsMessageSentEventPayload"
+        },
+        {
           "$ref": "#/definitions/threadLabelsChangedPublicEventPayload"
         },
         {
@@ -88,6 +94,8 @@
         "thread.email_sent",
         "thread.slack_message_received",
         "thread.slack_message_sent",
+        "thread.ms_teams_message_sent",
+        "thread.ms_teams_message_received",
         "thread.chat_sent",
         "thread.note_created",
         "thread.thread_labels_changed",
@@ -2658,6 +2666,91 @@
       ],
       "additionalProperties": false
     },
+    "msTeamsMessage": {
+      "type": "object",
+      "properties": {
+        "timelineEntryId": {
+          "$ref": "#/definitions/id"
+        },
+        "threadId": {
+          "$ref": "#/definitions/id"
+        },
+        "msTeamsMessageId": {
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "INBOUND",
+                "OUTBOUND",
+                "UNKNOWN_MS_TEAMS_MESSAGE_TYPE"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
+          }
+        },
+        "lastEditedOnMsTeamsAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/threadPriority"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "deletedOnMsTeamsAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/threadPriority"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "createdAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "createdBy": {
+          "$ref": "#/definitions/actor"
+        },
+        "updatedAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "updatedBy": {
+          "$ref": "#/definitions/actor"
+        }
+      },
+      "required": [
+        "timelineEntryId",
+        "threadId",
+        "msTeamsMessageId",
+        "type",
+        "text",
+        "attachments",
+        "createdAt",
+        "createdBy",
+        "updatedAt",
+        "updatedBy"
+      ],
+      "additionalProperties": false
+    },
     "customerChangedPayload": {
       "type": "object",
       "properties": {
@@ -3218,6 +3311,48 @@
       "additionalProperties": false
     },
     "threadSlackMessageSentEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.ms_teams_message_sent"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "msTeamsMessage": {
+          "$ref": "#/definitions/msTeamsMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "msTeamsMessage"
+      ],
+      "additionalProperties": false
+    },
+    "threadMSTeamsMessageReceivedEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.ms_teams_message_received"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "msTeamsMessage": {
+          "$ref": "#/definitions/msTeamsMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "msTeamsMessage"
+      ],
+      "additionalProperties": false
+    },
+    "threadMSTeamsMessageSentEventPayload": {
       "type": "object",
       "properties": {
         "eventType": {

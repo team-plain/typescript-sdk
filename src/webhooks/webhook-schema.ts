@@ -175,6 +175,8 @@ export interface WebhooksSchemaDefinition {
     | ThreadEmailSentPublicEventPayload
     | ThreadSlackMessageReceivedEventPayload
     | ThreadSlackMessageSentEventPayload
+    | ThreadMSTeamsMessageReceivedEventPayload
+    | ThreadMSTeamsMessageSentEventPayload
     | ThreadLabelsChangedPublicEventPayload
     | ThreadPriorityChangedPublicEventPayload
     | ThreadFieldCreatedPublicEventPayload
@@ -194,6 +196,8 @@ export interface WebhooksSchemaDefinition {
     | "thread.email_sent"
     | "thread.slack_message_received"
     | "thread.slack_message_sent"
+    | "thread.ms_teams_message_sent"
+    | "thread.ms_teams_message_received"
     | "thread.chat_sent"
     | "thread.note_created"
     | "thread.thread_labels_changed"
@@ -578,6 +582,30 @@ export interface SlackMessage {
   updatedBy: Actor;
 }
 export interface ThreadSlackMessageSentEventPayload {
+  eventType: "thread.ms_teams_message_sent";
+  thread: Thread;
+  msTeamsMessage: MsTeamsMessage;
+}
+export interface MsTeamsMessage {
+  timelineEntryId: Id;
+  threadId: Id;
+  msTeamsMessageId: string;
+  type: ("INBOUND" | "OUTBOUND" | "UNKNOWN_MS_TEAMS_MESSAGE_TYPE") | null;
+  text: string;
+  attachments: Attachment[];
+  lastEditedOnMsTeamsAt?: ThreadPriority | null;
+  deletedOnMsTeamsAt?: ThreadPriority | null;
+  createdAt: Datetime;
+  createdBy: Actor;
+  updatedAt: Datetime;
+  updatedBy: Actor;
+}
+export interface ThreadMSTeamsMessageReceivedEventPayload {
+  eventType: "thread.ms_teams_message_received";
+  thread: Thread;
+  msTeamsMessage: MsTeamsMessage;
+}
+export interface ThreadMSTeamsMessageSentEventPayload {
   eventType: "thread.slack_message_sent";
   thread: Thread;
   slackMessage: SlackMessage;
