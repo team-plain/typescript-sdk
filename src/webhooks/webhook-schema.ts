@@ -593,8 +593,8 @@ export interface MsTeamsMessage {
   type: ("INBOUND" | "OUTBOUND" | "UNKNOWN_MS_TEAMS_MESSAGE_TYPE") | null;
   text: string;
   attachments: Attachment[];
-  lastEditedOnMsTeamsAt?: ThreadPriority | null;
-  deletedOnMsTeamsAt?: ThreadPriority | null;
+  lastEditedOnMsTeamsAt: Datetime | null;
+  deletedOnMsTeamsAt: Datetime | null;
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;

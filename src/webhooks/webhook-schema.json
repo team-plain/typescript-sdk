@@ -2705,24 +2705,22 @@
         "lastEditedOnMsTeamsAt": {
           "anyOf": [
             {
-              "$ref": "#/definitions/threadPriority"
+              "$ref": "#/definitions/datetime"
             },
             {
               "type": "null"
             }
-          ],
-          "default": null
+          ]
         },
         "deletedOnMsTeamsAt": {
           "anyOf": [
             {
-              "$ref": "#/definitions/threadPriority"
+              "$ref": "#/definitions/datetime"
             },
             {
               "type": "null"
             }
-          ],
-          "default": null
+          ]
         },
         "createdAt": {
           "$ref": "#/definitions/datetime"
@@ -2744,6 +2742,8 @@
         "type",
         "text",
         "attachments",
+        "lastEditedOnMsTeamsAt",
+        "deletedOnMsTeamsAt",
         "createdAt",
         "createdBy",
         "updatedAt",
