@@ -22,7 +22,6 @@ fragment ThreadParts on Thread {
   threadFields {
     ...ThreadFieldParts
   }
-
   assignedAt {
     ...DateTimeParts
   }
