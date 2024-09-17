@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.9.0
+
+### Minor Changes
+
+- acb9a2b: Added 'upsertCompany' support to SDK
+
 ## 4.8.0
 
 ### Minor Changes
