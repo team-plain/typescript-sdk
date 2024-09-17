@@ -1,0 +1,10 @@
+mutation upsertCompany($input: UpsertCompanyInput!) {
+  upsertCompany(input: $input) {
+    company {
+      ...CompanyParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
