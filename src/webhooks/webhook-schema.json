@@ -114,29 +114,7 @@
       ]
     },
     "webhookMetadata": {
-      "type": "object",
-      "properties": {
-        "webhookTargetId": {
-          "$ref": "#/definitions/id"
-        },
-        "webhookDeliveryAttemptId": {
-          "$ref": "#/definitions/id"
-        },
-        "webhookDeliveryAttemptNumber": {
-          "type": "integer",
-          "exclusiveMinimum": 0
-        },
-        "webhookDeliveryAttemptTimestamp": {
-          "$ref": "#/definitions/datetime"
-        }
-      },
-      "required": [
-        "webhookTargetId",
-        "webhookDeliveryAttemptId",
-        "webhookDeliveryAttemptNumber",
-        "webhookDeliveryAttemptTimestamp"
-      ],
-      "additionalProperties": false
+      "$ref": "#/definitions/webhookMetadata"
     }
   },
   "required": [
@@ -2828,6 +2806,31 @@
         "previousTimelineEntry",
         "timelineEntry",
         "changeType"
+      ],
+      "additionalProperties": false
+    },
+    "webhookMetadata": {
+      "type": "object",
+      "properties": {
+        "webhookTargetId": {
+          "$ref": "#/definitions/id"
+        },
+        "webhookDeliveryAttemptId": {
+          "$ref": "#/definitions/id"
+        },
+        "webhookDeliveryAttemptNumber": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        },
+        "webhookDeliveryAttemptTimestamp": {
+          "$ref": "#/definitions/datetime"
+        }
+      },
+      "required": [
+        "webhookTargetId",
+        "webhookDeliveryAttemptId",
+        "webhookDeliveryAttemptNumber",
+        "webhookDeliveryAttemptTimestamp"
       ],
       "additionalProperties": false
     },

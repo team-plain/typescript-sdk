@@ -213,12 +213,7 @@ export interface WebhooksSchemaDefinition {
     | "customer.customer_group_changed"
     | "customer.customer_group_memberships_changed"
     | "timeline.timeline_entry_changed";
-  webhookMetadata: {
-    webhookTargetId: Id;
-    webhookDeliveryAttemptId: Id;
-    webhookDeliveryAttemptNumber: number;
-    webhookDeliveryAttemptTimestamp: Datetime;
-  };
+  webhookMetadata: WebhookMetadata;
 }
 export interface CustomerChangedPayload {
   changeType: "ADDED" | "UPDATED";
@@ -696,4 +691,10 @@ export interface CustomerUpdatedPublicEventPayload {
 export interface CustomerDeletedPublicEventPayload {
   eventType: "customer.customer_deleted";
   previousCustomer: Customer;
+}
+export interface WebhookMetadata {
+  webhookTargetId: Id;
+  webhookDeliveryAttemptId: Id;
+  webhookDeliveryAttemptNumber: number;
+  webhookDeliveryAttemptTimestamp: Datetime;
 }

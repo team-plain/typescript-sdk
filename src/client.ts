@@ -81,6 +81,7 @@ import {
   UpdateTenantTierDocument,
   UpdateThreadTenantDocument,
   UpdateWebhookTargetDocument,
+  UpsertCompanyDocument,
   UpsertCustomerDocument,
   type UpsertResult,
   UpsertTenantDocument,
@@ -984,6 +985,19 @@ export class PlainClient {
     });
 
     return unwrapData(res, () => null);
+  }
+
+  async upsertCompany(
+    input: VariablesOf<typeof UpsertCompanyDocument>['input']
+  ): SDKResult<CompanyPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: UpsertCompanyDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.upsertCompany.company));
   }
 
   async getCompanies(variables: VariablesOf<typeof CompaniesDocument>): SDKResult<{
