@@ -17,6 +17,7 @@ import {
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
   CreateCustomerEventDocument,
+  CreateLabelTypeDocument,
   CreateNoteDocument,
   CreateThreadDocument,
   CreateThreadEventDocument,
@@ -294,9 +295,10 @@ export class PlainClient {
   /**
    * Get a paginated list of customer groups.
    */
-  async getCustomerGroups(
-    variables: VariablesOf<typeof CustomerGroupsDocument>
-  ): SDKResult<{ customerGroups: CustomerGroupPartsFragment[]; pageInfo: PageInfo }> {
+  async getCustomerGroups(variables: VariablesOf<typeof CustomerGroupsDocument>): SDKResult<{
+    customerGroups: CustomerGroupPartsFragment[];
+    pageInfo: PageInfo;
+  }> {
     const res = await request(this.#ctx, {
       query: CustomerGroupsDocument,
       variables,
@@ -1121,5 +1123,18 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.updateCompanyTier.companyTierMembership));
+  }
+
+  async createLabelType(
+    input: VariablesOf<typeof CreateLabelTypeDocument>['input']
+  ): SDKResult<LabelTypePartsFragment> {
+    const res = await request(this.#ctx, {
+      query: CreateLabelTypeDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.createLabelType.labelType));
   }
 }
