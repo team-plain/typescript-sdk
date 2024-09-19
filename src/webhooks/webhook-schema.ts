@@ -160,7 +160,7 @@ export type ServiceLevelAgreementStatusDetail =
 /**
  * Webhook request
  */
-export interface PlainWebhooksSchemaUnversioned {
+export interface WebhooksSchemaDefinition {
   timestamp: Datetime;
   workspaceId: Id;
   payload:
