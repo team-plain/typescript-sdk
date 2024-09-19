@@ -1,0 +1,10 @@
+mutation createLabelType($input: CreateLabelTypeInput!) {
+  createLabelType(input: $input) {
+    labelType {
+      ...LabelTypeParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}
