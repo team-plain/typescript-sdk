@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.10.0
+
+### Minor Changes
+
+- 9e5c278: add support for creating label types (createLabelType)
+
 ## 4.9.0
 
 ### Minor Changes
