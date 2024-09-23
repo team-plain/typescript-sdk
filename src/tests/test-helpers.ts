@@ -22,8 +22,8 @@ function makeExpectFn(spy: Mock<any, any>) {
     expect(reqOptions.headers).toStrictEqual({
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'X-Plain-SDK': 'typescript',
-      'X-Plain-SDK-Version': packageJson.version,
+      'Plain-SDK': 'typescript',
+      'Plain-SDK-Version': packageJson.version,
     });
     expect(reqOptions.method).toStrictEqual('POST');
 
