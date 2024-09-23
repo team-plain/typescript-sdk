@@ -13,6 +13,6 @@ export async function createAttachmentUploadUrl() {
   if (res.error) {
     console.error(res.error);
   } else {
-    console.log(`Attachment upload url created!`, res.data);
+    console.log('Attachment upload url created!', res.data);
   }
 }

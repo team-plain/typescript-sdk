@@ -1,5 +1,5 @@
-import type { MutationErrorPartsFragment } from './graphql/types';
 import type { PlainGraphQLError } from './graphql-utlities';
+import type { MutationErrorPartsFragment } from './graphql/types';
 
 /* 400 */
 export type BadRequestError = {

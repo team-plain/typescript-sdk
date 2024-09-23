@@ -1,4 +1,4 @@
-import { expect, type Mock, vitest } from 'vitest';
+import { type Mock, expect, vitest } from 'vitest';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function makeExpectFn(spy: Mock<any, any>) {

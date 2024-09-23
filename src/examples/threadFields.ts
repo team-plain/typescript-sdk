@@ -18,7 +18,7 @@ export async function upsertThreadField() {
     console.log('There was an error upserting thread field');
     console.error(res.error);
   } else {
-    console.log(`Thread field upserted!`);
+    console.log('Thread field upserted!');
     console.log(res.data);
   }
 }
@@ -32,7 +32,7 @@ export async function deleteThreadField() {
     console.log('There was an error deleting thread field');
     console.error(res.error);
   } else {
-    console.log(`Thread field deleted!`);
+    console.log('Thread field deleted!');
     console.log(res.data);
   }
 }
