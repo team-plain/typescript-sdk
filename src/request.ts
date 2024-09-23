@@ -30,7 +30,7 @@ export async function request<Query, Variables>(
     const headers = {
       Authorization: `Bearer ${ctx.apiKey}`,
       'Content-Type': 'application/json',
-      'Plain-SDK': 'tyepscript',
+      'Plain-SDK': 'typescript',
       'Plain-SDK-Version': packageJson.version,
     };
 
