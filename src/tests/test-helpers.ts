@@ -1,4 +1,5 @@
 import { type Mock, expect, vitest } from 'vitest';
+import * as packageJson from '../../package.json';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function makeExpectFn(spy: Mock<any, any>) {
@@ -21,6 +22,7 @@ function makeExpectFn(spy: Mock<any, any>) {
     expect(reqOptions.headers).toStrictEqual({
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
+      'X-Plain-SDK-Version': packageJson.version,
     });
     expect(reqOptions.method).toStrictEqual('POST');
 
