@@ -1,6 +1,6 @@
 # @team-plain/typescript-sdk
 
-[Changelog]('./CHANGELOG.md')
+[Changelog](./CHANGELOG.md)
 
 ## Plain Client
 
@@ -104,16 +104,36 @@ Fallback error type when something unexpected happens.
 
 ## Webhooks
 
-This package also provides functionality to validate our [Webhook payloads](https://www.plain.com/docs/api-reference/webhooks).
+Plain signs the [webhooks](https://www.plain.com/docs/api-reference/webhooks) it sends to your endpoint,
+allowing you to validate that they were not sent by a third-party. You can read more about it [here](https://www.plain.com/docs/api-reference/request-signing).
+The SDK provides a convenient helper function to verify the signature, prevent replay attacks, and parse the payload to a typed object.
 
 ```ts
-import { parsePlainWebhook } from '@team-plain/typescript-sdk';
+import { verifyPlainWebhook, PlainWebhookSignatureVerificationError, PlainWebhookVersionMismatchError } from '@team-plain/typescript-sdk';
 
-const payload = { ... };
+// Please note that you must pass the raw request body, exactly as received from Plain,
+// to the verifyPlainWebhook() function; this will not work with a parsed (i.e., JSON) request body.
+const payload = '...';
 
-if(parsePlainWebhook(payload)) {
-  // payload is now typed!
-  doYourThing(payload);
+// The value of the `Plain-Request-Signature` header from the webhook request.
+const signature = '...';
+
+// Plain Request Signature Secret. You can find this in Plain's settings.
+const secret = '...';
+
+const webhookResult = verifyPlainWebhook(payload, signature, secret);
+if (webhookResult.error instanceof PlainWebhookSignatureVerificationError) {
+  // Signature verification failed.
+} else if (webhookResult.error instanceof PlainWebhookVersionMismatchError) {
+  // The SDK is not compatible with the received webhook version.
+  // Consider updating the SDK and the webhook target to the latest version.
+  // Consult the changelog or https://plain.com/docs/api-reference/webhooks/versions for more information.
+} else if (webhookResult.error) {
+  // Unexpected error. Most likely due to an error in Plain's webhook server or a bug in the SDK.
+  // Treate this as a 500 response from Plain.
+  // We also recommend logging the error and sharing it with Plain's support team.
+} else {
+  // webhookResult.data is now a typed object.
 }
 ```
 

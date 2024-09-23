@@ -15,8 +15,6 @@ export default {
         externalId: null,
         fullName: 'Peter Santos',
         shortName: 'Peter',
-        assignedAt: null,
-        assignedToUser: null,
         markedAsSpamAt: null,
         markedAsSpamBy: null,
         customerGroupMemberships: [],
@@ -68,6 +66,7 @@ export default {
   id: 'pEv_01HD44FHHJ0YABSNGKWMG3CJ5J',
   webhookMetadata: {
     webhookTargetId: 'whTarget_01HD4400VTDJQ646V6RY37SR7K',
+    webhookTargetVersion: '2024-09-18',
     webhookDeliveryAttemptId: 'whAttempt_01HD44FJASQM23MNHYDYPAXEG8',
     webhookDeliveryAttemptNumber: 1,
     webhookDeliveryAttemptTimestamp: '2023-10-19T14:12:26.073Z',

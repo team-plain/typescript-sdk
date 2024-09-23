@@ -78,6 +78,9 @@
         },
         {
           "$ref": "#/definitions/customerDeletedPublicEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadNoteCreatedEventPayload"
         }
       ]
     },
@@ -125,7 +128,7 @@
     "type",
     "webhookMetadata"
   ],
-  "additionalProperties": false,
+  "additionalProperties": true,
   "description": "Webhook request",
   "definitions": {
     "id": {
@@ -164,7 +167,7 @@
         "actorType",
         "userId"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customerActor": {
       "type": "object",
@@ -181,7 +184,7 @@
         "actorType",
         "customerId"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "systemActor": {
       "type": "object",
@@ -198,7 +201,7 @@
         "actorType",
         "system"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "machineUserActor": {
       "type": "object",
@@ -215,10 +218,23 @@
         "actorType",
         "machineUserId"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "internalActor": {
       "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "actorType": {
+              "type": "string",
+              "const": "UNKNOWN"
+            }
+          },
+          "required": [
+            "actorType"
+          ],
+          "additionalProperties": true
+        },
         {
           "$ref": "#/definitions/userActor"
         },
@@ -233,7 +249,7 @@
     "actor": {
       "anyOf": [
         {
-          "$ref": "#/definitions/customerActor"
+          "$ref": "#/definitions/internalActor/anyOf/0"
         },
         {
           "$ref": "#/definitions/userActor"
@@ -243,6 +259,9 @@
         },
         {
           "$ref": "#/definitions/systemActor"
+        },
+        {
+          "$ref": "#/definitions/customerActor"
         }
       ]
     },
@@ -266,7 +285,8 @@
           "enum": [
             "ONLINE",
             "OFFLINE",
-            "BREAK"
+            "BREAK",
+            "UNKNOWN_USER_STATUS"
           ]
         },
         "statusChangedAt": {
@@ -319,7 +339,7 @@
         "deletedAt",
         "deletedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "machineUser": {
       "type": "object",
@@ -384,7 +404,7 @@
         "deletedAt",
         "deletedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customerGroup": {
       "type": "object",
@@ -433,7 +453,7 @@
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customerGroupMembership": {
       "type": "object",
@@ -473,7 +493,7 @@
         "updatedBy",
         "customerGroup"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customer": {
       "type": "object",
@@ -506,7 +526,7 @@
             "isVerified",
             "verifiedAt"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         "externalId": {
           "type": [
@@ -521,26 +541,6 @@
           "type": [
             "string",
             "null"
-          ]
-        },
-        "assignedAt": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/datetime"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "assignedToUser": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/user"
-            },
-            {
-              "type": "null"
-            }
           ]
         },
         "markedAsSpamAt": {
@@ -590,15 +590,13 @@
         "externalId",
         "fullName",
         "shortName",
-        "assignedAt",
-        "assignedToUser",
         "customerGroupMemberships",
         "createdAt",
         "createdBy",
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "attachment": {
       "type": "object",
@@ -648,18 +646,22 @@
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "emailAuthenticity": {
       "type": "string",
       "enum": [
         "PASS",
         "FAIL",
-        "UNKNOWN"
+        "UNKNOWN",
+        "UNKNOWN_EMAIL_AUTHENTICITY"
       ]
     },
     "emailActor": {
       "anyOf": [
+        {
+          "$ref": "#/definitions/internalActor/anyOf/0"
+        },
         {
           "$ref": "#/definitions/userActor"
         },
@@ -681,7 +683,7 @@
             "actorType",
             "supportEmailAddress"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -698,7 +700,7 @@
             "actorType",
             "customerId"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         }
       ]
     },
@@ -730,7 +732,7 @@
         "name",
         "emailActor"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "email": {
       "type": "object",
@@ -856,7 +858,7 @@
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "chat": {
       "type": "object",
@@ -919,7 +921,7 @@
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customEntryAttachment": {
       "type": "object",
@@ -971,7 +973,7 @@
         "updatedBy",
         "type"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "chatEntryAttachment": {
       "type": "object",
@@ -1023,7 +1025,7 @@
         "updatedBy",
         "type"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "emailEntryAttachment": {
       "type": "object",
@@ -1079,14 +1081,15 @@
         "type",
         "emailContentId"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "componentTextSize": {
       "type": "string",
       "enum": [
         "S",
         "M",
-        "L"
+        "L",
+        "UNKNOWN_COMPONENT_TEXT_SIZE"
       ]
     },
     "componentTextColor": {
@@ -1096,7 +1099,8 @@
         "MUTED",
         "SUCCESS",
         "WARNING",
-        "ERROR"
+        "ERROR",
+        "UNKNOWN_COMPONENT_TEXT_COLOR"
       ]
     },
     "componentPlainTextSize": {
@@ -1104,7 +1108,8 @@
       "enum": [
         "S",
         "M",
-        "L"
+        "L",
+        "UNKNOWN_COMPONENT_PLAIN_TEXT_SIZE"
       ]
     },
     "componentPlainTextColor": {
@@ -1114,7 +1119,8 @@
         "MUTED",
         "SUCCESS",
         "WARNING",
-        "ERROR"
+        "ERROR",
+        "UNKNOWN_COMPONENT_PLAIN_TEXT_COLOR"
       ]
     },
     "componentSpacerSize": {
@@ -1124,7 +1130,8 @@
         "S",
         "M",
         "L",
-        "XL"
+        "XL",
+        "UNKNOWN_COMPONENT_SPACER_SIZE"
       ]
     },
     "componentDividerSpacingSize": {
@@ -1134,7 +1141,8 @@
         "S",
         "M",
         "L",
-        "XL"
+        "XL",
+        "UNKNOWN_COMPONENT_DIVIDER_SPACING_SIZE"
       ]
     },
     "componentBadgeColor": {
@@ -1144,7 +1152,8 @@
         "GREEN",
         "YELLOW",
         "RED",
-        "BLUE"
+        "BLUE",
+        "UNKNOWN_COMPONENT_BADGE_COLOR"
       ]
     },
     "componentText": {
@@ -1157,7 +1166,7 @@
         "textSize": {
           "anyOf": [
             {
-              "$ref": "#/definitions/componentPlainTextSize"
+              "$ref": "#/definitions/componentTextSize"
             },
             {
               "type": "null"
@@ -1167,7 +1176,7 @@
         "textColor": {
           "anyOf": [
             {
-              "$ref": "#/definitions/componentPlainTextColor"
+              "$ref": "#/definitions/componentTextColor"
             },
             {
               "type": "null"
@@ -1186,7 +1195,7 @@
         "textColor",
         "text"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "componentPlainText": {
       "type": "object",
@@ -1227,13 +1236,13 @@
         "plainText",
         "type"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "componentSpacer": {
       "type": "object",
       "properties": {
         "spacerSize": {
-          "$ref": "#/definitions/componentDividerSpacingSize"
+          "$ref": "#/definitions/componentSpacerSize"
         },
         "type": {
           "type": "string",
@@ -1244,7 +1253,7 @@
         "spacerSize",
         "type"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "componentDivider": {
       "type": "object",
@@ -1268,7 +1277,7 @@
         "dividerSpacingSize",
         "type"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "componentLinkButton": {
       "type": "object",
@@ -1291,7 +1300,7 @@
         "linkButtonLabel",
         "type"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "componentBadge": {
       "type": "object",
@@ -1320,7 +1329,7 @@
         "badgeColor",
         "type"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "componentCopyButton": {
       "type": "object",
@@ -1350,10 +1359,23 @@
         "copyButtonTooltipLabel",
         "type"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "componentRowContent": {
       "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "UNKNOWN"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
+        },
         {
           "$ref": "#/definitions/componentText"
         },
@@ -1402,10 +1424,13 @@
         "rowMainContent",
         "rowAsideContent"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "componentContainerContent": {
       "anyOf": [
+        {
+          "$ref": "#/definitions/componentRowContent/anyOf/0"
+        },
         {
           "$ref": "#/definitions/componentText"
         },
@@ -1450,10 +1475,13 @@
         "type",
         "containerContent"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "component": {
       "anyOf": [
+        {
+          "$ref": "#/definitions/componentRowContent/anyOf/0"
+        },
         {
           "$ref": "#/definitions/componentText"
         },
@@ -1548,7 +1576,7 @@
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "label": {
       "type": "object",
@@ -1580,7 +1608,7 @@
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "tier": {
       "type": "object",
@@ -1641,13 +1669,16 @@
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadPriority": {
       "type": "number"
     },
     "threadAssignee": {
       "anyOf": [
+        {
+          "$ref": "#/definitions/componentRowContent/anyOf/0"
+        },
         {
           "$ref": "#/definitions/user"
         },
@@ -1664,7 +1695,7 @@
           "required": [
             "id"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         }
       ]
     },
@@ -1673,7 +1704,8 @@
       "enum": [
         "TODO",
         "DONE",
-        "SNOOZED"
+        "SNOOZED",
+        "UNKNOWN_THREAD_STATUS"
       ]
     },
     "threadMessageInfo": {
@@ -1688,7 +1720,9 @@
             "CHAT",
             "EMAIL",
             "API",
-            "SLACK"
+            "SLACK",
+            "MS_TEAMS",
+            "UNKNOWN_THREAD_MESSAGE_INFO_MESSAGE_SOURCE"
           ]
         },
         "actorId": {
@@ -1720,10 +1754,13 @@
         "timestamp",
         "messageSource"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadStatusDetail": {
       "anyOf": [
+        {
+          "$ref": "#/definitions/componentRowContent/anyOf/0"
+        },
         {
           "type": "object",
           "properties": {
@@ -1739,45 +1776,7 @@
             "type",
             "createdAt"
           ],
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string",
-              "const": "SNOOZED"
-            },
-            "snoozedAt": {
-              "$ref": "#/definitions/datetime"
-            },
-            "snoozedUntil": {
-              "$ref": "#/definitions/datetime"
-            }
-          },
-          "required": [
-            "type",
-            "snoozedAt",
-            "snoozedUntil"
-          ],
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string",
-              "const": "UNSNOOZED"
-            },
-            "snoozedAt": {
-              "$ref": "#/definitions/datetime"
-            }
-          },
-          "required": [
-            "type",
-            "snoozedAt"
-          ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -1785,55 +1784,143 @@
             "type": {
               "type": "string",
               "const": "NEW_REPLY"
-            },
-            "newReplyAt": {
-              "$ref": "#/definitions/datetime"
             }
           },
           "required": [
-            "type",
-            "newReplyAt"
+            "type"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
           "properties": {
             "type": {
               "type": "string",
-              "const": "LINK_LINEAR_UPDATED"
-            },
-            "updatedAt": {
-              "$ref": "#/definitions/datetime"
-            },
-            "linearIssueId": {
-              "type": "string",
-              "format": "uuid"
+              "const": "IN_PROGRESS"
             }
           },
           "required": [
-            "type",
-            "updatedAt",
-            "linearIssueId"
+            "type"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
           "properties": {
             "type": {
               "type": "string",
-              "const": "REPLIED"
+              "const": "WAITING_FOR_CUSTOMER"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "WAITING_FOR_DURATION"
             },
-            "repliedAt": {
+            "waitingUntil": {
               "$ref": "#/definitions/datetime"
+            },
+            "durationSeconds": {
+              "type": "number"
             }
           },
           "required": [
             "type",
-            "repliedAt"
+            "waitingUntil",
+            "durationSeconds"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "THREAD_LINK_UPDATED"
+            },
+            "linear": {
+              "type": "object",
+              "properties": {
+                "issueId": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": [
+                "issueId"
+              ],
+              "additionalProperties": true
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "DONE_MANUALLY_SET"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "IGNORED"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "DONE_AUTOMATICALLY_SET"
+            },
+            "afterSeconds": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "THREAD_DISCUSSION_RESOLVED"
+            },
+            "threadDiscussionId": {
+              "$ref": "#/definitions/id"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
         }
       ]
     },
@@ -1854,7 +1941,8 @@
           "enum": [
             "STRING",
             "BOOL",
-            "ENUM"
+            "ENUM",
+            "UNKNOWN_THREAD_FIELD_SCHEMA_TYPE"
           ]
         },
         "stringValue": {
@@ -1894,7 +1982,7 @@
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "thread": {
       "type": "object",
@@ -2071,7 +2159,7 @@
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "noteEntry": {
       "type": "object",
@@ -2107,7 +2195,7 @@
         "text",
         "markdown"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "chatEntry": {
       "type": "object",
@@ -2149,7 +2237,7 @@
         "attachments",
         "customerReadAt"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "emailEntry": {
       "type": "object",
@@ -2261,7 +2349,7 @@
         "inReplyToEmailId",
         "isStartOfThread"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customEntry": {
       "type": "object",
@@ -2313,7 +2401,7 @@
         "components",
         "attachments"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "timelineEntry": {
       "type": "object",
@@ -2344,6 +2432,19 @@
         "entry": {
           "anyOf": [
             {
+              "type": "object",
+              "properties": {
+                "entryType": {
+                  "type": "string",
+                  "const": "UNKNOWN"
+                }
+              },
+              "required": [
+                "entryType"
+              ],
+              "additionalProperties": true
+            },
+            {
               "$ref": "#/definitions/noteEntry"
             },
             {
@@ -2365,10 +2466,23 @@
         "actor",
         "entry"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "serviceLevelAgreementStatusDetail": {
       "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "UNKNOWN"
+            }
+          },
+          "required": [
+            "status"
+          ],
+          "additionalProperties": true
+        },
         {
           "type": "object",
           "properties": {
@@ -2384,7 +2498,7 @@
             "breachTime",
             "status"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -2401,7 +2515,7 @@
             "achievedAt",
             "status"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -2418,7 +2532,7 @@
             "breachTime",
             "status"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -2435,7 +2549,7 @@
             "breachedAt",
             "status"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -2456,7 +2570,7 @@
             "completedAt",
             "status"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -2473,12 +2587,15 @@
             "cancelledAt",
             "status"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         }
       ]
     },
     "serviceLevelAgreement": {
       "anyOf": [
+        {
+          "$ref": "#/definitions/componentRowContent/anyOf/0"
+        },
         {
           "type": "object",
           "properties": {
@@ -2529,7 +2646,7 @@
             "type",
             "firstResponseTimeMinutes"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -2541,7 +2658,7 @@
               "$ref": "#/definitions/tier"
             },
             "useBusinessHoursOnly": {
-              "$ref": "#/definitions/serviceLevelAgreement/anyOf/0/properties/useBusinessHoursOnly"
+              "$ref": "#/definitions/serviceLevelAgreement/anyOf/1/properties/useBusinessHoursOnly"
             },
             "threadPriorityFilter": {
               "type": "array",
@@ -2581,7 +2698,7 @@
             "type",
             "nextResponseTimeMinutes"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         }
       ]
     },
@@ -2642,7 +2759,7 @@
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "msTeamsMessage": {
       "type": "object",
@@ -2727,7 +2844,7 @@
         "updatedAt",
         "updatedBy"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customerChangedPayload": {
       "type": "object",
@@ -2763,7 +2880,7 @@
         "customer",
         "previousCustomer"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "timelineEntryChangedPayload": {
       "type": "object",
@@ -2807,13 +2924,17 @@
         "timelineEntry",
         "changeType"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "webhookMetadata": {
       "type": "object",
       "properties": {
         "webhookTargetId": {
           "$ref": "#/definitions/id"
+        },
+        "webhookTargetVersion": {
+          "type": "string",
+          "const": "2024-09-18"
         },
         "webhookDeliveryAttemptId": {
           "$ref": "#/definitions/id"
@@ -2828,11 +2949,12 @@
       },
       "required": [
         "webhookTargetId",
+        "webhookTargetVersion",
         "webhookDeliveryAttemptId",
         "webhookDeliveryAttemptNumber",
         "webhookDeliveryAttemptTimestamp"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customerGroupMembershipsChangedPayload": {
       "type": "object",
@@ -2861,7 +2983,7 @@
         "customer",
         "previousCustomer"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customerGroupChangedPayload": {
       "anyOf": [
@@ -2885,7 +3007,7 @@
             "eventType",
             "customerGroup"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -2911,7 +3033,7 @@
             "customerGroup",
             "previousCustomerGroup"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -2933,7 +3055,7 @@
             "eventType",
             "previousCustomerGroup"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         }
       ]
     },
@@ -2952,7 +3074,7 @@
         "eventType",
         "thread"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadStatusTransitionedPublicEventPayload": {
       "type": "object",
@@ -2973,7 +3095,7 @@
         "previousThread",
         "thread"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadAssignmentTransitionedPublicEventPayload": {
       "type": "object",
@@ -2994,7 +3116,7 @@
         "previousThread",
         "thread"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadEmailReceivedPublicEventPayload": {
       "type": "object",
@@ -3015,7 +3137,7 @@
         "thread",
         "email"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadEmailSentPublicEventPayload": {
       "type": "object",
@@ -3036,7 +3158,7 @@
         "thread",
         "email"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadLabelsChangedPublicEventPayload": {
       "type": "object",
@@ -3061,7 +3183,7 @@
         "thread",
         "previousThread"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadPriorityChangedPublicEventPayload": {
       "type": "object",
@@ -3082,7 +3204,7 @@
         "previousThread",
         "thread"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadFieldCreatedPublicEventPayload": {
       "type": "object",
@@ -3103,7 +3225,7 @@
         "thread",
         "threadField"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadFieldUpdatedPublicEventPayload": {
       "type": "object",
@@ -3128,7 +3250,7 @@
         "previousThreadField",
         "threadField"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadFieldDeletedPublicEventPayload": {
       "type": "object",
@@ -3149,7 +3271,7 @@
         "thread",
         "previousThreadField"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadChatSentPublicEventPayload": {
       "type": "object",
@@ -3170,7 +3292,7 @@
         "chat",
         "thread"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadNoteCreatedEventPayload": {
       "type": "object",
@@ -3253,7 +3375,7 @@
             "deletedAt",
             "deletedBy"
           ],
-          "additionalProperties": false
+          "additionalProperties": true
         }
       },
       "required": [
@@ -3261,7 +3383,7 @@
         "thread",
         "note"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadServiceLevelAgreementStatusTransitionedPayload": {
       "type": "object",
@@ -3290,7 +3412,7 @@
         "previousServiceLevelAgreementStatusDetail",
         "serviceLevelAgreementStatusDetail"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadSlackMessageReceivedEventPayload": {
       "type": "object",
@@ -3311,7 +3433,7 @@
         "thread",
         "slackMessage"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadSlackMessageSentEventPayload": {
       "type": "object",
@@ -3332,7 +3454,7 @@
         "thread",
         "msTeamsMessage"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadMSTeamsMessageReceivedEventPayload": {
       "type": "object",
@@ -3353,7 +3475,7 @@
         "thread",
         "msTeamsMessage"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "threadMSTeamsMessageSentEventPayload": {
       "type": "object",
@@ -3374,7 +3496,7 @@
         "thread",
         "slackMessage"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customerCreatedPublicEventPayload": {
       "type": "object",
@@ -3391,7 +3513,7 @@
         "eventType",
         "customer"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customerUpdatedPublicEventPayload": {
       "type": "object",
@@ -3412,7 +3534,7 @@
         "customer",
         "previousCustomer"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "customerDeletedPublicEventPayload": {
       "type": "object",
@@ -3429,7 +3551,7 @@
         "eventType",
         "previousCustomer"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     }
   },
   "$schema": "http://json-schema.org/draft-07/schema#"

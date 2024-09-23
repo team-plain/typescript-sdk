@@ -11,3 +11,7 @@ type Err<U> = {
 };
 
 export type Result<T, U> = NonNullable<Data<T> | Err<U>>;
+
+export const isErr = <T, U>(result: Result<T, U>): result is Err<U> => {
+  return !!result.error;
+};

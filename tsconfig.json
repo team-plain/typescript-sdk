@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "verbatimModuleSyntax": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["node"]
   }
 }

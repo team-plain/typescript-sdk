@@ -8,21 +8,46 @@
 export type Datetime = string;
 export type Id = string;
 export type EmailAddress = string;
-export type InternalActor = UserActor | MachineUserActor | SystemActor;
-export type Actor = CustomerActor | UserActor | MachineUserActor | SystemActor;
+export type InternalActor =
+  | {
+      actorType: "UNKNOWN";
+      [k: string]: unknown;
+    }
+  | UserActor
+  | MachineUserActor
+  | SystemActor;
+export type Actor =
+  | {
+      actorType: "UNKNOWN";
+      [k: string]: unknown;
+    }
+  | UserActor
+  | MachineUserActor
+  | SystemActor
+  | CustomerActor;
 export type EmailActor =
+  | {
+      actorType: "UNKNOWN";
+      [k: string]: unknown;
+    }
   | UserActor
   | CustomerActor
   | {
       actorType: "supportEmailAddress";
       supportEmailAddress: string;
+      [k: string]: unknown;
     }
   | {
       actorType: "deletedCustomer";
       customerId: Id;
+      [k: string]: unknown;
     };
-export type EmailAuthenticity = "PASS" | "FAIL" | "UNKNOWN";
+export type EmailAuthenticity = "PASS" | "FAIL" | "UNKNOWN" | "UNKNOWN_EMAIL_AUTHENTICITY";
 export type Component =
+  | {
+      type: "UNKNOWN";
+      [k: string]: unknown;
+    }
   | ComponentText
   | ComponentPlainText
   | ComponentSpacer
@@ -32,11 +57,24 @@ export type Component =
   | ComponentCopyButton
   | ComponentRow
   | ComponentContainer;
-export type ComponentPlainTextSize = "S" | "M" | "L";
-export type ComponentPlainTextColor = "NORMAL" | "MUTED" | "SUCCESS" | "WARNING" | "ERROR";
-export type ComponentDividerSpacingSize = "XS" | "S" | "M" | "L" | "XL";
-export type ComponentBadgeColor = "GREY" | "GREEN" | "YELLOW" | "RED" | "BLUE";
+export type ComponentTextSize = "S" | "M" | "L" | "UNKNOWN_COMPONENT_TEXT_SIZE";
+export type ComponentTextColor = "NORMAL" | "MUTED" | "SUCCESS" | "WARNING" | "ERROR" | "UNKNOWN_COMPONENT_TEXT_COLOR";
+export type ComponentPlainTextSize = "S" | "M" | "L" | "UNKNOWN_COMPONENT_PLAIN_TEXT_SIZE";
+export type ComponentPlainTextColor =
+  | "NORMAL"
+  | "MUTED"
+  | "SUCCESS"
+  | "WARNING"
+  | "ERROR"
+  | "UNKNOWN_COMPONENT_PLAIN_TEXT_COLOR";
+export type ComponentSpacerSize = "XS" | "S" | "M" | "L" | "XL" | "UNKNOWN_COMPONENT_SPACER_SIZE";
+export type ComponentDividerSpacingSize = "XS" | "S" | "M" | "L" | "XL" | "UNKNOWN_COMPONENT_DIVIDER_SPACING_SIZE";
+export type ComponentBadgeColor = "GREY" | "GREEN" | "YELLOW" | "RED" | "BLUE" | "UNKNOWN_COMPONENT_BADGE_COLOR";
 export type ComponentRowContent =
+  | {
+      type: "UNKNOWN";
+      [k: string]: unknown;
+    }
   | ComponentText
   | ComponentPlainText
   | ComponentSpacer
@@ -45,6 +83,10 @@ export type ComponentRowContent =
   | ComponentBadge
   | ComponentCopyButton;
 export type ComponentContainerContent =
+  | {
+      type: "UNKNOWN";
+      [k: string]: unknown;
+    }
   | ComponentText
   | ComponentPlainText
   | ComponentSpacer
@@ -58,54 +100,93 @@ export type CustomerGroupChangedPayload =
       changeType: "ADDED";
       eventType: "customer.customer_group_changed";
       customerGroup: CustomerGroup;
+      [k: string]: unknown;
     }
   | {
       changeType: "UPDATED";
       eventType: "customer.customer_group_changed";
       customerGroup: CustomerGroup;
       previousCustomerGroup: CustomerGroup;
+      [k: string]: unknown;
     }
   | {
       changeType: "REMOVED";
       eventType: "customer.customer_group_changed";
       previousCustomerGroup: CustomerGroup;
+      [k: string]: unknown;
     };
 export type ThreadPriority = number;
-export type ThreadStatus = "TODO" | "DONE" | "SNOOZED";
+export type ThreadStatus = "TODO" | "DONE" | "SNOOZED" | "UNKNOWN_THREAD_STATUS";
 export type ThreadStatusDetail =
+  | {
+      type: "UNKNOWN";
+      [k: string]: unknown;
+    }
   | {
       type: "CREATED";
       createdAt: Datetime;
-    }
-  | {
-      type: "SNOOZED";
-      snoozedAt: Datetime;
-      snoozedUntil: Datetime;
-    }
-  | {
-      type: "UNSNOOZED";
-      snoozedAt: Datetime;
+      [k: string]: unknown;
     }
   | {
       type: "NEW_REPLY";
-      newReplyAt: Datetime;
+      [k: string]: unknown;
     }
   | {
-      type: "LINK_LINEAR_UPDATED";
-      updatedAt: Datetime;
-      linearIssueId: string;
+      type: "IN_PROGRESS";
+      [k: string]: unknown;
     }
   | {
-      type: "REPLIED";
-      repliedAt: Datetime;
+      type: "WAITING_FOR_CUSTOMER";
+      [k: string]: unknown;
+    }
+  | {
+      type: "WAITING_FOR_DURATION";
+      waitingUntil: Datetime;
+      durationSeconds: number;
+      [k: string]: unknown;
+    }
+  | {
+      type: "THREAD_LINK_UPDATED";
+      linear?: {
+        issueId: string;
+        [k: string]: unknown;
+      };
+      [k: string]: unknown;
+    }
+  | {
+      type: "DONE_MANUALLY_SET";
+      [k: string]: unknown;
+    }
+  | {
+      type: "IGNORED";
+      [k: string]: unknown;
+    }
+  | {
+      type: "DONE_AUTOMATICALLY_SET";
+      afterSeconds?: number;
+      [k: string]: unknown;
+    }
+  | {
+      type: "THREAD_DISCUSSION_RESOLVED";
+      threadDiscussionId?: Id;
+      [k: string]: unknown;
     };
 export type ThreadAssignee =
+  | {
+      type: "UNKNOWN";
+      [k: string]: unknown;
+    }
   | User
   | MachineUser
   | {
       id: string;
+      [k: string]: unknown;
     };
 export type ServiceLevelAgreement =
+  | {
+      type: "UNKNOWN";
+      [k: string]: unknown;
+    }
   | {
       id: Id;
       tier: Tier;
@@ -117,6 +198,7 @@ export type ServiceLevelAgreement =
       updatedBy: InternalActor;
       type: "FIRST_RESPONSE_TIME";
       firstResponseTimeMinutes: number;
+      [k: string]: unknown;
     }
   | {
       id: Id;
@@ -129,32 +211,43 @@ export type ServiceLevelAgreement =
       updatedBy: InternalActor;
       type: "NEXT_RESPONSE_TIME";
       nextResponseTimeMinutes: number;
+      [k: string]: unknown;
     };
 export type ServiceLevelAgreementStatusDetail =
   | {
+      status: "UNKNOWN";
+      [k: string]: unknown;
+    }
+  | {
       breachTime: Datetime;
       status: "PENDING";
+      [k: string]: unknown;
     }
   | {
       achievedAt: Datetime;
       status: "ACHIEVED";
+      [k: string]: unknown;
     }
   | {
       breachTime: Datetime;
       status: "IMMINENT_BREACH";
+      [k: string]: unknown;
     }
   | {
       breachedAt: Datetime;
       status: "BREACHING";
+      [k: string]: unknown;
     }
   | {
       breachedAt: Datetime;
       completedAt: Datetime;
       status: "BREACHED";
+      [k: string]: unknown;
     }
   | {
       cancelledAt: Datetime;
       status: "CANCELLED";
+      [k: string]: unknown;
     };
 
 /**
@@ -186,7 +279,8 @@ export interface WebhooksSchemaDefinition {
     | ThreadServiceLevelAgreementStatusTransitionedPayload
     | CustomerCreatedPublicEventPayload
     | CustomerUpdatedPublicEventPayload
-    | CustomerDeletedPublicEventPayload;
+    | CustomerDeletedPublicEventPayload
+    | ThreadNoteCreatedEventPayload;
   id: Id;
   type:
     | "thread.thread_created"
@@ -214,12 +308,14 @@ export interface WebhooksSchemaDefinition {
     | "customer.customer_group_memberships_changed"
     | "timeline.timeline_entry_changed";
   webhookMetadata: WebhookMetadata;
+  [k: string]: unknown;
 }
 export interface CustomerChangedPayload {
   changeType: "ADDED" | "UPDATED";
   eventType: "customer.customer_changed";
   customer: Customer;
   previousCustomer: Customer | null;
+  [k: string]: unknown;
 }
 export interface Customer {
   id: Id;
@@ -227,12 +323,11 @@ export interface Customer {
     email: EmailAddress;
     isVerified: boolean;
     verifiedAt: Datetime | null;
+    [k: string]: unknown;
   };
   externalId: string | null;
   fullName: string;
   shortName: string | null;
-  assignedAt: Datetime | null;
-  assignedToUser: User | null;
   markedAsSpamAt?: Datetime | null;
   markedAsSpamBy?: InternalActor | null;
   customerGroupMemberships: CustomerGroupMembership[];
@@ -240,32 +335,22 @@ export interface Customer {
   createdBy: Actor;
   updatedAt: Datetime;
   updatedBy: Actor;
-}
-export interface User {
-  id: Id;
-  email: EmailAddress;
-  fullName: string;
-  publicName: string;
-  status: "ONLINE" | "OFFLINE" | "BREAK";
-  statusChangedAt: Datetime;
-  createdAt: Datetime;
-  createdBy: InternalActor;
-  updatedAt: Datetime;
-  updatedBy: InternalActor;
-  deletedAt: Datetime | null;
-  deletedBy: InternalActor | null;
+  [k: string]: unknown;
 }
 export interface UserActor {
   actorType: "user";
   userId: Id;
+  [k: string]: unknown;
 }
 export interface MachineUserActor {
   actorType: "machineUser";
   machineUserId: Id;
+  [k: string]: unknown;
 }
 export interface SystemActor {
   actorType: "system";
   system: string;
+  [k: string]: unknown;
 }
 export interface CustomerGroupMembership {
   customerId: Id;
@@ -276,6 +361,7 @@ export interface CustomerGroupMembership {
   updatedAt: Datetime;
   updatedBy: InternalActor;
   customerGroup: CustomerGroup;
+  [k: string]: unknown;
 }
 export interface CustomerGroup {
   id: Id;
@@ -287,22 +373,26 @@ export interface CustomerGroup {
   createdBy: InternalActor;
   updatedAt: Datetime;
   updatedBy: InternalActor;
+  [k: string]: unknown;
 }
 export interface CustomerActor {
   actorType: "customer";
   customerId: Id;
+  [k: string]: unknown;
 }
 export interface CustomerGroupMembershipsChangedPayload {
   eventType: "customer.customer_group_memberships_changed";
   changeType: "ADDED" | "REMOVED";
   customer: Customer;
   previousCustomer: Customer;
+  [k: string]: unknown;
 }
 export interface TimelineEntryChangedPayload {
   eventType: "timeline.timeline_entry_changed";
   previousTimelineEntry: TimelineEntry | null;
   timelineEntry: TimelineEntry | null;
   changeType: "ADDED" | "UPDATED" | "REMOVED";
+  [k: string]: unknown;
 }
 export interface TimelineEntry {
   id: Id;
@@ -310,13 +400,23 @@ export interface TimelineEntry {
   threadId?: Id | null;
   timestamp: Datetime;
   actor: Actor;
-  entry: NoteEntry | ChatEntry | EmailEntry | CustomEntry;
+  entry:
+    | {
+        entryType: "UNKNOWN";
+        [k: string]: unknown;
+      }
+    | NoteEntry
+    | ChatEntry
+    | EmailEntry
+    | CustomEntry;
+  [k: string]: unknown;
 }
 export interface NoteEntry {
   entryType: "note";
   noteId: Id;
   text: string;
   markdown: string | null;
+  [k: string]: unknown;
 }
 export interface ChatEntry {
   entryType: "chat";
@@ -324,6 +424,7 @@ export interface ChatEntry {
   text: string | null;
   attachments: ChatEntryAttachment[];
   customerReadAt: Datetime | null;
+  [k: string]: unknown;
 }
 export interface ChatEntryAttachment {
   id: Id;
@@ -336,6 +437,7 @@ export interface ChatEntryAttachment {
   updatedAt: Datetime;
   updatedBy: Actor;
   type: "CHAT";
+  [k: string]: unknown;
 }
 export interface EmailEntry {
   entryType: "email";
@@ -355,11 +457,13 @@ export interface EmailEntry {
   attachments: EmailEntryAttachment[];
   inReplyToEmailId: string | null;
   isStartOfThread: boolean;
+  [k: string]: unknown;
 }
 export interface EmailParticipant {
   email: string;
   name: string | null;
   emailActor: EmailActor | null;
+  [k: string]: unknown;
 }
 export interface EmailEntryAttachment {
   id: Id;
@@ -373,6 +477,7 @@ export interface EmailEntryAttachment {
   updatedBy: Actor;
   type: "EMAIL";
   emailContentId: string;
+  [k: string]: unknown;
 }
 export interface CustomEntry {
   entryType: "custom";
@@ -381,50 +486,60 @@ export interface CustomEntry {
   type: string | null;
   components: Component[];
   attachments: CustomEntryAttachment[];
+  [k: string]: unknown;
 }
 export interface ComponentText {
   type: "text";
-  textSize: ComponentPlainTextSize | null;
-  textColor: ComponentPlainTextColor | null;
+  textSize: ComponentTextSize | null;
+  textColor: ComponentTextColor | null;
   text: string;
+  [k: string]: unknown;
 }
 export interface ComponentPlainText {
   plainTextSize: ComponentPlainTextSize | null;
   plainTextColor: ComponentPlainTextColor | null;
   plainText: string;
   type: "plainText";
+  [k: string]: unknown;
 }
 export interface ComponentSpacer {
-  spacerSize: ComponentDividerSpacingSize;
+  spacerSize: ComponentSpacerSize;
   type: "spacer";
+  [k: string]: unknown;
 }
 export interface ComponentDivider {
   dividerSpacingSize: ComponentDividerSpacingSize | null;
   type: "divider";
+  [k: string]: unknown;
 }
 export interface ComponentLinkButton {
   linkButtonUrl: string;
   linkButtonLabel: string;
   type: "linkButton";
+  [k: string]: unknown;
 }
 export interface ComponentBadge {
   badgeLabel: string;
   badgeColor: ComponentBadgeColor | null;
   type: "badge";
+  [k: string]: unknown;
 }
 export interface ComponentCopyButton {
   copyButtonValue: string;
   copyButtonTooltipLabel: string | null;
   type: "copyButton";
+  [k: string]: unknown;
 }
 export interface ComponentRow {
   type: "row";
   rowMainContent: ComponentRowContent[];
   rowAsideContent: ComponentRowContent[];
+  [k: string]: unknown;
 }
 export interface ComponentContainer {
   type: "container";
   containerContent: ComponentContainerContent[];
+  [k: string]: unknown;
 }
 export interface CustomEntryAttachment {
   id: Id;
@@ -437,10 +552,12 @@ export interface CustomEntryAttachment {
   updatedAt: Datetime;
   updatedBy: Actor;
   type: "CUSTOM_TIMELINE_ENTRY";
+  [k: string]: unknown;
 }
 export interface ThreadCreatedPublicEventPayload {
   eventType: "thread.thread_created";
   thread: Thread;
+  [k: string]: unknown;
 }
 export interface Thread {
   id: Id;
@@ -465,6 +582,22 @@ export interface Thread {
   createdBy: Actor;
   updatedAt: Datetime;
   updatedBy: Actor;
+  [k: string]: unknown;
+}
+export interface User {
+  id: Id;
+  email: EmailAddress;
+  fullName: string;
+  publicName: string;
+  status: "ONLINE" | "OFFLINE" | "BREAK" | "UNKNOWN_USER_STATUS";
+  statusChangedAt: Datetime;
+  createdAt: Datetime;
+  createdBy: InternalActor;
+  updatedAt: Datetime;
+  updatedBy: InternalActor;
+  deletedAt: Datetime | null;
+  deletedBy: InternalActor | null;
+  [k: string]: unknown;
 }
 export interface MachineUser {
   id: Id;
@@ -477,6 +610,7 @@ export interface MachineUser {
   updatedBy: InternalActor;
   deletedAt: Datetime | null;
   deletedBy: InternalActor | null;
+  [k: string]: unknown;
 }
 export interface Label {
   id: Id;
@@ -485,6 +619,7 @@ export interface Label {
   createdBy: Actor;
   updatedAt: Datetime;
   updatedBy: Actor;
+  [k: string]: unknown;
 }
 export interface LabelType {
   id: Id;
@@ -497,27 +632,32 @@ export interface LabelType {
   createdBy: InternalActor;
   updatedAt: Datetime;
   updatedBy: InternalActor;
+  [k: string]: unknown;
 }
 export interface ThreadMessageInfo {
   timestamp: Datetime;
-  messageSource: "CHAT" | "EMAIL" | "API" | "SLACK";
+  messageSource: "CHAT" | "EMAIL" | "API" | "SLACK" | "MS_TEAMS" | "UNKNOWN_THREAD_MESSAGE_INFO_MESSAGE_SOURCE";
   actorId?: string | null;
   actorType?: ("user" | "machineUser" | "customer" | "system") | null;
+  [k: string]: unknown;
 }
 export interface ThreadStatusTransitionedPublicEventPayload {
   eventType: "thread.thread_status_transitioned";
   previousThread: Thread;
   thread: Thread;
+  [k: string]: unknown;
 }
 export interface ThreadAssignmentTransitionedPublicEventPayload {
   eventType: "thread.thread_assignment_transitioned";
   previousThread: Thread;
   thread: Thread;
+  [k: string]: unknown;
 }
 export interface ThreadEmailReceivedPublicEventPayload {
   eventType: "thread.email_received";
   thread: Thread;
   email: Email;
+  [k: string]: unknown;
 }
 export interface Email {
   timelineEntryId: Id;
@@ -540,6 +680,7 @@ export interface Email {
   createdBy: Actor;
   updatedAt: Datetime;
   updatedBy: Actor;
+  [k: string]: unknown;
 }
 export interface Attachment {
   id: Id;
@@ -551,16 +692,19 @@ export interface Attachment {
   createdBy: Actor;
   updatedAt: Datetime;
   updatedBy: Actor;
+  [k: string]: unknown;
 }
 export interface ThreadEmailSentPublicEventPayload {
   eventType: "thread.email_sent";
   thread: Thread;
   email: Email;
+  [k: string]: unknown;
 }
 export interface ThreadSlackMessageReceivedEventPayload {
   eventType: "thread.slack_message_received";
   thread: Thread;
   slackMessage: SlackMessage;
+  [k: string]: unknown;
 }
 export interface SlackMessage {
   timelineEntryId: Id;
@@ -575,11 +719,13 @@ export interface SlackMessage {
   createdBy: Actor;
   updatedAt: Datetime;
   updatedBy: Actor;
+  [k: string]: unknown;
 }
 export interface ThreadSlackMessageSentEventPayload {
   eventType: "thread.ms_teams_message_sent";
   thread: Thread;
   msTeamsMessage: MsTeamsMessage;
+  [k: string]: unknown;
 }
 export interface MsTeamsMessage {
   timelineEntryId: Id;
@@ -594,60 +740,70 @@ export interface MsTeamsMessage {
   createdBy: Actor;
   updatedAt: Datetime;
   updatedBy: Actor;
+  [k: string]: unknown;
 }
 export interface ThreadMSTeamsMessageReceivedEventPayload {
   eventType: "thread.ms_teams_message_received";
   thread: Thread;
   msTeamsMessage: MsTeamsMessage;
+  [k: string]: unknown;
 }
 export interface ThreadMSTeamsMessageSentEventPayload {
   eventType: "thread.slack_message_sent";
   thread: Thread;
   slackMessage: SlackMessage;
+  [k: string]: unknown;
 }
 export interface ThreadLabelsChangedPublicEventPayload {
   eventType: "thread.thread_labels_changed";
   changeType: "ADDED" | "REMOVED";
   thread: Thread;
   previousThread: Thread;
+  [k: string]: unknown;
 }
 export interface ThreadPriorityChangedPublicEventPayload {
   eventType: "thread.thread_priority_changed";
   previousThread: Thread;
   thread: Thread;
+  [k: string]: unknown;
 }
 export interface ThreadFieldCreatedPublicEventPayload {
   eventType: "thread.thread_field_created";
   thread: Thread;
   threadField: ThreadField;
+  [k: string]: unknown;
 }
 export interface ThreadField {
   id: Id;
   threadId: Id;
   key: string;
-  type: "STRING" | "BOOL" | "ENUM";
+  type: "STRING" | "BOOL" | "ENUM" | "UNKNOWN_THREAD_FIELD_SCHEMA_TYPE";
   stringValue: string | null;
   booleanValue: boolean | null;
   createdAt: Datetime;
   createdBy: InternalActor;
   updatedAt: Datetime;
   updatedBy: InternalActor;
+  [k: string]: unknown;
 }
 export interface ThreadFieldUpdatedPublicEventPayload {
   eventType: "thread.thread_field_updated";
   thread: Thread;
   previousThreadField: ThreadField;
   threadField: ThreadField;
+  [k: string]: unknown;
 }
 export interface ThreadFieldDeletedPublicEventPayload {
   eventType: "thread.thread_field_deleted";
   thread: Thread;
   previousThreadField: ThreadField;
+  [k: string]: unknown;
 }
 export interface ThreadChatSentPublicEventPayload {
   eventType: "thread.chat_sent";
   chat: Chat;
   thread: Thread;
+  [k: string]: unknown;
 }
 export interface Chat {
   timelineEntryId: Id;
@@ -659,6 +815,7 @@ export interface Chat {
   createdBy: Actor;
   updatedAt: Datetime;
   updatedBy: Actor;
+  [k: string]: unknown;
 }
 export interface ThreadServiceLevelAgreementStatusTransitionedPayload {
   eventType: "thread.service_level_agreement_status_transitioned";
@@ -666,6 +823,7 @@ export interface ThreadServiceLevelAgreementStatusTransitionedPayload {
   serviceLevelAgreement: ServiceLevelAgreement;
   previousServiceLevelAgreementStatusDetail: ServiceLevelAgreementStatusDetail;
   serviceLevelAgreementStatusDetail: ServiceLevelAgreementStatusDetail;
+  [k: string]: unknown;
 }
 export interface Tier {
   id: Id;
@@ -678,23 +836,47 @@ export interface Tier {
   createdBy: InternalActor;
   updatedAt: Datetime;
   updatedBy: InternalActor;
+  [k: string]: unknown;
 }
 export interface CustomerCreatedPublicEventPayload {
   eventType: "customer.customer_created";
   customer: Customer;
+  [k: string]: unknown;
 }
 export interface CustomerUpdatedPublicEventPayload {
   eventType: "customer.customer_updated";
   customer: Customer;
   previousCustomer: Customer;
+  [k: string]: unknown;
 }
 export interface CustomerDeletedPublicEventPayload {
   eventType: "customer.customer_deleted";
   previousCustomer: Customer;
+  [k: string]: unknown;
+}
+export interface ThreadNoteCreatedEventPayload {
+  eventType: "thread.note_created";
+  thread: Thread;
+  note: {
+    timelineEntryId: Id;
+    id: Id;
+    text: string;
+    markdown: string | null;
+    createdAt: Datetime;
+    createdBy: InternalActor;
+    updatedAt: Datetime;
+    updatedBy: InternalActor;
+    deletedAt: Datetime | null;
+    deletedBy: InternalActor | null;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
 }
 export interface WebhookMetadata {
   webhookTargetId: Id;
+  webhookTargetVersion: "2024-09-18";
   webhookDeliveryAttemptId: Id;
   webhookDeliveryAttemptNumber: number;
   webhookDeliveryAttemptTimestamp: Datetime;
+  [k: string]: unknown;
 }

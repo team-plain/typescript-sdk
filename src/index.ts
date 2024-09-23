@@ -2,7 +2,15 @@
 
 export { PlainClient } from './client';
 
-export { parsePlainWebhook } from './webhooks';
+export {
+  parsePlainWebhook,
+  verifyPlainWebhook,
+  PlainWebhookError,
+  PlainWebhookPayloadError,
+  PlainWebhookSignatureVerificationError,
+  PlainWebhookVersionMismatchError,
+} from './webhooks';
+
 export type {
   WebhooksSchemaDefinition,
   CustomerChangedPayload,
