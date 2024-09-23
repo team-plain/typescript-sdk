@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 4.10.1
+
+### Patch Changes
+
+- 09e1e7b: Include SDK version as header in all requests to our API so we can better debug failures and issues.
+
 ## 4.10.0
 
 ### Minor Changes
