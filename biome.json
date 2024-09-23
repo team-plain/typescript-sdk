@@ -23,8 +23,13 @@
     }
   },
   "files": {
-    "include": ["vitest.*.js", "src/**/*.ts", "src/**/*.gql"],
-    "ignore": ["dist/**", "node_modules/**", "src/graphql/types.ts"]
+    "include": ["biome.json", "vitest.*.js", "src/**/*.ts", "src/**/*.gql"],
+    "ignore": [
+      "dist/**",
+      "node_modules/**",
+      "src/graphql/types.ts",
+      "src/webhooks/webhook-schema.ts"
+    ]
   },
   "linter": {
     "rules": {

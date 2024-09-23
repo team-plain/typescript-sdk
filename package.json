@@ -14,8 +14,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome lint .",
     "lint:fix": "biome lint . --fix",
-    "format": "biome check .",
-    "format:fix": "biome check --write .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
     "test": "vitest",
     "changeset": "changeset",
     "release": "npm run build && changeset publish"
