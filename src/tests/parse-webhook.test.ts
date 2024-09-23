@@ -21,7 +21,7 @@ describe('Parse webhook', () => {
     });
   });
 
-  test(`should fail to validate an invalid payload`, () => {
+  test('should fail to validate an invalid payload', () => {
     expect(parsePlainWebhook(invalidWebhook).error).toBeTruthy();
   });
 });

@@ -32,9 +32,9 @@ import {
   type CustomerGroupPartsFragment,
   CustomerGroupsDocument,
   type CustomerPartsFragment,
-  CustomersDocument,
   type CustomerTenantMembershipPartsFragment,
   CustomerTenantsDocument,
+  CustomersDocument,
   DeleteCustomerCardConfigDocument,
   DeleteCustomerDocument,
   DeleteThreadFieldDocument,
@@ -63,8 +63,8 @@ import {
   SnoozeThreadDocument,
   TenantDocument,
   type TenantPartsFragment,
-  TenantsDocument,
   type TenantTierMembershipPartsFragment,
+  TenantsDocument,
   ThreadByExternalIdDocument,
   ThreadDocument,
   type ThreadEventPartsFragment,
@@ -101,7 +101,7 @@ type SDKResult<T> = Promise<Result<T, PlainSDKError>>;
 
 function nonNullable<T>(x: T | null | undefined): T {
   if (x === null || x === undefined) {
-    throw new Error(`Expected value to be non nullable`);
+    throw new Error('Expected value to be non nullable');
   }
 
   return x;
@@ -115,11 +115,10 @@ function unwrapData<T, X>(
     return {
       error: result.error,
     };
-  } else {
-    return {
-      data: unwrapFn(result.data),
-    };
   }
+  return {
+    data: unwrapFn(result.data),
+  };
 }
 
 type ConstructorOptions = {

@@ -418,6 +418,21 @@ export type BusinessHours = {
   weekDays: BusinessHoursWeekDays;
 };
 
+export type BusinessHoursSlot = {
+  __typename?: 'BusinessHoursSlot';
+  closesAt: Scalars['String'];
+  opensAt: Scalars['String'];
+  timezone: Timezone;
+  weekday: WeekDay;
+};
+
+export type BusinessHoursSlotInput = {
+  closesAt: Scalars['String'];
+  opensAt: Scalars['String'];
+  timezone: Scalars['String'];
+  weekday: WeekDay;
+};
+
 export type BusinessHoursWeekDay = {
   __typename?: 'BusinessHoursWeekDay';
   endTime: Time;
@@ -1266,6 +1281,18 @@ export type CreateWebhookTargetOutput = {
   webhookTarget: Maybe<WebhookTarget>;
 };
 
+export type CreateWorkflowRuleInput = {
+  name: Scalars['String'];
+  /** JSON-encoded payload of the rule definition. */
+  payload: Scalars['String'];
+};
+
+export type CreateWorkflowRuleOutput = {
+  __typename?: 'CreateWorkflowRuleOutput';
+  error: Maybe<MutationError>;
+  workflowRule: Maybe<WorkflowRule>;
+};
+
 export type CreateWorkspaceDiscordIntegrationInput = {
   name: Scalars['String'];
   webhookUrl: Scalars['String'];
@@ -2041,6 +2068,15 @@ export type DeleteWebhookTargetOutput = {
   error: Maybe<MutationError>;
 };
 
+export type DeleteWorkflowRuleInput = {
+  workflowRuleId: Scalars['ID'];
+};
+
+export type DeleteWorkflowRuleOutput = {
+  __typename?: 'DeleteWorkflowRuleOutput';
+  error: Maybe<MutationError>;
+};
+
 export type DeleteWorkspaceDiscordIntegrationInput = {
   integrationId: Scalars['ID'];
 };
@@ -2284,7 +2320,8 @@ export enum FeatureKey {
   MoreActiveEngRotaSeats = 'MORE_ACTIVE_ENG_ROTA_SEATS',
   MsTeamsIntegration = 'MS_TEAMS_INTEGRATION',
   ServiceLevelAgreements = 'SERVICE_LEVEL_AGREEMENTS',
-  SlackDiscussions = 'SLACK_DISCUSSIONS'
+  SlackDiscussions = 'SLACK_DISCUSSIONS',
+  WorkflowRules = 'WORKFLOW_RULES'
 }
 
 export type FileSize = {
@@ -2620,6 +2657,7 @@ export type Mutation = {
   createUserAuthSlackIntegration: CreateUserAuthSlackIntegrationOutput;
   /** Creates a webhook target. */
   createWebhookTarget: CreateWebhookTargetOutput;
+  createWorkflowRule: CreateWorkflowRuleOutput;
   createWorkspace: CreateWorkspaceOutput;
   createWorkspaceDiscordIntegration: CreateWorkspaceDiscordIntegrationOutput;
   createWorkspaceEmailDomainSettings: CreateWorkspaceEmailDomainSettingsOutput;
@@ -2628,6 +2666,7 @@ export type Mutation = {
   createWorkspaceSlackIntegration: CreateWorkspaceSlackIntegrationOutput;
   deleteApiKey: DeleteApiKeyOutput;
   deleteAutoresponder: DeleteAutoresponderOutput;
+  /** @deprecated Use syncBusinessHoursSlots instead. */
   deleteBusinessHours: DeleteBusinessHoursOutput;
   /** Deletes a customer and all of their data stored on Plain. This action cannot be reversed. */
   deleteCustomer: DeleteCustomerOutput;
@@ -2651,6 +2690,7 @@ export type Mutation = {
   deleteUserAuthSlackIntegration: DeleteUserAuthSlackIntegrationOutput;
   /** Deletes a webhook target. */
   deleteWebhookTarget: DeleteWebhookTargetOutput;
+  deleteWorkflowRule: DeleteWorkflowRuleOutput;
   deleteWorkspaceDiscordIntegration: DeleteWorkspaceDiscordIntegrationOutput;
   deleteWorkspaceEmailDomainSettings: DeleteWorkspaceEmailDomainSettingsOutput;
   deleteWorkspaceInvite: DeleteWorkspaceInviteOutput;
@@ -2707,6 +2747,7 @@ export type Mutation = {
   shareThreadToUserInSlack: ShareThreadToUserInSlackOutput;
   snoozeThread: SnoozeThreadOutput;
   startServiceAuthorization: StartServiceAuthorizationOutput;
+  syncBusinessHoursSlots: SyncBusinessHoursSlotsOutput;
   /** Adds or removes a reaction from a slack message timeline entry. */
   toggleSlackMessageReaction: ToggleSlackMessageReactionOutput;
   unarchiveLabelType: UnarchiveLabelTypeOutput;
@@ -2737,8 +2778,10 @@ export type Mutation = {
   updateTier: UpdateTierOutput;
   /** Updates a webhook target. */
   updateWebhookTarget: UpdateWebhookTargetOutput;
+  updateWorkflowRule: UpdateWorkflowRuleOutput;
   updateWorkspace: UpdateWorkspaceOutput;
   updateWorkspaceEmailSettings: UpdateWorkspaceEmailSettingsOutput;
+  /** @deprecated Use syncBusinessHoursSlots instead. */
   upsertBusinessHours: UpsertBusinessHoursOutput;
   upsertCompany: UpsertCompanyOutput;
   /** Creates or updates a customer. */
@@ -2963,6 +3006,11 @@ export type MutationCreateWebhookTargetArgs = {
 };
 
 
+export type MutationCreateWorkflowRuleArgs = {
+  input: CreateWorkflowRuleInput;
+};
+
+
 export type MutationCreateWorkspaceArgs = {
   input: CreateWorkspaceInput;
 };
@@ -3075,6 +3123,11 @@ export type MutationDeleteUserAuthSlackIntegrationArgs = {
 
 export type MutationDeleteWebhookTargetArgs = {
   input: DeleteWebhookTargetInput;
+};
+
+
+export type MutationDeleteWorkflowRuleArgs = {
+  input: DeleteWorkflowRuleInput;
 };
 
 
@@ -3253,6 +3306,11 @@ export type MutationStartServiceAuthorizationArgs = {
 };
 
 
+export type MutationSyncBusinessHoursSlotsArgs = {
+  input: SyncBusinessHoursSlotsInput;
+};
+
+
 export type MutationToggleSlackMessageReactionArgs = {
   input: ToggleSlackMessageReactionInput;
 };
@@ -3365,6 +3423,11 @@ export type MutationUpdateTierArgs = {
 
 export type MutationUpdateWebhookTargetArgs = {
   input: UpdateWebhookTargetInput;
+};
+
+
+export type MutationUpdateWorkflowRuleArgs = {
+  input: UpdateWorkflowRuleInput;
 };
 
 
@@ -3575,7 +3638,9 @@ export type Query = {
   autoresponder: Maybe<Autoresponder>;
   autoresponders: AutoresponderConnection;
   billingPlans: BillingPlanConnection;
+  /** @deprecated Use businessHoursSlots instead. */
   businessHours: Maybe<BusinessHours>;
+  businessHoursSlots: Array<BusinessHoursSlot>;
   companies: CompanyConnection;
   company: Maybe<Company>;
   /** Gets all slack channels for this workspace, which match the specified filters. */
@@ -3688,6 +3753,10 @@ export type Query = {
   webhookTargets: WebhookTargetConnection;
   /** List webhook versions. */
   webhookVersions: WebhookVersionConnection;
+  /** Get a workflow rule by id. */
+  workflowRule: Maybe<WorkflowRule>;
+  /** List workflow rules. */
+  workflowRules: WorkflowRuleConnection;
   workspace: Maybe<Workspace>;
   workspaceChatSettings: WorkspaceChatSettings;
   workspaceDiscordIntegration: Maybe<WorkspaceDiscordIntegration>;
@@ -4109,6 +4178,19 @@ export type QueryWebhookTargetsArgs = {
 
 
 export type QueryWebhookVersionsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryWorkflowRuleArgs = {
+  workflowRuleId: Scalars['ID'];
+};
+
+
+export type QueryWorkflowRulesArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
@@ -4933,6 +5015,16 @@ export type SupportEmailAddressEmailActor = {
   supportEmailAddress: Scalars['String'];
 };
 
+export type SyncBusinessHoursSlotsInput = {
+  slots: Array<BusinessHoursSlotInput>;
+};
+
+export type SyncBusinessHoursSlotsOutput = {
+  __typename?: 'SyncBusinessHoursSlotsOutput';
+  error: Maybe<MutationError>;
+  slots: Array<BusinessHoursSlot>;
+};
+
 export type System = {
   __typename?: 'System';
   id: Scalars['ID'];
@@ -5697,6 +5789,11 @@ export type TimelineEventEntry = {
   title: Scalars['String'];
 };
 
+export type Timezone = {
+  __typename?: 'Timezone';
+  name: Scalars['String'];
+};
+
 export enum TodoStatusDetail {
   Created = 'CREATED',
   InProgress = 'IN_PROGRESS',
@@ -6029,6 +6126,19 @@ export type UpdateWebhookTargetOutput = {
   __typename?: 'UpdateWebhookTargetOutput';
   error: Maybe<MutationError>;
   webhookTarget: Maybe<WebhookTarget>;
+};
+
+export type UpdateWorkflowRuleInput = {
+  name?: InputMaybe<StringInput>;
+  /** JSON-encoded payload of the rule definition. */
+  payload?: InputMaybe<StringInput>;
+  workflowRuleId: Scalars['ID'];
+};
+
+export type UpdateWorkflowRuleOutput = {
+  __typename?: 'UpdateWorkflowRuleOutput';
+  error: Maybe<MutationError>;
+  workflowRule: Maybe<WorkflowRule>;
 };
 
 export type UpdateWorkspaceEmailSettingsInput = {
@@ -6398,6 +6508,40 @@ export type WebhookVersionEdge = {
   __typename?: 'WebhookVersionEdge';
   cursor: Scalars['String'];
   node: WebhookVersion;
+};
+
+export enum WeekDay {
+  Friday = 'FRIDAY',
+  Monday = 'MONDAY',
+  Saturday = 'SATURDAY',
+  Sunday = 'SUNDAY',
+  Thursday = 'THURSDAY',
+  Tuesday = 'TUESDAY',
+  Wednesday = 'WEDNESDAY'
+}
+
+export type WorkflowRule = {
+  __typename?: 'WorkflowRule';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  /** JSON-encoded payload of the rule definition. */
+  payload: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+};
+
+export type WorkflowRuleConnection = {
+  __typename?: 'WorkflowRuleConnection';
+  edges: Array<WorkflowRuleEdge>;
+  pageInfo: PageInfo;
+};
+
+export type WorkflowRuleEdge = {
+  __typename?: 'WorkflowRuleEdge';
+  cursor: Scalars['String'];
+  node: WorkflowRule;
 };
 
 export type Workspace = {

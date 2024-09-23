@@ -3,8 +3,8 @@ import { describe, expect, test } from 'vitest';
 
 import { PlainClient } from '..';
 import type { PlainSDKError } from '../error';
+import type { PlainGraphQLError } from '../graphql-utlities';
 import { CustomerByIdDocument, type CustomerPartsFragment } from '../graphql/types';
-import { PlainGraphQLError } from '../graphql-utlities';
 import { testHelpers } from './test-helpers';
 
 describe('query test - customer by id', () => {

@@ -12,7 +12,7 @@ export async function assignThread() {
   if (res.error) {
     console.error(res.error);
   } else {
-    console.log(`Thread assigned!`);
+    console.log('Thread assigned!');
     console.log(res.data);
   }
 }

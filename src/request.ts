@@ -1,6 +1,7 @@
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { print } from 'graphql';
 
+import * as packageJson from '../package.json';
 import type { Context } from './context';
 import type { PlainSDKError } from './error';
 import { getMutationErrorFromResponse, isPlainFailedGraphQLResponse } from './graphql-utlities';
@@ -29,6 +30,8 @@ export async function request<Query, Variables>(
     const headers = {
       Authorization: `Bearer ${ctx.apiKey}`,
       'Content-Type': 'application/json',
+      'Plain-SDK': 'typescript',
+      'Plain-SDK-Version': packageJson.version,
     };
 
     const url = ctx.apiUrl || defaultUrl;
@@ -45,7 +48,7 @@ export async function request<Query, Variables>(
     const status = result.status;
     const responseHeaders = result.headers;
 
-    let response;
+    let response: any;
     try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       response = await result.json();
