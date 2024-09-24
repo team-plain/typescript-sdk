@@ -1,6 +1,6 @@
 # @team-plain/typescript-sdk
 
-[Changelog]('./CHANGELOG.md')
+[Changelog]('CHANGELOG.md')
 
 ## Plain Client
 
