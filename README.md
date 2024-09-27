@@ -109,10 +109,14 @@ allowing you to validate that they were not sent by a third-party. You can read 
 The SDK provides a convenient helper function to verify the signature, prevent replay attacks, and parse the payload to a typed object.
 
 ```ts
-import { verifyPlainWebhook, PlainWebhookSignatureVerificationError, PlainWebhookVersionMismatchError } from '@team-plain/typescript-sdk';
+import {
+  PlainWebhookSignatureVerificationError,
+  PlainWebhookVersionMismatchError,
+  verifyPlainWebhook,
+} from '@team-plain/typescript-sdk';
 
-// Please note that you must pass the raw request body, exactly as received from Plain,
-// to the verifyPlainWebhook() function; this will not work with a parsed (i.e., JSON) request body.
+// You must pass the raw request body, exactly as received from Plain,
+// this will not work with a parsed (i.e., JSON) request body.
 const payload = '...';
 
 // The value of the `Plain-Request-Signature` header from the webhook request.
@@ -130,7 +134,7 @@ if (webhookResult.error instanceof PlainWebhookSignatureVerificationError) {
   // Consult the changelog or https://plain.com/docs/api-reference/webhooks/versions for more information.
 } else if (webhookResult.error) {
   // Unexpected error. Most likely due to an error in Plain's webhook server or a bug in the SDK.
-  // Treate this as a 500 response from Plain.
+  // Treat this as a 500 response from Plain.
   // We also recommend logging the error and sharing it with Plain's support team.
 } else {
   // webhookResult.data is now a typed object.

@@ -13,7 +13,7 @@ import webhookSchema from './webhook-schema.json';
 
 export function parsePlainWebhook(
   unknownPayload: unknown
-): Result<WebhooksSchemaDefinition, Error> {
+): Result<WebhooksSchemaDefinition, PlainWebhookPayloadError> {
   const payloadResult = (() => {
     if (typeof unknownPayload === 'string') {
       try {
