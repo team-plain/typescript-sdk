@@ -15,8 +15,6 @@ export default {
       shortName: 'Peter',
       markedAsSpamAt: null,
       markedAsSpamBy: null,
-      assignedAt: null,
-      assignedToUser: null,
       customerGroupMemberships: [],
       createdAt: '2023-10-04T14:17:41.991Z',
       createdBy: {
@@ -33,6 +31,7 @@ export default {
   id: 'pEv_01HD44FHDPMZ3YJB5GEB1EZKQV',
   webhookMetadata: {
     webhookTargetId: 'whTarget_01HD4400VTDJQ646V6RY37SR7K',
+    webhookTargetVersion: '2024-09-18',
     webhookDeliveryAttemptId: 'whAttempt_01HD44FJ45FJKVFHM3MDVYPGRS',
     webhookDeliveryAttemptNumber: 1,
     webhookDeliveryAttemptTimestamp: '2023-10-19T14:12:25.861Z',

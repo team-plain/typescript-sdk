@@ -23,7 +23,12 @@
     }
   },
   "files": {
-    "include": ["biome.json", "vitest.*.js", "src/**/*.ts", "src/**/*.gql"],
+    "include": [
+      "biome.json",
+      "vitest.*.js",
+      "src/**/*.ts",
+      "src/**/*.gql"
+    ],
     "ignore": [
       "dist/**",
       "node_modules/**",

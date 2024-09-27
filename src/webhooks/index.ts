@@ -1,4 +1,12 @@
 export { parsePlainWebhook } from './parse';
+export { verifyPlainWebhook } from './verify';
+export {
+  PlainWebhookError,
+  PlainWebhookSignatureVerificationError,
+  PlainWebhookVersionMismatchError,
+  PlainWebhookPayloadError,
+} from './errors';
+
 export type {
   CustomerChangedPayload,
   CustomerCreatedPublicEventPayload,
