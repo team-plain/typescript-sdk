@@ -61,15 +61,18 @@ function getParseError(
   const errorMessage = getErrorMessageForHumans(payload, originalAjvError);
 
   if (isVersionMismatch(payload)) {
-    return new PlainWebhookVersionMismatchError(errorMessage, getPayloadVersion(payload) ?? '');
+    return new PlainWebhookVersionMismatchError(
+      errorMessage,
+      getPayloadVersion(payload) ?? 'unknown'
+    );
   }
 
   return new PlainWebhookPayloadError(errorMessage);
 }
 
 function isVersionMismatch(payload: Record<string, unknown>): boolean {
-  const payloadVersion = getPayloadVersion(payload);
-  return typeof payloadVersion === 'string' && payloadVersion !== getSchemaVersion();
+  const schemaVersion = getSchemaVersion();
+  return typeof schemaVersion === 'string' && schemaVersion !== getPayloadVersion(payload);
 }
 
 function getErrorMessageForHumans(
