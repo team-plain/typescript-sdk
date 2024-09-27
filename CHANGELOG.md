@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.0.1
+
+### Patch Changes
+
+- a4e365a: Fix a bug with webhook version mismatch detection
+
 ## 5.0.0
 
 ### Major Changes
