@@ -1886,6 +1886,13 @@ export type DateTime = {
   unixTimestamp: Scalars['String'];
 };
 
+export type DatetimeFilter = {
+  /** Timestamps -greater or equal- than this value. ISO 8601 format (e.g. 2024-10-28T18:30:00Z). */
+  after?: InputMaybe<Scalars['String']>;
+  /** Timestamps -less- than this value. ISO 8601 format (e.g. 2024-10-28T18:30:00Z). */
+  before?: InputMaybe<Scalars['String']>;
+};
+
 export type DeleteApiKeyInput = {
   apiKeyId: Scalars['ID'];
 };
@@ -5517,6 +5524,7 @@ export type ThreadStatusDetailLinearUpdated = {
 
 export type ThreadStatusDetailNewReply = {
   __typename?: 'ThreadStatusDetailNewReply';
+  /** @deprecated newReplyAt is no longer supported, query Thread.lastInboundMessageInfo.timestamp instead. */
   newReplyAt: Maybe<DateTime>;
   statusChangedAt: DateTime;
 };
@@ -5583,6 +5591,7 @@ export type ThreadStatusTransitionedEntry = {
 export type ThreadsFilter = {
   assignedToUser?: InputMaybe<Array<Scalars['ID']>>;
   companyIdentifiers?: InputMaybe<Array<CompanyIdentifierInput>>;
+  createdAt?: InputMaybe<DatetimeFilter>;
   customerGroupIdentifiers?: InputMaybe<Array<CustomerGroupIdentifier>>;
   customerIds?: InputMaybe<Array<Scalars['ID']>>;
   isAssigned?: InputMaybe<Scalars['Boolean']>;
@@ -5591,12 +5600,14 @@ export type ThreadsFilter = {
   messageSource?: InputMaybe<Array<MessageSource>>;
   priorities?: InputMaybe<Array<Scalars['Int']>>;
   serviceLevelAgreements?: InputMaybe<ServiceLevelAgreementFilter>;
+  statusChangedAt?: InputMaybe<DatetimeFilter>;
   statuses?: InputMaybe<Array<ThreadStatus>>;
   supportEmailAddresses?: InputMaybe<Array<Scalars['String']>>;
   tenantIdentifiers?: InputMaybe<Array<TenantIdentifierInput>>;
   threadFields?: InputMaybe<Array<ThreadFieldFilter>>;
   threadIds?: InputMaybe<Array<Scalars['ID']>>;
   tierIdentifiers?: InputMaybe<Array<TierIdentifierInput>>;
+  updatedAt?: InputMaybe<DatetimeFilter>;
 };
 
 /**
