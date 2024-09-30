@@ -23,6 +23,7 @@ import {
   CreateThreadEventDocument,
   CreateWebhookTargetDocument,
   CustomerByEmailDocument,
+  CustomerByExternalIdDocument,
   CustomerByIdDocument,
   type CustomerCardConfigPartsFragment,
   CustomerCustomerGroupsDocument,
@@ -218,6 +219,25 @@ export class PlainClient {
         return null;
       }
       return q.customer;
+    });
+  }
+
+  /**
+   * If the customer is not found this will return null.
+   */
+  async getCustomerByExternalId(
+    variables: VariablesOf<typeof CustomerByExternalIdDocument>
+  ): SDKResult<CustomerPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: CustomerByExternalIdDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => {
+      if (!q.customerByExternalId) {
+        return null;
+      }
+      return q.customerByExternalId;
     });
   }
 
