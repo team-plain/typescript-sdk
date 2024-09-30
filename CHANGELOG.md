@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.0.2
+
+### Patch Changes
+
+- 31da736: Updated graphql types to reflect new createdAt, updatedAt, statusChangedAt filters
+
 ## 5.0.1
 
 ### Patch Changes
