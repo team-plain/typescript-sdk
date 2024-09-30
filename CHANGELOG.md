@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.1.0
+
+### Minor Changes
+
+- 695f962: Add support for getCustomerByExternalId
+
 ## 5.0.2
 
 ### Patch Changes
