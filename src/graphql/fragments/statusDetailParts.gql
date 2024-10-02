@@ -1,0 +1,66 @@
+fragment ThreadStatusDetailParts on ThreadStatusDetail {
+  # TODO status details
+  ... on ThreadStatusDetailCreated {
+    __typename
+    createdAt {
+      ...DateTimeParts
+    }
+  }
+  ... on ThreadStatusDetailNewReply {
+    __typename
+    statusChangedAt {
+      ...DateTimeParts
+    }
+  }
+  ... on ThreadStatusDetailInProgress {
+    statusChangedAt {
+      ...DateTimeParts
+    }
+  }
+  ... on ThreadStatusDetailThreadDiscussionResolved {
+    threadDiscussionId
+    statusChangedAt {
+      ...DateTimeParts
+    }
+  }
+  ... on ThreadStatusDetailThreadLinkUpdated {
+    __typename
+    statusChangedAt {
+      ...DateTimeParts
+    }
+    linearIssueId
+  }
+
+  # SNOOZED status details
+  ... on ThreadStatusDetailWaitingForCustomer {
+    statusChangedAt {
+      ...DateTimeParts
+    }
+  }
+  ... on ThreadStatusDetailWaitingForDuration {
+    statusChangedAt {
+      ...DateTimeParts
+    }
+    waitingUntil {
+      ...DateTimeParts
+    }
+  }
+
+  # DONE status details
+  ... on ThreadStatusDetailDoneManuallySet {
+    statusChangedAt {
+      ...DateTimeParts
+    }
+  }
+  ... on ThreadStatusDetailDoneAutomaticallySet {
+    statusChangedAt {
+      ...DateTimeParts
+    }
+    afterSeconds
+  }
+  ... on ThreadStatusDetailIgnored {
+    statusChangedAt {
+      ...DateTimeParts
+    }
+  }    
+}

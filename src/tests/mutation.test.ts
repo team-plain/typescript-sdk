@@ -41,6 +41,14 @@ describe('mutation test - create an issue', () => {
       previewText: null,
       priority: 1,
       status: ThreadStatus.Todo,
+      statusDetail: {
+        __typename: 'ThreadStatusDetailNewReply',
+        statusChangedAt: {
+          __typename: 'DateTime',
+          iso8601: '2023-05-07T05:50:35.085Z',
+          unixTimestamp: '1683438635085',
+        },
+      },
       statusChangedAt: {
         __typename: 'DateTime',
         iso8601: '2023-05-07T05:50:35.085Z',
