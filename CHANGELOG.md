@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.2.0
+
+### Minor Changes
+
+- 9e0b2ba: Expose thread status details
+
 ## 5.1.0
 
 ### Minor Changes
