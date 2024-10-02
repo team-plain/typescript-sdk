@@ -83,6 +83,7 @@ export type {
   SystemActorPartsFragment,
   ThreadEventPartsFragment,
   ThreadPartsFragment,
+  ThreadStatusDetailPartsFragment,
   UserActorPartsFragment,
   WorkspacePartsFragment,
   TierPartsFragment,

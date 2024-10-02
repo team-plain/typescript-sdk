@@ -7,6 +7,9 @@ fragment ThreadParts on Thread {
   }
 
   status
+  statusDetail {
+    ...ThreadStatusDetailParts
+  }
   statusChangedAt {
     ...DateTimeParts
   }
