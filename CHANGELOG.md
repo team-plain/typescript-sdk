@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.2.1
+
+### Patch Changes
+
+- a7d1438: add \_\_typename to all status details
+
 ## 5.2.0
 
 ### Minor Changes
