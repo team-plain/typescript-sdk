@@ -2,4 +2,4 @@
 '@team-plain/typescript-sdk': minor
 ---
 
-add userById method
+Add ability to fetch a user by id (`userById()`)
