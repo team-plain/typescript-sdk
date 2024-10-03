@@ -13,11 +13,13 @@ fragment ThreadStatusDetailParts on ThreadStatusDetail {
     }
   }
   ... on ThreadStatusDetailInProgress {
+    __typename
     statusChangedAt {
       ...DateTimeParts
     }
   }
   ... on ThreadStatusDetailThreadDiscussionResolved {
+    __typename
     threadDiscussionId
     statusChangedAt {
       ...DateTimeParts
@@ -33,11 +35,13 @@ fragment ThreadStatusDetailParts on ThreadStatusDetail {
 
   # SNOOZED status details
   ... on ThreadStatusDetailWaitingForCustomer {
+    __typename
     statusChangedAt {
       ...DateTimeParts
     }
   }
   ... on ThreadStatusDetailWaitingForDuration {
+    __typename
     statusChangedAt {
       ...DateTimeParts
     }
@@ -48,17 +52,20 @@ fragment ThreadStatusDetailParts on ThreadStatusDetail {
 
   # DONE status details
   ... on ThreadStatusDetailDoneManuallySet {
+    __typename
     statusChangedAt {
       ...DateTimeParts
     }
   }
   ... on ThreadStatusDetailDoneAutomaticallySet {
+    __typename
     statusChangedAt {
       ...DateTimeParts
     }
     afterSeconds
   }
   ... on ThreadStatusDetailIgnored {
+    __typename
     statusChangedAt {
       ...DateTimeParts
     }
