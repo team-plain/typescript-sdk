@@ -89,6 +89,7 @@ import {
   UpsertTenantDocument,
   UpsertThreadFieldDocument,
   UserByEmailDocument,
+  UserByIdDocument,
   type UserPartsFragment,
   WebhookTargetDocument,
   type WebhookTargetPartsFragment,
@@ -170,7 +171,7 @@ export class PlainClient {
   }
 
   /**
-   * Get a paginated list of customers.
+   * Get a a user by email
    */
   async getUserByEmail(
     variables: VariablesOf<typeof UserByEmailDocument>
@@ -181,6 +182,20 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => q.userByEmail || null);
+  }
+
+  /**
+   * Get a user by id
+   */
+  async getUserById(
+    variables: VariablesOf<typeof UserByIdDocument>
+  ): SDKResult<UserPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: UserByIdDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => q.userById || null);
   }
 
   /**

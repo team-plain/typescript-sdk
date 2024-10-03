@@ -1,0 +1,5 @@
+query userById($id: ID!) {
+  userById: user(userId: $id) {
+    ...UserParts
+  }
+}
