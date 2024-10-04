@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.3.0
+
+### Minor Changes
+
+- d16ed41: Add ability to fetch a user by id (`userById()`)
+
 ## 5.2.1
 
 ### Patch Changes
