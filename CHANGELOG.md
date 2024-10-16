@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.4.0
+
+### Minor Changes
+
+- 56a4508: Add support for indexing documents into Plain.
+
 ## 5.3.0
 
 ### Minor Changes
