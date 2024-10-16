@@ -1,0 +1,10 @@
+mutation indexDocument($input:CreateIndexedDocumentInput!) {
+  createIndexedDocument(input: $input) {
+    indexedDocument {
+      ...IndexedDocumentParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

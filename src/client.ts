@@ -41,6 +41,8 @@ import {
   DeleteThreadFieldDocument,
   DeleteWebhookTargetDocument,
   type EmailPartsFragment,
+  IndexDocumentDocument,
+  type IndexedDocumentPartsFragment,
   type LabelPartsFragment,
   LabelTypeDocument,
   type LabelTypePartsFragment,
@@ -1170,5 +1172,18 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.createLabelType.labelType));
+  }
+
+  async indexDocument(
+    input: VariablesOf<typeof IndexDocumentDocument>['input']
+  ): SDKResult<IndexedDocumentPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: IndexDocumentDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.createIndexedDocument.indexedDocument));
   }
 }

@@ -1,0 +1,8 @@
+fragment IndexedDocumentParts on IndexedDocument {
+  __typename
+  id
+  url
+  createdAt {
+    ...DateTimeParts
+  }
+}
