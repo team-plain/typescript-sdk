@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.4.1
+
+### Patch Changes
+
+- f0849ed: new field added to User type
+
 ## 5.4.0
 
 ### Minor Changes
