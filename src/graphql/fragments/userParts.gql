@@ -3,6 +3,10 @@ fragment UserParts on User {
   id
   fullName
   publicName
+  slackIdentities {
+    slackTeamId
+    slackUserId
+  }
   email
   updatedAt {
     ...DateTimeParts
