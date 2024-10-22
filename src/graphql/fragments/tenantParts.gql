@@ -4,6 +4,9 @@ fragment TenantParts on Tenant {
   name
   externalId
   url
+  tier {
+    ...TierParts
+  }
   createdAt {
     ...DateTimeParts
   }
