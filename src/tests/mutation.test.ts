@@ -38,6 +38,7 @@ describe('mutation test - create an issue', () => {
       externalId: null,
       labels: [],
       threadFields: [],
+      tenant: null,
       previewText: null,
       priority: 1,
       status: ThreadStatus.Todo,
