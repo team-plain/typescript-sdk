@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.4.2
+
+### Patch Changes
+
+- ed3d92c: add tenant field to thread type
+
 ## 5.4.1
 
 ### Patch Changes
