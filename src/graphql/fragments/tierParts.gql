@@ -3,6 +3,7 @@ fragment TierParts on Tier {
   id
   name
   externalId
+  defaultThreadPriority
   createdAt {
     ...DateTimeParts
   }
