@@ -1,5 +1,12 @@
 # @team-plain/typescript-sdk
 
+## 5.4.3
+
+### Patch Changes
+
+- 640c6f1: expose tier default priority field
+- 640c6f1: expose tier field on tenant
+
 ## 5.4.2
 
 ### Patch Changes
