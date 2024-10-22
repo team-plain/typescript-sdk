@@ -18,6 +18,9 @@ fragment ThreadParts on Thread {
   description
   previewText
   priority
+  tenant {
+    ...TenantParts
+  }
 
   labels {
     ...LabelParts
