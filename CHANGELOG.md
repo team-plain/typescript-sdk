@@ -1,5 +1,12 @@
 # @team-plain/typescript-sdk
 
+## 5.5.0
+
+### Minor Changes
+
+- 43677a3: Regenerate GraphQL Schema
+  - Allow labelTypeIds to be passed to `indexDocument` mutation
+
 ## 5.4.3
 
 ### Patch Changes
