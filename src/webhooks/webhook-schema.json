@@ -81,6 +81,9 @@
         },
         {
           "$ref": "#/definitions/threadNoteCreatedEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadChatReceivedPublicEventPayload"
         }
       ]
     },
@@ -100,6 +103,7 @@
         "thread.ms_teams_message_sent",
         "thread.ms_teams_message_received",
         "thread.chat_sent",
+        "thread.chat_received",
         "thread.note_created",
         "thread.thread_labels_changed",
         "thread.thread_priority_changed",
@@ -3279,6 +3283,27 @@
         "eventType": {
           "type": "string",
           "const": "thread.chat_sent"
+        },
+        "chat": {
+          "$ref": "#/definitions/chat"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        }
+      },
+      "required": [
+        "eventType",
+        "chat",
+        "thread"
+      ],
+      "additionalProperties": true
+    },
+    "threadChatReceivedPublicEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.chat_received"
         },
         "chat": {
           "$ref": "#/definitions/chat"

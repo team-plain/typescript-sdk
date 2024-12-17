@@ -1,0 +1,10 @@
+mutation sendCustomerChat($input:SendCustomerChatInput!) {
+  sendCustomerChat(input:$input){
+    chat {
+      ...ChatParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

@@ -280,7 +280,8 @@ export interface WebhooksSchemaDefinition {
     | CustomerCreatedPublicEventPayload
     | CustomerUpdatedPublicEventPayload
     | CustomerDeletedPublicEventPayload
-    | ThreadNoteCreatedEventPayload;
+    | ThreadNoteCreatedEventPayload
+    | ThreadChatReceivedPublicEventPayload;
   id: Id;
   type:
     | "thread.thread_created"
@@ -293,6 +294,7 @@ export interface WebhooksSchemaDefinition {
     | "thread.ms_teams_message_sent"
     | "thread.ms_teams_message_received"
     | "thread.chat_sent"
+    | "thread.chat_received"
     | "thread.note_created"
     | "thread.thread_labels_changed"
     | "thread.thread_priority_changed"
@@ -870,6 +872,12 @@ export interface ThreadNoteCreatedEventPayload {
     deletedBy: InternalActor | null;
     [k: string]: unknown;
   };
+  [k: string]: unknown;
+}
+export interface ThreadChatReceivedPublicEventPayload {
+  eventType: "thread.chat_received";
+  chat: Chat;
+  thread: Thread;
   [k: string]: unknown;
 }
 export interface WebhookMetadata {
