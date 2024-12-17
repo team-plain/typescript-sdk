@@ -1,0 +1,14 @@
+fragment ChatParts on Chat {
+	id
+  text
+  attachments {
+    id
+  }
+  createdAt {
+    ...DateTimeParts
+  }
+  updatedAt {
+    ...DateTimeParts
+  }
+  
+}

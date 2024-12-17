@@ -11,6 +11,7 @@ import {
   AssignThreadDocument,
   type AttachmentUploadUrlPartsFragment,
   ChangeThreadPriorityDocument,
+  type ChatPartsFragment,
   CompaniesDocument,
   type CompanyPartsFragment,
   type CompanyTierMembershipPartsFragment,
@@ -61,6 +62,7 @@ import {
   ReplyToThreadDocument,
   SearchCompaniesDocument,
   SearchTenantsDocument,
+  SendCustomerChatDocument,
   SendNewEmailDocument,
   SetCustomerTenantsDocument,
   SnoozeThreadDocument,
@@ -1185,5 +1187,18 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.createIndexedDocument.indexedDocument));
+  }
+
+  async sendCustomerChat(
+    input: VariablesOf<typeof SendCustomerChatDocument>['input']
+  ): SDKResult<ChatPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: SendCustomerChatDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.sendCustomerChat.chat));
   }
 }

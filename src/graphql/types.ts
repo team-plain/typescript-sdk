@@ -488,6 +488,7 @@ export type BusinessHoursWeekDaysInput = {
 };
 
 export type CalculateRoleChangeCostInput = {
+  quantity?: InputMaybe<IntInput>;
   roleKey: RoleKey;
   userId?: InputMaybe<Scalars['ID']>;
   usingBillingRotaSeat?: InputMaybe<BooleanInput>;
@@ -507,6 +508,17 @@ export type ChangeBillingPlanInput = {
 export type ChangeBillingPlanOutput = {
   __typename?: 'ChangeBillingPlanOutput';
   error: Maybe<MutationError>;
+};
+
+export type ChangeThreadCustomerInput = {
+  customerId: Scalars['ID'];
+  threadId: Scalars['ID'];
+};
+
+export type ChangeThreadCustomerOutput = {
+  __typename?: 'ChangeThreadCustomerOutput';
+  error: Maybe<MutationError>;
+  thread: Maybe<Thread>;
 };
 
 export type ChangeThreadPriorityInput = {
@@ -554,6 +566,7 @@ export type ChatApp = {
   createdAt: DateTime;
   createdBy: InternalActor;
   id: Scalars['ID'];
+  logo: Maybe<WorkspaceFile>;
   name: Scalars['String'];
   updatedAt: DateTime;
   updatedBy: InternalActor;
@@ -1015,6 +1028,7 @@ export type CreateBillingPortalSessionOutput = {
 };
 
 export type CreateChatAppInput = {
+  logo?: InputMaybe<WorkspaceFileInput>;
   name: Scalars['String'];
 };
 
@@ -1193,6 +1207,19 @@ export type CreateNoteOutput = {
   note: Maybe<Note>;
 };
 
+export type CreateSavedThreadsViewInput = {
+  color: Scalars['String'];
+  icon: Scalars['String'];
+  name: Scalars['String'];
+  threadsFilter: SavedThreadsViewFilterInput;
+};
+
+export type CreateSavedThreadsViewOutput = {
+  __typename?: 'CreateSavedThreadsViewOutput';
+  error: Maybe<MutationError>;
+  savedThreadsView: Maybe<SavedThreadsView>;
+};
+
 export type CreateServiceLevelAgreementInput = {
   serviceLevelAgreement: ServiceLevelAgreementInput;
   tierId: Scalars['ID'];
@@ -1207,6 +1234,8 @@ export type CreateServiceLevelAgreementOutput = {
 export type CreateSnippetInput = {
   markdown?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
+  /** Used to group snippets, only accepts alphanumeric characters */
+  path?: InputMaybe<Scalars['String']>;
   text: Scalars['String'];
 };
 
@@ -1319,6 +1348,7 @@ export type CreateThreadInput = {
 };
 
 export type CreateThreadLinkInput = {
+  jiraIssue?: InputMaybe<JiraIssueThreadLinkInput>;
   linearIssue?: InputMaybe<LinearIssueThreadLinkInput>;
   plainThread?: InputMaybe<PlainThreadLinkInput>;
   threadId: Scalars['ID'];
@@ -1411,6 +1441,17 @@ export type CreateWorkflowRuleOutput = {
   workflowRule: Maybe<WorkflowRule>;
 };
 
+export type CreateWorkspaceDiscordChannelIntegrationInput = {
+  authCode: Scalars['String'];
+  redirectUrl: Scalars['String'];
+};
+
+export type CreateWorkspaceDiscordChannelIntegrationOutput = {
+  __typename?: 'CreateWorkspaceDiscordChannelIntegrationOutput';
+  error: Maybe<MutationError>;
+  integration: Maybe<WorkspaceDiscordChannelIntegration>;
+};
+
 export type CreateWorkspaceDiscordIntegrationInput = {
   name: Scalars['String'];
   webhookUrl: Scalars['String'];
@@ -1430,6 +1471,18 @@ export type CreateWorkspaceEmailDomainSettingsOutput = {
   __typename?: 'CreateWorkspaceEmailDomainSettingsOutput';
   error: Maybe<MutationError>;
   workspaceEmailDomainSettings: Maybe<WorkspaceEmailDomainSettings>;
+};
+
+export type CreateWorkspaceFileUploadUrlInput = {
+  fileName: Scalars['String'];
+  fileSizeBytes: Scalars['Int'];
+  visibility: WorkspaceFileVisibility;
+};
+
+export type CreateWorkspaceFileUploadUrlOutput = {
+  __typename?: 'CreateWorkspaceFileUploadUrlOutput';
+  error: Maybe<MutationError>;
+  workspaceFileUploadUrl: Maybe<WorkspaceFileUploadUrl>;
 };
 
 export type CreateWorkspaceInput = {
@@ -2131,6 +2184,15 @@ export type DeleteMyMsTeamsIntegrationOutput = {
   integration: Maybe<UserMsTeamsIntegration>;
 };
 
+export type DeleteMyServiceAuthorizationInput = {
+  serviceAuthorizationId: Scalars['ID'];
+};
+
+export type DeleteMyServiceAuthorizationOutput = {
+  __typename?: 'DeleteMyServiceAuthorizationOutput';
+  error: Maybe<MutationError>;
+};
+
 export type DeleteMySlackIntegrationOutput = {
   __typename?: 'DeleteMySlackIntegrationOutput';
   error: Maybe<MutationError>;
@@ -2144,6 +2206,15 @@ export type DeleteNoteOutput = {
   __typename?: 'DeleteNoteOutput';
   error: Maybe<MutationError>;
   note: Maybe<Note>;
+};
+
+export type DeleteSavedThreadsViewInput = {
+  savedThreadsViewId: Scalars['ID'];
+};
+
+export type DeleteSavedThreadsViewOutput = {
+  __typename?: 'DeleteSavedThreadsViewOutput';
+  error: Maybe<MutationError>;
 };
 
 export type DeleteServiceAuthorizationInput = {
@@ -2257,6 +2328,15 @@ export type DeleteWorkflowRuleOutput = {
   error: Maybe<MutationError>;
 };
 
+export type DeleteWorkspaceDiscordChannelIntegrationInput = {
+  integrationId: Scalars['ID'];
+};
+
+export type DeleteWorkspaceDiscordChannelIntegrationOutput = {
+  __typename?: 'DeleteWorkspaceDiscordChannelIntegrationOutput';
+  error: Maybe<MutationError>;
+};
+
 export type DeleteWorkspaceDiscordIntegrationInput = {
   integrationId: Scalars['ID'];
 };
@@ -2269,6 +2349,15 @@ export type DeleteWorkspaceDiscordIntegrationOutput = {
 
 export type DeleteWorkspaceEmailDomainSettingsOutput = {
   __typename?: 'DeleteWorkspaceEmailDomainSettingsOutput';
+  error: Maybe<MutationError>;
+};
+
+export type DeleteWorkspaceFileInput = {
+  workspaceFileId: Scalars['ID'];
+};
+
+export type DeleteWorkspaceFileOutput = {
+  __typename?: 'DeleteWorkspaceFileOutput';
   error: Maybe<MutationError>;
 };
 
@@ -2336,6 +2425,13 @@ export type DependsOnThreadFieldType = {
   __typename?: 'DependsOnThreadFieldType';
   threadFieldSchemaId: Scalars['ID'];
   threadFieldSchemaValue: Scalars['String'];
+};
+
+export type DiscordMessageEntry = {
+  __typename?: 'DiscordMessageEntry';
+  customerId: Scalars['ID'];
+  discordMessageId: Scalars['ID'];
+  textContent: Scalars['String'];
 };
 
 export type DnsRecord = {
@@ -2482,7 +2578,7 @@ export type EmailSignature = {
 };
 
 /** A union of all possible entries that can appear in a timeline. */
-export type Entry = ChatEntry | CustomEntry | CustomerEventEntry | EmailEntry | LinearIssueThreadLinkStateTransitionedEntry | MsTeamsMessageEntry | NoteEntry | ServiceLevelAgreementStatusTransitionedEntry | SlackMessageEntry | SlackReplyEntry | ThreadAdditionalAssigneesTransitionedEntry | ThreadAssignmentTransitionedEntry | ThreadDiscussionEntry | ThreadDiscussionResolvedEntry | ThreadEventEntry | ThreadLabelsChangedEntry | ThreadLinkUpdatedEntry | ThreadPriorityChangedEntry | ThreadStatusTransitionedEntry;
+export type Entry = ChatEntry | CustomEntry | CustomerEventEntry | DiscordMessageEntry | EmailEntry | LinearIssueThreadLinkStateTransitionedEntry | MsTeamsMessageEntry | NoteEntry | ServiceLevelAgreementStatusTransitionedEntry | SlackMessageEntry | SlackReplyEntry | ThreadAdditionalAssigneesTransitionedEntry | ThreadAssignmentTransitionedEntry | ThreadDiscussionEntry | ThreadDiscussionResolvedEntry | ThreadEventEntry | ThreadLabelsChangedEntry | ThreadLinkUpdatedEntry | ThreadPriorityChangedEntry | ThreadStatusTransitionedEntry;
 
 export type EventComponent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
 
@@ -2498,6 +2594,7 @@ export type EventComponentInput = {
 };
 
 export enum FeatureKey {
+  AiSuggestedResponses = 'AI_SUGGESTED_RESPONSES',
   BillingRotaSeats = 'BILLING_ROTA_SEATS',
   BusinessHours = 'BUSINESS_HOURS',
   ConnectedCustomerSlackChannels = 'CONNECTED_CUSTOMER_SLACK_CHANNELS',
@@ -2509,6 +2606,7 @@ export enum FeatureKey {
   MsTeamsIntegration = 'MS_TEAMS_INTEGRATION',
   ServiceLevelAgreements = 'SERVICE_LEVEL_AGREEMENTS',
   SlackDiscussions = 'SLACK_DISCUSSIONS',
+  TeamReporting = 'TEAM_REPORTING',
   WorkflowRules = 'WORKFLOW_RULES'
 }
 
@@ -2527,6 +2625,7 @@ export type FirstResponseTimeServiceLevelAgreement = ServiceLevelAgreement & {
   /** This SLA will breach if it does not receive a first response within this many minutes. */
   firstResponseTimeMinutes: Scalars['Int'];
   id: Scalars['ID'];
+  threadLabelTypeIdFilter: Maybe<ServiceLevelAgreementThreadLabelTypeIdFilter>;
   threadPriorityFilter: Array<Scalars['Int']>;
   updatedAt: DateTime;
   updatedBy: InternalActor;
@@ -2544,10 +2643,27 @@ export type ForkThreadOutput = {
   thread: Maybe<Thread>;
 };
 
+export type GenerateReplyOption = {
+  key?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
 export type GeneratedReply = {
   __typename?: 'GeneratedReply';
+  forTimelineEntryTimestamp: DateTime;
+  id: Scalars['ID'];
   text: Scalars['String'];
 };
+
+export type GeneratedReplyFeedbackInput = {
+  type?: InputMaybe<OptionalGeneratedReplyFeedbackInput>;
+};
+
+export enum GeneratedReplyFeedbackType {
+  Negative = 'NEGATIVE',
+  Positive = 'POSITIVE',
+  Unknown = 'UNKNOWN'
+}
 
 export type ImpersonationInput = {
   asCustomer: CustomerImpersonationInput;
@@ -2559,6 +2675,7 @@ export type IndexedDocument = {
   createdBy: InternalActor;
   id: Scalars['ID'];
   labelTypes: Array<LabelType>;
+  status: IndexedDocumentStatus;
   updatedAt: DateTime;
   updatedBy: InternalActor;
   url: Scalars['String'];
@@ -2574,6 +2691,24 @@ export type IndexedDocumentEdge = {
   __typename?: 'IndexedDocumentEdge';
   cursor: Scalars['String'];
   node: IndexedDocument;
+};
+
+export type IndexedDocumentStatus = IndexedDocumentStatusFailed | IndexedDocumentStatusIndexed | IndexedDocumentStatusPending;
+
+export type IndexedDocumentStatusFailed = {
+  __typename?: 'IndexedDocumentStatusFailed';
+  failedAt: DateTime;
+  reason: Scalars['String'];
+};
+
+export type IndexedDocumentStatusIndexed = {
+  __typename?: 'IndexedDocumentStatusIndexed';
+  indexedAt: DateTime;
+};
+
+export type IndexedDocumentStatusPending = {
+  __typename?: 'IndexedDocumentStatusPending';
+  startedAt: DateTime;
 };
 
 export type IntArrayInput = {
@@ -2602,7 +2737,35 @@ export type InviteUserToWorkspaceOutput = {
 
 export type JiraIntegrationToken = {
   __typename?: 'JiraIntegrationToken';
+  createdAt: DateTime;
   token: Scalars['String'];
+};
+
+export type JiraIssueThreadLink = ThreadLink & {
+  __typename?: 'JiraIssueThreadLink';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  description: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  jiraIssueId: Scalars['ID'];
+  jiraIssueKey: Scalars['String'];
+  jiraIssueType: JiraIssueType;
+  status: ThreadLinkStatus;
+  threadId: Scalars['ID'];
+  title: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+  url: Scalars['String'];
+};
+
+export type JiraIssueThreadLinkInput = {
+  jiraIssueId: Scalars['ID'];
+};
+
+export type JiraIssueType = {
+  __typename?: 'JiraIssueType';
+  iconUrl: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type JiraSite = {
@@ -2843,6 +3006,7 @@ export type MarkThreadDiscussionAsResolvedOutput = {
 export enum MessageSource {
   Api = 'API',
   Chat = 'CHAT',
+  Discord = 'DISCORD',
   Email = 'EMAIL',
   MsTeams = 'MS_TEAMS',
   Slack = 'SLACK'
@@ -2863,7 +3027,6 @@ export type MetricDimension = {
 };
 
 export enum MetricDimensionType {
-  Agent = 'AGENT',
   Company = 'COMPANY',
   CustomerGroup = 'CUSTOMER_GROUP',
   LabelType = 'LABEL_TYPE',
@@ -2890,6 +3053,7 @@ export type Mutation = {
   bulkUpsertThreadFields: BulkUpsertThreadFieldsOutput;
   calculateRoleChangeCost: CalculateRoleChangeCostOutput;
   changeBillingPlan: ChangeBillingPlanOutput;
+  changeThreadCustomer: ChangeThreadCustomerOutput;
   changeThreadPriority: ChangeThreadPriorityOutput;
   changeUserStatus: ChangeUserStatusOutput;
   completeServiceAuthorization: CompleteServiceAuthorizationOutput;
@@ -2915,6 +3079,7 @@ export type Mutation = {
   createMyMSTeamsIntegration: CreateMyMsTeamsIntegrationOutput;
   createMySlackIntegration: CreateMySlackIntegrationOutput;
   createNote: CreateNoteOutput;
+  createSavedThreadsView: CreateSavedThreadsViewOutput;
   createServiceLevelAgreement: CreateServiceLevelAgreementOutput;
   createSnippet: CreateSnippetOutput;
   createThread: CreateThreadOutput;
@@ -2931,8 +3096,10 @@ export type Mutation = {
   createWebhookTarget: CreateWebhookTargetOutput;
   createWorkflowRule: CreateWorkflowRuleOutput;
   createWorkspace: CreateWorkspaceOutput;
+  createWorkspaceDiscordChannelIntegration: CreateWorkspaceDiscordChannelIntegrationOutput;
   createWorkspaceDiscordIntegration: CreateWorkspaceDiscordIntegrationOutput;
   createWorkspaceEmailDomainSettings: CreateWorkspaceEmailDomainSettingsOutput;
+  createWorkspaceFileUploadUrl: CreateWorkspaceFileUploadUrlOutput;
   createWorkspaceMSTeamsIntegration: CreateWorkspaceMsTeamsIntegrationOutput;
   createWorkspaceSlackChannelIntegration: CreateWorkspaceSlackChannelIntegrationOutput;
   createWorkspaceSlackIntegration: CreateWorkspaceSlackIntegrationOutput;
@@ -2952,8 +3119,12 @@ export type Mutation = {
   deleteMachineUser: DeleteMachineUserOutput;
   deleteMyLinearIntegration: DeleteMyLinearIntegrationOutput;
   deleteMyMSTeamsIntegration: DeleteMyMsTeamsIntegrationOutput;
+  /** Delete personal service authorizations for the current user. */
+  deleteMyServiceAuthorization: DeleteMyServiceAuthorizationOutput;
   deleteMySlackIntegration: DeleteMySlackIntegrationOutput;
   deleteNote: DeleteNoteOutput;
+  deleteSavedThreadsView: DeleteSavedThreadsViewOutput;
+  /** Delete the workspace service authorization. */
   deleteServiceAuthorization: DeleteServiceAuthorizationOutput;
   deleteServiceLevelAgreement: DeleteServiceLevelAgreementOutput;
   deleteSnippet: DeleteSnippetOutput;
@@ -2967,8 +3138,10 @@ export type Mutation = {
   /** Deletes a webhook target. */
   deleteWebhookTarget: DeleteWebhookTargetOutput;
   deleteWorkflowRule: DeleteWorkflowRuleOutput;
+  deleteWorkspaceDiscordChannelIntegration: DeleteWorkspaceDiscordChannelIntegrationOutput;
   deleteWorkspaceDiscordIntegration: DeleteWorkspaceDiscordIntegrationOutput;
   deleteWorkspaceEmailDomainSettings: DeleteWorkspaceEmailDomainSettingsOutput;
+  deleteWorkspaceFile: DeleteWorkspaceFileOutput;
   deleteWorkspaceInvite: DeleteWorkspaceInviteOutput;
   deleteWorkspaceMSTeamsIntegration: DeleteWorkspaceMsTeamsIntegrationOutput;
   deleteWorkspaceSlackChannelIntegration: DeleteWorkspaceSlackChannelIntegrationOutput;
@@ -3016,6 +3189,7 @@ export type Mutation = {
   sendBulkEmail: SendBulkEmailOutput;
   sendChat: SendChatOutput;
   sendCustomerChat: SendCustomerChatOutput;
+  sendDiscordMessage: SendDiscordMessageOutput;
   sendMSTeamsMessage: SendMsTeamsMessageOutput;
   sendNewEmail: SendNewEmailOutput;
   sendSlackMessage: SendSlackMessageOutput;
@@ -3032,6 +3206,7 @@ export type Mutation = {
   /** Removes the spam mark from a customer. */
   unmarkCustomerAsSpam: UnmarkCustomerAsSpamOutput;
   updateActiveBillingRota: UpdateActiveBillingRotaOutput;
+  updateApiKey: UpdateApiKeyOutput;
   updateAutoresponder: UpdateAutoresponderOutput;
   updateChatApp: UpdateChatAppOutput;
   updateCompanyTier: UpdateCompanyTierOutput;
@@ -3042,8 +3217,10 @@ export type Mutation = {
   updateCustomerCompany: UpdateCustomerCompanyOutput;
   /** Update a customer group. */
   updateCustomerGroup: UpdateCustomerGroupOutput;
+  updateGeneratedReply: UpdateGeneratedReplyOutput;
   updateLabelType: UpdateLabelTypeOutput;
   updateMachineUser: UpdateMachineUserOutput;
+  updateSavedThreadsView: UpdateSavedThreadsViewOutput;
   updateServiceLevelAgreement: UpdateServiceLevelAgreementOutput;
   /** Updates a setting. */
   updateSetting: UpdateSettingOutput;
@@ -3141,6 +3318,11 @@ export type MutationCalculateRoleChangeCostArgs = {
 
 export type MutationChangeBillingPlanArgs = {
   input: ChangeBillingPlanInput;
+};
+
+
+export type MutationChangeThreadCustomerArgs = {
+  input: ChangeThreadCustomerInput;
 };
 
 
@@ -3249,6 +3431,11 @@ export type MutationCreateNoteArgs = {
 };
 
 
+export type MutationCreateSavedThreadsViewArgs = {
+  input: CreateSavedThreadsViewInput;
+};
+
+
 export type MutationCreateServiceLevelAgreementArgs = {
   input: CreateServiceLevelAgreementInput;
 };
@@ -3319,6 +3506,11 @@ export type MutationCreateWorkspaceArgs = {
 };
 
 
+export type MutationCreateWorkspaceDiscordChannelIntegrationArgs = {
+  input: CreateWorkspaceDiscordChannelIntegrationInput;
+};
+
+
 export type MutationCreateWorkspaceDiscordIntegrationArgs = {
   input: CreateWorkspaceDiscordIntegrationInput;
 };
@@ -3326,6 +3518,11 @@ export type MutationCreateWorkspaceDiscordIntegrationArgs = {
 
 export type MutationCreateWorkspaceEmailDomainSettingsArgs = {
   input: CreateWorkspaceEmailDomainSettingsInput;
+};
+
+
+export type MutationCreateWorkspaceFileUploadUrlArgs = {
+  input: CreateWorkspaceFileUploadUrlInput;
 };
 
 
@@ -3389,8 +3586,18 @@ export type MutationDeleteMachineUserArgs = {
 };
 
 
+export type MutationDeleteMyServiceAuthorizationArgs = {
+  input: DeleteMyServiceAuthorizationInput;
+};
+
+
 export type MutationDeleteNoteArgs = {
   input: DeleteNoteInput;
+};
+
+
+export type MutationDeleteSavedThreadsViewArgs = {
+  input: DeleteSavedThreadsViewInput;
 };
 
 
@@ -3454,8 +3661,18 @@ export type MutationDeleteWorkflowRuleArgs = {
 };
 
 
+export type MutationDeleteWorkspaceDiscordChannelIntegrationArgs = {
+  input: DeleteWorkspaceDiscordChannelIntegrationInput;
+};
+
+
 export type MutationDeleteWorkspaceDiscordIntegrationArgs = {
   input: DeleteWorkspaceDiscordIntegrationInput;
+};
+
+
+export type MutationDeleteWorkspaceFileArgs = {
+  input: DeleteWorkspaceFileInput;
 };
 
 
@@ -3594,6 +3811,11 @@ export type MutationSendCustomerChatArgs = {
 };
 
 
+export type MutationSendDiscordMessageArgs = {
+  input: SendDiscordMessageInput;
+};
+
+
 export type MutationSendMsTeamsMessageArgs = {
   input: SendMsTeamsMessageInput;
 };
@@ -3664,6 +3886,11 @@ export type MutationUpdateActiveBillingRotaArgs = {
 };
 
 
+export type MutationUpdateApiKeyArgs = {
+  input: UpdateApiKeyInput;
+};
+
+
 export type MutationUpdateAutoresponderArgs = {
   input: UpdateAutoresponderInput;
 };
@@ -3699,6 +3926,11 @@ export type MutationUpdateCustomerGroupArgs = {
 };
 
 
+export type MutationUpdateGeneratedReplyArgs = {
+  input: UpdateGeneratedReplyInput;
+};
+
+
 export type MutationUpdateLabelTypeArgs = {
   input: UpdateLabelTypeInput;
 };
@@ -3706,6 +3938,11 @@ export type MutationUpdateLabelTypeArgs = {
 
 export type MutationUpdateMachineUserArgs = {
   input: UpdateMachineUserInput;
+};
+
+
+export type MutationUpdateSavedThreadsViewArgs = {
+  input: UpdateSavedThreadsViewInput;
 };
 
 
@@ -3865,6 +4102,7 @@ export type NextResponseTimeServiceLevelAgreement = ServiceLevelAgreement & {
   id: Scalars['ID'];
   /** This SLA will breach if it does not receive a next response within this many minutes. */
   nextResponseTimeMinutes: Scalars['Int'];
+  threadLabelTypeIdFilter: Maybe<ServiceLevelAgreementThreadLabelTypeIdFilter>;
   threadPriorityFilter: Array<Scalars['Int']>;
   updatedAt: DateTime;
   updatedBy: InternalActor;
@@ -3910,6 +4148,10 @@ export type OptionalBooleanInput = {
 
 export type OptionalDependsOnThreadFieldInput = {
   value?: InputMaybe<DependsOnThreadFieldInput>;
+};
+
+export type OptionalGeneratedReplyFeedbackInput = {
+  value?: InputMaybe<GeneratedReplyFeedbackType>;
 };
 
 export type OptionalStringInput = {
@@ -4027,7 +4269,7 @@ export type Query = {
   customerGroups: CustomerGroupConnection;
   customers: CustomerConnection;
   /** This API is in beta and may change without notice. */
-  generateReply: GeneratedReply;
+  generatedReplies: Maybe<Array<GeneratedReply>>;
   indexedDocuments: IndexedDocumentConnection;
   labelType: Maybe<LabelType>;
   labelTypes: LabelTypeConnection;
@@ -4056,6 +4298,8 @@ export type Query = {
   /** This API is in beta and may change without notice. */
   relatedThreads: Array<ThreadWithDistance>;
   roles: RoleConnection;
+  savedThreadsView: Maybe<SavedThreadsView>;
+  savedThreadsViews: SavedThreadsViewConnection;
   searchCompanies: CompanySearchResultConnection;
   /**
    * Search for customers based on the provided query. Returned customers are sorted by how recently
@@ -4128,6 +4372,9 @@ export type Query = {
   workflowRules: WorkflowRuleConnection;
   workspace: Maybe<Workspace>;
   workspaceChatSettings: WorkspaceChatSettings;
+  workspaceDiscordChannelInstallationInfo: WorkspaceDiscordChannelInstallationInfo;
+  workspaceDiscordChannelIntegration: Maybe<WorkspaceDiscordChannelIntegration>;
+  workspaceDiscordChannelIntegrations: WorkspaceDiscordChannelIntegrationConnection;
   workspaceDiscordIntegration: Maybe<WorkspaceDiscordIntegration>;
   workspaceDiscordIntegrations: WorkspaceDiscordIntegrationConnection;
   workspaceEmailSettings: WorkspaceEmailSettings;
@@ -4261,8 +4508,8 @@ export type QueryCustomersArgs = {
 };
 
 
-export type QueryGenerateReplyArgs = {
-  prompt?: InputMaybe<Scalars['String']>;
+export type QueryGeneratedRepliesArgs = {
+  options?: InputMaybe<Array<GenerateReplyOption>>;
   threadId: Scalars['ID'];
 };
 
@@ -4340,6 +4587,19 @@ export type QueryRelatedThreadsArgs = {
 
 
 export type QueryRolesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QuerySavedThreadsViewArgs = {
+  savedThreadsViewId: Scalars['ID'];
+};
+
+
+export type QuerySavedThreadsViewsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
@@ -4630,6 +4890,24 @@ export type QueryWorkspaceArgs = {
 };
 
 
+export type QueryWorkspaceDiscordChannelInstallationInfoArgs = {
+  redirectUrl: Scalars['String'];
+};
+
+
+export type QueryWorkspaceDiscordChannelIntegrationArgs = {
+  integrationId: Scalars['ID'];
+};
+
+
+export type QueryWorkspaceDiscordChannelIntegrationsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryWorkspaceDiscordIntegrationArgs = {
   integrationId: Scalars['ID'];
 };
@@ -4823,7 +5101,8 @@ export type ReorderThreadFieldSchemasOutput = {
 export type ReplyToEmailInput = {
   additionalRecipients?: InputMaybe<Array<EmailParticipantInput>>;
   attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
-  customerId: Scalars['ID'];
+  /** @deprecated Use inReplyToEmailId instead. */
+  customerId?: InputMaybe<Scalars['ID']>;
   /**
    * Optional field for alternate from email address. If provided, it will be used as the from address in the email.
    * It must match one of the workspace support email addresses (default or alternate).
@@ -4882,9 +5161,27 @@ export type Role = {
 export type RoleChangeCost = {
   __typename?: 'RoleChangeCost';
   addingSeatType: BillingSeatType;
+  /**
+   * The total price delta for the remainder of the current billing period (i.e. prorated).
+   * Could be negative (e.g. swapping member for viewer).
+   */
+  adjustedPrice: Price;
+  /**
+   * Total amount that will be invoiced immediately for the role change.
+   * If this is negative, we would credit the amount to your account.
+   */
+  dueNowPrice: Price;
+  /**
+   * The total price delta for the entire subscription billing period (i.e. non-prorated).
+   * Could be negative (e.g. swapping member for viewer).
+   */
+  fullPrice: Price;
   intervalCount: Scalars['Int'];
   intervalUnit: BillingIntervalUnit;
+  /** The number of seats. */
+  quantity: Scalars['Int'];
   removingSeatType: Maybe<BillingSeatType>;
+  /** Deprecated. Use fullPrice instead. */
   totalPrice: Price;
 };
 
@@ -4906,6 +5203,83 @@ export enum RoleKey {
   Support = 'SUPPORT',
   Viewer = 'VIEWER'
 }
+
+export type SavedThreadsView = {
+  __typename?: 'SavedThreadsView';
+  color: Scalars['String'];
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  icon: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  threadsFilter: SavedThreadsViewFilter;
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+};
+
+export type SavedThreadsViewConnection = {
+  __typename?: 'SavedThreadsViewConnection';
+  edges: Array<SavedThreadsViewEdge>;
+  pageInfo: PageInfo;
+};
+
+export type SavedThreadsViewEdge = {
+  __typename?: 'SavedThreadsViewEdge';
+  cursor: Scalars['String'];
+  node: SavedThreadsView;
+};
+
+export type SavedThreadsViewFilter = {
+  __typename?: 'SavedThreadsViewFilter';
+  assignedToUser: Array<Scalars['ID']>;
+  companies: Array<Scalars['ID']>;
+  customerGroups: Array<Scalars['ID']>;
+  labelTypeIds: Array<Scalars['ID']>;
+  messageSource: Array<MessageSource>;
+  priorities: Array<Scalars['Int']>;
+  slaStatuses: Array<Scalars['String']>;
+  slaTypes: Array<Scalars['String']>;
+  sort: SavedThreadsViewSort;
+  statusDetails: Array<StatusDetailType>;
+  statuses: Array<ThreadStatus>;
+  supportEmailAddresses: Array<Scalars['String']>;
+  tenants: Array<Scalars['ID']>;
+  threadFields: Array<SavedThreadsViewFilterThreadField>;
+  threadLinkGroupIds: Array<Scalars['ID']>;
+  tiers: Array<Scalars['ID']>;
+};
+
+export type SavedThreadsViewFilterInput = {
+  assignedToUser: Array<Scalars['ID']>;
+  companies: Array<Scalars['ID']>;
+  customerGroups: Array<Scalars['ID']>;
+  labelTypeIds: Array<Scalars['ID']>;
+  messageSource: Array<MessageSource>;
+  priorities: Array<Scalars['Int']>;
+  slaStatuses: Array<Scalars['String']>;
+  slaTypes: Array<Scalars['String']>;
+  sort: ThreadsSort;
+  statusDetails: Array<StatusDetailType>;
+  statuses: Array<ThreadStatus>;
+  supportEmailAddresses: Array<Scalars['String']>;
+  tenants: Array<Scalars['ID']>;
+  threadFields: Array<ThreadFieldFilter>;
+  threadLinkGroupIds: Array<Scalars['ID']>;
+  tiers: Array<Scalars['ID']>;
+};
+
+export type SavedThreadsViewFilterThreadField = {
+  __typename?: 'SavedThreadsViewFilterThreadField';
+  booleanValue: Maybe<Scalars['Boolean']>;
+  key: Scalars['String'];
+  stringValue: Maybe<Scalars['String']>;
+};
+
+export type SavedThreadsViewSort = {
+  __typename?: 'SavedThreadsViewSort';
+  direction: Maybe<SortDirection>;
+  field: Maybe<ThreadsSortField>;
+};
 
 export type SendBulkEmailInput = {
   markdownContent?: InputMaybe<Scalars['String']>;
@@ -4941,6 +5315,16 @@ export type SendCustomerChatInput = {
 export type SendCustomerChatOutput = {
   __typename?: 'SendCustomerChatOutput';
   chat: Maybe<Chat>;
+  error: Maybe<MutationError>;
+};
+
+export type SendDiscordMessageInput = {
+  markdownContent?: InputMaybe<Scalars['String']>;
+  threadId: Scalars['ID'];
+};
+
+export type SendDiscordMessageOutput = {
+  __typename?: 'SendDiscordMessageOutput';
   error: Maybe<MutationError>;
 };
 
@@ -5080,6 +5464,8 @@ export type ServiceLevelAgreement = {
   createdAt: DateTime;
   createdBy: InternalActor;
   id: Scalars['ID'];
+  /** This SLA can only be applied to a thread if it has one of these label types. */
+  threadLabelTypeIdFilter: Maybe<ServiceLevelAgreementThreadLabelTypeIdFilter>;
   /** This SLA can only be applied to a thread if it has one of these priority values. */
   threadPriorityFilter: Array<Scalars['Int']>;
   updatedAt: DateTime;
@@ -5100,6 +5486,8 @@ export type ServiceLevelAgreementInput = {
   firstResponseTimeMinutes?: InputMaybe<Scalars['Int']>;
   /** Set this to configure an SLA for next responses. */
   nextResponseTimeMinutes?: InputMaybe<Scalars['Int']>;
+  /** This SLA can only be applied to a thread if it has one or all of these label types. If not provided, the filter is not applied. */
+  threadLabelTypeIdFilter?: InputMaybe<ServiceLevelAgreementThreadLabelTypeIdFilterInput>;
   /** This SLA can only be applied to a thread if it has one of these priority values. If not provided, it defaults to all priorities (0, 1, 2 and 3). */
   threadPriorityFilter?: InputMaybe<Array<Scalars['Int']>>;
   /** If true, the SLA will only be tracked during your workspace's business hours. If false, the SLA will tracked 24/7. */
@@ -5166,6 +5554,21 @@ export type ServiceLevelAgreementStatusTransitionedEntry = {
   nextStatus: ServiceLevelAgreementStatus;
   previousStatus: ServiceLevelAgreementStatus;
   serviceLevelAgreement: Maybe<ServiceLevelAgreement>;
+};
+
+export type ServiceLevelAgreementThreadLabelTypeIdFilter = {
+  __typename?: 'ServiceLevelAgreementThreadLabelTypeIdFilter';
+  /** The label type IDs that the thread needs to have in order for the SLA to be applied. Based on the 'requireAll' field. */
+  labelTypeIds: Array<Scalars['ID']>;
+  /** If true, the SLA will only be applied to threads that have all of the provided label types. If false, the SLA will be applied to threads that have any of the provided label types. */
+  requireAll: Scalars['Boolean'];
+};
+
+export type ServiceLevelAgreementThreadLabelTypeIdFilterInput = {
+  /** The label type IDs that the thread needs to have in order for the SLA to be applied. Based on the 'requireAll' field. */
+  labelTypeIds: Array<Scalars['ID']>;
+  /** If true, the SLA will only be applied to threads that have all of the provided label types. If false, the SLA will be applied to threads that have any of the provided label types. */
+  requireAll: Scalars['Boolean'];
 };
 
 export enum ServiceLevelAgreementType {
@@ -5273,8 +5676,13 @@ export type SingleValueMetric = {
   values: Array<SingleValueMetricValue>;
 };
 
+export type SingleValueMetricFilters = {
+  userId?: InputMaybe<Scalars['ID']>;
+};
+
 export type SingleValueMetricOptions = {
   dimension?: InputMaybe<MetricDimensionType>;
+  filters?: InputMaybe<SingleValueMetricFilters>;
   /** Defaults to 24 hours ago. */
   from?: InputMaybe<Scalars['String']>;
   subDimension?: InputMaybe<Scalars['String']>;
@@ -5284,6 +5692,7 @@ export type SingleValueMetricOptions = {
 export type SingleValueMetricValue = {
   __typename?: 'SingleValueMetricValue';
   dimension: Maybe<MetricDimension>;
+  userId: Maybe<Scalars['ID']>;
   value: Maybe<Scalars['Float']>;
 };
 
@@ -5383,6 +5792,7 @@ export type Snippet = {
   isDeleted: Scalars['Boolean'];
   markdown: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  path: Maybe<Scalars['String']>;
   text: Scalars['String'];
   updatedAt: DateTime;
   updatedBy: InternalActor;
@@ -5724,6 +6134,7 @@ export type ThreadChange = {
 export enum ThreadChannel {
   Api = 'API',
   Chat = 'CHAT',
+  Discord = 'DISCORD',
   Email = 'EMAIL',
   MsTeams = 'MS_TEAMS',
   Slack = 'SLACK'
@@ -6289,6 +6700,8 @@ export type ThreadsSort = {
 export enum ThreadsSortField {
   ClosestToBreachSla = 'CLOSEST_TO_BREACH_SLA',
   CreatedAt = 'CREATED_AT',
+  LastInboundMessageAt = 'LAST_INBOUND_MESSAGE_AT',
+  Priority = 'PRIORITY',
   StatusChangedAt = 'STATUS_CHANGED_AT'
 }
 
@@ -6389,7 +6802,6 @@ export type TimeSeriesMetricDimension = {
 };
 
 export enum TimeSeriesMetricDimensionType {
-  Agent = 'AGENT',
   Company = 'COMPANY',
   CustomerGroup = 'CUSTOMER_GROUP',
   LabelType = 'LABEL_TYPE',
@@ -6398,6 +6810,10 @@ export enum TimeSeriesMetricDimensionType {
   ThreadField = 'THREAD_FIELD',
   Tier = 'TIER'
 }
+
+export type TimeSeriesMetricFilters = {
+  userId?: InputMaybe<Scalars['ID']>;
+};
 
 export type TimeSeriesMetricInterval = {
   unit?: InputMaybe<TimeSeriesMetricIntervalUnit>;
@@ -6410,6 +6826,7 @@ export enum TimeSeriesMetricIntervalUnit {
 
 export type TimeSeriesMetricOptions = {
   dimension?: InputMaybe<TimeSeriesMetricDimensionType>;
+  filters?: InputMaybe<TimeSeriesMetricFilters>;
   /** Defaults to 24 hours ago. */
   from?: InputMaybe<Scalars['String']>;
   interval?: InputMaybe<TimeSeriesMetricInterval>;
@@ -6420,6 +6837,7 @@ export type TimeSeriesMetricOptions = {
 export type TimeSeriesSeries = {
   __typename?: 'TimeSeriesSeries';
   dimension: Maybe<TimeSeriesMetricDimension>;
+  userId: Maybe<Scalars['ID']>;
   values: Array<Maybe<Scalars['Float']>>;
 };
 
@@ -6530,6 +6948,18 @@ export type UpdateActiveBillingRotaOutput = {
   error: Maybe<MutationError>;
 };
 
+export type UpdateApiKeyInput = {
+  apiKeyId: Scalars['ID'];
+  description?: InputMaybe<Scalars['String']>;
+  permissions: Array<Scalars['String']>;
+};
+
+export type UpdateApiKeyOutput = {
+  __typename?: 'UpdateApiKeyOutput';
+  apiKey: Maybe<ApiKey>;
+  error: Maybe<MutationError>;
+};
+
 export type UpdateAutoresponderInput = {
   autoresponderId: Scalars['ID'];
   conditions?: InputMaybe<Array<AutoresponderConditionInput>>;
@@ -6550,6 +6980,7 @@ export type UpdateAutoresponderOutput = {
 
 export type UpdateChatAppInput = {
   chatAppId: Scalars['ID'];
+  logo?: InputMaybe<WorkspaceFileInput>;
   name?: InputMaybe<StringInput>;
 };
 
@@ -6636,6 +7067,17 @@ export type UpdateCustomerGroupOutput = {
   error: Maybe<MutationError>;
 };
 
+export type UpdateGeneratedReplyInput = {
+  feedback?: InputMaybe<GeneratedReplyFeedbackInput>;
+  generatedReplyId: Scalars['ID'];
+};
+
+export type UpdateGeneratedReplyOutput = {
+  __typename?: 'UpdateGeneratedReplyOutput';
+  error: Maybe<MutationError>;
+  generatedReply: Maybe<GeneratedReply>;
+};
+
 export type UpdateLabelTypeInput = {
   icon?: InputMaybe<OptionalStringInput>;
   labelTypeId: Scalars['ID'];
@@ -6661,6 +7103,20 @@ export type UpdateMachineUserOutput = {
   machineUser: Maybe<MachineUser>;
 };
 
+export type UpdateSavedThreadsViewInput = {
+  color?: InputMaybe<StringInput>;
+  icon?: InputMaybe<StringInput>;
+  name?: InputMaybe<StringInput>;
+  savedThreadsViewId: Scalars['ID'];
+  threadsFilter?: InputMaybe<SavedThreadsViewFilterInput>;
+};
+
+export type UpdateSavedThreadsViewOutput = {
+  __typename?: 'UpdateSavedThreadsViewOutput';
+  error: Maybe<MutationError>;
+  savedThreadsView: Maybe<SavedThreadsView>;
+};
+
 export type UpdateServiceLevelAgreementInput = {
   /** The actions to take when the SLA is about to breach and when it breaches. */
   breachActions?: InputMaybe<Array<BreachActionInput>>;
@@ -6670,6 +7126,8 @@ export type UpdateServiceLevelAgreementInput = {
   nextResponseTimeMinutes?: InputMaybe<IntInput>;
   /** The ID of the SLA to update. */
   serviceLevelAgreementId: Scalars['ID'];
+  /** This SLA can only be applied to a thread if it has one or all of these label types. If not provided, the filter is not applied. */
+  threadLabelTypeIdFilter?: InputMaybe<ServiceLevelAgreementThreadLabelTypeIdFilterInput>;
   /** This SLA can only be applied to a thread if it has one of these priority values. If not provided, it defaults to all priorities (0, 1, 2 and 3). */
   threadPriorityFilter?: InputMaybe<IntArrayInput>;
   /** If true, the SLA will only be tracked during your workspace's business hours. If false, the SLA will tracked 24/7. */
@@ -6706,6 +7164,8 @@ export type UpdateSettingOutput = {
 export type UpdateSnippetInput = {
   markdown?: InputMaybe<StringInput>;
   name?: InputMaybe<StringInput>;
+  /** Used to group snippets, only accepts alphanumeric characters */
+  path?: InputMaybe<OptionalStringInput>;
   snippetId: Scalars['ID'];
   text?: InputMaybe<StringInput>;
 };
@@ -6834,6 +7294,7 @@ export type UpdateWorkspaceEmailSettingsOutput = {
 };
 
 export type UpdateWorkspaceInput = {
+  domainName?: InputMaybe<OptionalStringInput>;
   name?: InputMaybe<StringInput>;
   publicName?: InputMaybe<StringInput>;
 };
@@ -7232,6 +7693,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   createdAt: DateTime;
   createdBy: InternalActor;
+  domainName: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isDemoWorkspace: Scalars['Boolean'];
   name: Scalars['String'];
@@ -7251,6 +7713,34 @@ export type WorkspaceConnection = {
   __typename?: 'WorkspaceConnection';
   edges: Array<WorkspaceEdge>;
   pageInfo: PageInfo;
+};
+
+export type WorkspaceDiscordChannelInstallationInfo = {
+  __typename?: 'WorkspaceDiscordChannelInstallationInfo';
+  installationUrl: Scalars['String'];
+};
+
+export type WorkspaceDiscordChannelIntegration = {
+  __typename?: 'WorkspaceDiscordChannelIntegration';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  discordGuildId: Scalars['String'];
+  discordGuildName: Scalars['String'];
+  id: Scalars['ID'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+};
+
+export type WorkspaceDiscordChannelIntegrationConnection = {
+  __typename?: 'WorkspaceDiscordChannelIntegrationConnection';
+  edges: Array<WorkspaceDiscordChannelIntegrationEdge>;
+  pageInfo: PageInfo;
+};
+
+export type WorkspaceDiscordChannelIntegrationEdge = {
+  __typename?: 'WorkspaceDiscordChannelIntegrationEdge';
+  cursor: Scalars['String'];
+  node: WorkspaceDiscordChannelIntegration;
 };
 
 export type WorkspaceDiscordIntegration = {
@@ -7306,6 +7796,46 @@ export type WorkspaceEmailSettings = {
   isEnabled: Scalars['Boolean'];
   workspaceEmailDomainSettings: Maybe<WorkspaceEmailDomainSettings>;
 };
+
+export type WorkspaceFile = {
+  __typename?: 'WorkspaceFile';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  /** This URL will only be available after the file has been uploaded. */
+  downloadUrl: Maybe<WorkspaceFileDownloadUrl>;
+  fileExtension: Maybe<Scalars['String']>;
+  fileMimeType: Scalars['String'];
+  fileName: Scalars['String'];
+  fileSize: FileSize;
+  id: Scalars['ID'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+  visibility: WorkspaceFileVisibility;
+};
+
+export type WorkspaceFileDownloadUrl = {
+  __typename?: 'WorkspaceFileDownloadUrl';
+  downloadUrl: Scalars['String'];
+  /** The time when the download URL will expire. Only set when visibility of the workspace file is PRIVATE. */
+  expiresAt: Maybe<DateTime>;
+};
+
+export type WorkspaceFileInput = {
+  workspaceFileId?: InputMaybe<Scalars['ID']>;
+};
+
+export type WorkspaceFileUploadUrl = {
+  __typename?: 'WorkspaceFileUploadUrl';
+  expiresAt: DateTime;
+  uploadFormData: Array<UploadFormData>;
+  uploadFormUrl: Scalars['String'];
+  workspaceFile: WorkspaceFile;
+};
+
+export enum WorkspaceFileVisibility {
+  Private = 'PRIVATE',
+  Public = 'PUBLIC'
+}
 
 export type WorkspaceHmac = {
   __typename?: 'WorkspaceHmac';
@@ -7444,6 +7974,8 @@ export type ActorPartsFragment = ActorParts_CustomerActor_Fragment | ActorParts_
 export type AttachmentPartsFragment = { __typename: 'Attachment', id: string, fileName: string, fileExtension: string | null, fileSize: { __typename: 'FileSize', kiloBytes: number, megaBytes: number }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } };
 
 export type AttachmentUploadUrlPartsFragment = { __typename: 'AttachmentUploadUrl', uploadFormUrl: string, attachment: { __typename: 'Attachment', id: string, fileName: string, fileExtension: string | null, fileSize: { __typename: 'FileSize', kiloBytes: number, megaBytes: number }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } }, uploadFormData: Array<{ __typename?: 'UploadFormData', key: string, value: string }>, expiresAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } };
+
+export type ChatPartsFragment = { __typename?: 'Chat', id: string, text: string | null, attachments: Array<{ __typename?: 'Attachment', id: string }>, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } };
 
 export type CompanyPartsFragment = { __typename: 'Company', id: string, name: string, domainName: string, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } };
 
@@ -7777,6 +8309,13 @@ export type ReplyToThreadMutationVariables = Exact<{
 
 export type ReplyToThreadMutation = { __typename?: 'Mutation', replyToThread: { __typename?: 'ReplyToThreadOutput', error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
+export type SendCustomerChatMutationVariables = Exact<{
+  input: SendCustomerChatInput;
+}>;
+
+
+export type SendCustomerChatMutation = { __typename?: 'Mutation', sendCustomerChat: { __typename?: 'SendCustomerChatOutput', chat: { __typename?: 'Chat', id: string, text: string | null, attachments: Array<{ __typename?: 'Attachment', id: string }>, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+
 export type SendNewEmailMutationVariables = Exact<{
   input: SendNewEmailInput;
 }>;
@@ -8099,6 +8638,7 @@ export const FileSizePartsFragmentDoc = {"kind":"Document","definitions":[{"kind
 export const DateTimePartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}}]} as unknown as DocumentNode<DateTimePartsFragment, unknown>;
 export const AttachmentPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AttachmentParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Attachment"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"fileSize"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FileSizeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fileExtension"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FileSizeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FileSize"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"kiloBytes"}},{"kind":"Field","name":{"kind":"Name","value":"megaBytes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}}]} as unknown as DocumentNode<AttachmentPartsFragment, unknown>;
 export const AttachmentUploadUrlPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AttachmentUploadUrlParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AttachmentUploadUrl"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"attachment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AttachmentParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"uploadFormUrl"}},{"kind":"Field","name":{"kind":"Name","value":"uploadFormData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FileSizeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FileSize"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"kiloBytes"}},{"kind":"Field","name":{"kind":"Name","value":"megaBytes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AttachmentParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Attachment"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"fileSize"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FileSizeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fileExtension"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}}]} as unknown as DocumentNode<AttachmentUploadUrlPartsFragment, unknown>;
+export const ChatPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ChatParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Chat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}}]} as unknown as DocumentNode<ChatPartsFragment, unknown>;
 export const CustomerCardConfigPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CustomerCardConfigParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerCardConfig"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"defaultTimeToLiveSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"apiUrl"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"apiHeaders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}}]} as unknown as DocumentNode<CustomerCardConfigPartsFragment, unknown>;
 export const UserActorPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]} as unknown as DocumentNode<UserActorPartsFragment, unknown>;
 export const CustomerActorPartsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CustomerActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"customerId"}}]}}]} as unknown as DocumentNode<CustomerActorPartsFragment, unknown>;
@@ -8166,6 +8706,7 @@ export const RemoveLabelsDocument = {"kind":"Document","definitions":[{"kind":"O
 export const RemoveMembersFromTierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"removeMembersFromTier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoveMembersFromTierInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeMembersFromTier"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<RemoveMembersFromTierMutation, RemoveMembersFromTierMutationVariables>;
 export const ReplyToEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"replyToEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ReplyToEmailInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"replyToEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"customerId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SupportEmailAddressEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"supportEmailAddress"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DeletedCustomerEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"customerId"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailParticipantParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EmailParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"emailActor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FileSizeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FileSize"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"kiloBytes"}},{"kind":"Field","name":{"kind":"Name","value":"megaBytes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AttachmentParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Attachment"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"fileSize"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FileSizeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fileExtension"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Email"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"inReplyToEmailId"}},{"kind":"Field","name":{"kind":"Name","value":"from"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"to"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"additionalRecipients"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"hiddenRecipients"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"textContent"}},{"kind":"Field","name":{"kind":"Name","value":"markdownContent"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AttachmentParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<ReplyToEmailMutation, ReplyToEmailMutationVariables>;
 export const ReplyToThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"replyToThread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ReplyToThreadInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"replyToThread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<ReplyToThreadMutation, ReplyToThreadMutationVariables>;
+export const SendCustomerChatDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"sendCustomerChat"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendCustomerChatInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendCustomerChat"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ChatParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ChatParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Chat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<SendCustomerChatMutation, SendCustomerChatMutationVariables>;
 export const SendNewEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"sendNewEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendNewEmailInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendNewEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"customerId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SupportEmailAddressEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"supportEmailAddress"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DeletedCustomerEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"customerId"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailParticipantParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EmailParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"emailActor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FileSizeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FileSize"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"kiloBytes"}},{"kind":"Field","name":{"kind":"Name","value":"megaBytes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AttachmentParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Attachment"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"fileSize"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FileSizeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fileExtension"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Email"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"inReplyToEmailId"}},{"kind":"Field","name":{"kind":"Name","value":"from"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"to"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"additionalRecipients"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"hiddenRecipients"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"textContent"}},{"kind":"Field","name":{"kind":"Name","value":"markdownContent"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AttachmentParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<SendNewEmailMutation, SendNewEmailMutationVariables>;
 export const SetCustomerTenantsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"setCustomerTenants"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SetCustomerTenantsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setCustomerTenants"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<SetCustomerTenantsMutation, SetCustomerTenantsMutationVariables>;
 export const SnoozeThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"snoozeThread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SnoozeThreadInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"snoozeThread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"thread"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThreadParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThreadStatusDetailParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadStatusDetail"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadStatusDetailCreated"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadStatusDetailNewReply"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"statusChangedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadStatusDetailInProgress"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"statusChangedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadStatusDetailThreadDiscussionResolved"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"threadDiscussionId"}},{"kind":"Field","name":{"kind":"Name","value":"statusChangedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadStatusDetailThreadLinkUpdated"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"statusChangedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"linearIssueId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadStatusDetailWaitingForCustomer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"statusChangedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadStatusDetailWaitingForDuration"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"statusChangedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"waitingUntil"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadStatusDetailDoneManuallySet"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"statusChangedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadStatusDetailDoneAutomaticallySet"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"statusChangedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"afterSeconds"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadStatusDetailIgnored"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"statusChangedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SystemActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SystemActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"systemId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MachineUserActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MachineUserActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"machineUserId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InternalActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Actor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserActorParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SystemActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SystemActorParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MachineUserActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MachineUserActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TierParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Tier"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"externalId"}},{"kind":"Field","name":{"kind":"Name","value":"defaultThreadPriority"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InternalActorParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InternalActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TenantParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Tenant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"externalId"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"tier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TierParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InternalActorParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InternalActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CustomerActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"customerId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DeletedCustomerActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DeletedCustomerActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"customerId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Actor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserActorParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"CustomerActorParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SystemActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SystemActorParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MachineUserActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MachineUserActorParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DeletedCustomerActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DeletedCustomerActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LabelTypeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LabelType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isArchived"}},{"kind":"Field","name":{"kind":"Name","value":"archivedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"archivedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ActorParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ActorParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LabelParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Label"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labelType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"LabelTypeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ActorParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThreadFieldParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"stringValue"}},{"kind":"Field","name":{"kind":"Name","value":"booleanValue"}},{"kind":"Field","name":{"kind":"Name","value":"isAiGenerated"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InternalActorParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InternalActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"publicName"}},{"kind":"Field","name":{"kind":"Name","value":"slackIdentities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slackTeamId"}},{"kind":"Field","name":{"kind":"Name","value":"slackUserId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MachineUserParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MachineUser"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"publicName"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SystemParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"System"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThreadAssigneeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ThreadAssignee"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MachineUser"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MachineUserParts"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"System"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SystemParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThreadParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Thread"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"externalId"}},{"kind":"Field","name":{"kind":"Name","value":"customer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"statusDetail"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThreadStatusDetailParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"statusChangedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"previewText"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"tenant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TenantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"LabelParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"threadFields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThreadFieldParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"assignedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"assignedTo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThreadAssigneeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ActorParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<SnoozeThreadMutation, SnoozeThreadMutationVariables>;
