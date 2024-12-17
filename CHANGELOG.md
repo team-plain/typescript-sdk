@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.6.0
+
+### Minor Changes
+
+- 58dfbc7: Added support for sending chats as a customer `sendCustomerChat`
+
 ## 5.5.0
 
 ### Minor Changes
