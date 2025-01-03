@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.7.0
+
+### Minor Changes
+
+- 93c4bdb: Export missing status detail enums
+
 ## 5.6.0
 
 ### Minor Changes
