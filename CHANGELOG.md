@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.8.0
+
+### Minor Changes
+
+- 09528f3: Update upsertCompany with contractValue arg
+
 ## 5.7.0
 
 ### Minor Changes
