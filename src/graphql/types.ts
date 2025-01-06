@@ -632,6 +632,7 @@ export type CompaniesSearchQuery = {
 
 export type Company = {
   __typename?: 'Company';
+  contractValue: Maybe<Scalars['Int']>;
   createdAt: DateTime;
   createdBy: InternalActor;
   domainName: Scalars['String'];
@@ -1159,6 +1160,16 @@ export type CreateMachineUserOutput = {
   __typename?: 'CreateMachineUserOutput';
   error: Maybe<MutationError>;
   machineUser: Maybe<MachineUser>;
+};
+
+export type CreateMyFavoritePageInput = {
+  key: Scalars['String'];
+};
+
+export type CreateMyFavoritePageOutput = {
+  __typename?: 'CreateMyFavoritePageOutput';
+  error: Maybe<MutationError>;
+  favoritePage: Maybe<FavoritePage>;
 };
 
 export type CreateMyLinearIntegrationInput = {
@@ -2173,6 +2184,15 @@ export type DeleteMachineUserOutput = {
   machineUser: Maybe<MachineUser>;
 };
 
+export type DeleteMyFavoritePageInput = {
+  favoritePageId: Scalars['ID'];
+};
+
+export type DeleteMyFavoritePageOutput = {
+  __typename?: 'DeleteMyFavoritePageOutput';
+  error: Maybe<MutationError>;
+};
+
 export type DeleteMyLinearIntegrationOutput = {
   __typename?: 'DeleteMyLinearIntegrationOutput';
   error: Maybe<MutationError>;
@@ -2591,6 +2611,28 @@ export type EventComponentInput = {
   componentRow?: InputMaybe<ComponentRowInput>;
   componentSpacer?: InputMaybe<ComponentSpacerInput>;
   componentText?: InputMaybe<ComponentTextInput>;
+};
+
+export type FavoritePage = {
+  __typename?: 'FavoritePage';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  id: Scalars['ID'];
+  key: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+};
+
+export type FavoritePageConnection = {
+  __typename?: 'FavoritePageConnection';
+  edges: Array<FavoritePageEdge>;
+  pageInfo: PageInfo;
+};
+
+export type FavoritePageEdge = {
+  __typename?: 'FavoritePageEdge';
+  cursor: Scalars['String'];
+  node: FavoritePage;
 };
 
 export enum FeatureKey {
@@ -3075,6 +3117,7 @@ export type Mutation = {
   createIndexedDocument: CreateIndexedDocumentOutput;
   createLabelType: CreateLabelTypeOutput;
   createMachineUser: CreateMachineUserOutput;
+  createMyFavoritePage: CreateMyFavoritePageOutput;
   createMyLinearIntegration: CreateMyLinearIntegrationOutput;
   createMyMSTeamsIntegration: CreateMyMsTeamsIntegrationOutput;
   createMySlackIntegration: CreateMySlackIntegrationOutput;
@@ -3117,6 +3160,7 @@ export type Mutation = {
   deleteCustomerGroup: DeleteCustomerGroupOutput;
   deleteIndexedDocument: DeleteIndexedDocumentOutput;
   deleteMachineUser: DeleteMachineUserOutput;
+  deleteMyFavoritePage: DeleteMyFavoritePageOutput;
   deleteMyLinearIntegration: DeleteMyLinearIntegrationOutput;
   deleteMyMSTeamsIntegration: DeleteMyMsTeamsIntegrationOutput;
   /** Delete personal service authorizations for the current user. */
@@ -3411,6 +3455,11 @@ export type MutationCreateMachineUserArgs = {
 };
 
 
+export type MutationCreateMyFavoritePageArgs = {
+  input: CreateMyFavoritePageInput;
+};
+
+
 export type MutationCreateMyLinearIntegrationArgs = {
   input: CreateMyLinearIntegrationInput;
 };
@@ -3583,6 +3632,11 @@ export type MutationDeleteIndexedDocumentArgs = {
 
 export type MutationDeleteMachineUserArgs = {
   input: DeleteMachineUserInput;
+};
+
+
+export type MutationDeleteMyFavoritePageArgs = {
+  input: DeleteMyFavoritePageInput;
 };
 
 
@@ -4278,6 +4332,7 @@ export type Query = {
   myBillingRota: Maybe<BillingRota>;
   myBillingSubscription: Maybe<BillingSubscription>;
   myEmailSignature: Maybe<EmailSignature>;
+  myFavoritePages: FavoritePageConnection;
   myJiraIntegrationToken: Maybe<JiraIntegrationToken>;
   myLinearInstallationInfo: UserLinearInstallationInfo;
   myLinearIntegration: Maybe<UserLinearIntegration>;
@@ -4542,6 +4597,14 @@ export type QueryMachineUserArgs = {
 
 
 export type QueryMachineUsersArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryMyFavoritePagesArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
@@ -5234,7 +5297,10 @@ export type SavedThreadsViewFilter = {
   assignedToUser: Array<Scalars['ID']>;
   companies: Array<Scalars['ID']>;
   customerGroups: Array<Scalars['ID']>;
+  displayOptions: ThreadsDisplayOptions;
+  groupBy: ThreadsGroupBy;
   labelTypeIds: Array<Scalars['ID']>;
+  layout: ThreadsLayout;
   messageSource: Array<MessageSource>;
   priorities: Array<Scalars['Int']>;
   slaStatuses: Array<Scalars['String']>;
@@ -5253,7 +5319,10 @@ export type SavedThreadsViewFilterInput = {
   assignedToUser: Array<Scalars['ID']>;
   companies: Array<Scalars['ID']>;
   customerGroups: Array<Scalars['ID']>;
+  displayOptions: ThreadsDisplayOptionsInput;
+  groupBy: ThreadsGroupBy;
   labelTypeIds: Array<Scalars['ID']>;
+  layout: ThreadsLayout;
   messageSource: Array<MessageSource>;
   priorities: Array<Scalars['Int']>;
   slaStatuses: Array<Scalars['String']>;
@@ -6656,6 +6725,41 @@ export type ThreadWithDistance = {
   thread: Thread;
 };
 
+export type ThreadsDisplayOptions = {
+  __typename?: 'ThreadsDisplayOptions';
+  hasAssignees: Scalars['Boolean'];
+  hasChannels: Scalars['Boolean'];
+  hasCompany: Scalars['Boolean'];
+  hasCustomer: Scalars['Boolean'];
+  hasCustomerGroups: Scalars['Boolean'];
+  hasJiraIssues: Scalars['Boolean'];
+  hasLabels: Scalars['Boolean'];
+  hasLastUpdated: Scalars['Boolean'];
+  hasLinearIssues: Scalars['Boolean'];
+  hasLinkedThreads: Scalars['Boolean'];
+  hasPreviewText: Scalars['Boolean'];
+  hasServiceLevelAgreements: Scalars['Boolean'];
+  hasStatus: Scalars['Boolean'];
+  hasTier: Scalars['Boolean'];
+};
+
+export type ThreadsDisplayOptionsInput = {
+  hasAssignees: Scalars['Boolean'];
+  hasChannels: Scalars['Boolean'];
+  hasCompany: Scalars['Boolean'];
+  hasCustomer: Scalars['Boolean'];
+  hasCustomerGroups: Scalars['Boolean'];
+  hasJiraIssues: Scalars['Boolean'];
+  hasLabels: Scalars['Boolean'];
+  hasLastUpdated: Scalars['Boolean'];
+  hasLinearIssues: Scalars['Boolean'];
+  hasLinkedThreads: Scalars['Boolean'];
+  hasPreviewText: Scalars['Boolean'];
+  hasServiceLevelAgreements: Scalars['Boolean'];
+  hasStatus: Scalars['Boolean'];
+  hasTier: Scalars['Boolean'];
+};
+
 export type ThreadsFilter = {
   assignedToUser?: InputMaybe<Array<Scalars['ID']>>;
   companyIdentifiers?: InputMaybe<Array<CompanyIdentifierInput>>;
@@ -6679,6 +6783,24 @@ export type ThreadsFilter = {
   tierIdentifiers?: InputMaybe<Array<TierIdentifierInput>>;
   updatedAt?: InputMaybe<DatetimeFilter>;
 };
+
+export enum ThreadsGroupBy {
+  Assignee = 'ASSIGNEE',
+  Channel = 'CHANNEL',
+  Company = 'COMPANY',
+  CustomerGroup = 'CUSTOMER_GROUP',
+  Label = 'LABEL',
+  None = 'NONE',
+  Priority = 'PRIORITY',
+  Status = 'STATUS',
+  Tenant = 'TENANT',
+  Tier = 'TIER'
+}
+
+export enum ThreadsLayout {
+  Board = 'BOARD',
+  Table = 'TABLE'
+}
 
 /**
  * Query to search for threads. The search term provided is used to match against different parts of the thread:
@@ -7323,6 +7445,7 @@ export type UpsertBusinessHoursOutput = {
 };
 
 export type UpsertCompanyInput = {
+  contractValue?: InputMaybe<Scalars['Int']>;
   domainName: Scalars['String'];
   identifier: CompanyIdentifierInput;
   name: Scalars['String'];
