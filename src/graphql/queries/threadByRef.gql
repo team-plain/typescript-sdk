@@ -1,0 +1,5 @@
+query threadByRef($ref: String!) {
+  threadByRef(ref: $ref) {
+    ...ThreadParts
+  }
+}

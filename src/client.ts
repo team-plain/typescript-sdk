@@ -71,6 +71,7 @@ import {
   type TenantTierMembershipPartsFragment,
   TenantsDocument,
   ThreadByExternalIdDocument,
+  ThreadByRefDocument,
   ThreadDocument,
   type ThreadEventPartsFragment,
   type ThreadFieldPartsFragment,
@@ -574,6 +575,20 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => q.thread);
+  }
+
+  /**
+   * Get a single thread by its ref (eg T-12345)
+   */
+  async getThreadByRef(
+    variables: VariablesOf<typeof ThreadByRefDocument>
+  ): SDKResult<ThreadPartsFragment | null> {
+    const res = await request(this.#ctx, {
+      query: ThreadByRefDocument,
+      variables,
+    });
+
+    return unwrapData(res, (q) => q.threadByRef);
   }
 
   /**
