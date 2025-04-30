@@ -21,6 +21,7 @@ describe('mutation test - create an issue', () => {
     const thread: ThreadPartsFragment = {
       __typename: 'Thread',
       id: 'th_01HD47ZH1A14GH0HDYBQ9KHGKZ',
+      ref: 'T-12345',
       title: threadTitle,
       assignedAt: null,
       assignedTo: null,
