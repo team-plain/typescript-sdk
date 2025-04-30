@@ -1,6 +1,7 @@
 fragment ThreadParts on Thread {
   __typename
   id
+  ref
   externalId
   customer {
     id

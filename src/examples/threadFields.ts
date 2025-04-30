@@ -25,7 +25,10 @@ export async function upsertThreadField() {
 
 export async function deleteThreadField() {
   const res = await client.deleteThreadField({
-    threadFieldId: 'tf_01HVTN2VTNYP91P5XGDQ57M2ZX',
+    identifier: {
+      key: 'product_area',
+      threadId: 'th_01HVNWFJS395XVPPBJNE6A8BHP',
+    },
   });
 
   if (res.error) {
