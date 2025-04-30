@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.9.0
+
+### Minor Changes
+
+- e3c1550: Add support for getting threads by ref number
+
 ## 5.8.0
 
 ### Minor Changes
