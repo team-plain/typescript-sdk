@@ -1,0 +1,25 @@
+fragment KnowledgeSourceParts on KnowledgeSource {
+  ... on KnowledgeSourceSitemap {
+    id
+    url
+    type
+    labelTypes {
+      ...LabelTypeParts
+    }
+    status {
+      ...IndexingStatusParts
+    }
+    createdAt {
+      ...DateTimeParts
+    }
+    createdBy {
+      ...ActorParts
+    }
+    updatedAt {
+      ...DateTimeParts
+    }
+    updatedBy {
+      ...ActorParts
+    }
+  }
+}
