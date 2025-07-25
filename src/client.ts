@@ -18,6 +18,7 @@ import {
   CreateAttachmentUploadUrlDocument,
   CreateCustomerCardConfigDocument,
   CreateCustomerEventDocument,
+  CreateKnowledgeSourceDocument,
   CreateLabelTypeDocument,
   CreateNoteDocument,
   CreateThreadDocument,
@@ -44,6 +45,7 @@ import {
   type EmailPartsFragment,
   IndexDocumentDocument,
   type IndexedDocumentPartsFragment,
+  type KnowledgeSourcePartsFragment,
   type LabelPartsFragment,
   LabelTypeDocument,
   type LabelTypePartsFragment,
@@ -1215,5 +1217,16 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.sendCustomerChat.chat));
+  }
+
+  async createKnowledgeSource(
+    input: VariablesOf<typeof CreateKnowledgeSourceDocument>['input']
+  ): SDKResult<KnowledgeSourcePartsFragment> {
+    const res = await request(this.#ctx, {
+      query: CreateKnowledgeSourceDocument,
+      variables: { input },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.createKnowledgeSource.knowledgeSource));
   }
 }

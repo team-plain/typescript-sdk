@@ -84,6 +84,18 @@
         },
         {
           "$ref": "#/definitions/threadChatReceivedPublicEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadSlackMessageUpdatedEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadDiscordMessageReceivedEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadDiscordMessageSentEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadDiscordMessageUpdatedEventPayload"
         }
       ]
     },
@@ -100,6 +112,10 @@
         "thread.email_sent",
         "thread.slack_message_received",
         "thread.slack_message_sent",
+        "thread.slack_message_updated",
+        "thread.discord_message_received",
+        "thread.discord_message_sent",
+        "thread.discord_message_updated",
         "thread.ms_teams_message_sent",
         "thread.ms_teams_message_received",
         "thread.chat_sent",
@@ -2737,6 +2753,58 @@
         "slackMessageLink": {
           "type": "string"
         },
+        "slackReactions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "actors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "actorId": {
+                      "$ref": "#/definitions/id"
+                    },
+                    "actorType": {
+                      "$ref": "#/definitions/threadMessageInfo/properties/actorType/anyOf/0"
+                    },
+                    "slackUserId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "actorId",
+                    "actorType",
+                    "slackUserId"
+                  ],
+                  "additionalProperties": true
+                }
+              },
+              "imageUrl": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "name",
+              "actors"
+            ],
+            "additionalProperties": true
+          },
+          "default": []
+        },
         "createdAt": {
           "$ref": "#/definitions/datetime"
         },
@@ -2758,6 +2826,91 @@
         "slackChannelId",
         "slackChannelName",
         "slackMessageLink",
+        "createdAt",
+        "createdBy",
+        "updatedAt",
+        "updatedBy"
+      ],
+      "additionalProperties": true
+    },
+    "discordMessage": {
+      "type": "object",
+      "properties": {
+        "timelineEntryId": {
+          "$ref": "#/definitions/id"
+        },
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "discordGuildId": {
+          "type": "string"
+        },
+        "discordChannelId": {
+          "type": "string"
+        },
+        "discordThreadId": {
+          "type": "string"
+        },
+        "discordId": {
+          "type": "string"
+        },
+        "discordTimestamp": {
+          "$ref": "#/definitions/datetime"
+        },
+        "textContent": {
+          "type": "string"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
+          },
+          "default": []
+        },
+        "lastEditedOnDiscordAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/datetime"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "deletedOnDiscordAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/datetime"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "createdAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "createdBy": {
+          "$ref": "#/definitions/actor"
+        },
+        "updatedAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "updatedBy": {
+          "$ref": "#/definitions/actor"
+        }
+      },
+      "required": [
+        "timelineEntryId",
+        "id",
+        "discordGuildId",
+        "discordChannelId",
+        "discordThreadId",
+        "discordId",
+        "discordTimestamp",
+        "textContent",
         "createdAt",
         "createdBy",
         "updatedAt",
@@ -3465,19 +3618,103 @@
       "properties": {
         "eventType": {
           "type": "string",
-          "const": "thread.ms_teams_message_sent"
+          "const": "thread.slack_message_sent"
         },
         "thread": {
           "$ref": "#/definitions/thread"
         },
-        "msTeamsMessage": {
-          "$ref": "#/definitions/msTeamsMessage"
+        "slackMessage": {
+          "$ref": "#/definitions/slackMessage"
         }
       },
       "required": [
         "eventType",
         "thread",
-        "msTeamsMessage"
+        "slackMessage"
+      ],
+      "additionalProperties": true
+    },
+    "threadSlackMessageUpdatedEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.slack_message_updated"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "slackMessage": {
+          "$ref": "#/definitions/slackMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "slackMessage"
+      ],
+      "additionalProperties": true
+    },
+    "threadDiscordMessageReceivedEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.discord_message_received"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "discordMessage": {
+          "$ref": "#/definitions/discordMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "discordMessage"
+      ],
+      "additionalProperties": true
+    },
+    "threadDiscordMessageSentEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.discord_message_sent"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "discordMessage": {
+          "$ref": "#/definitions/discordMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "discordMessage"
+      ],
+      "additionalProperties": true
+    },
+    "threadDiscordMessageUpdatedEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.discord_message_updated"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "discordMessage": {
+          "$ref": "#/definitions/discordMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "discordMessage"
       ],
       "additionalProperties": true
     },
@@ -3507,19 +3744,19 @@
       "properties": {
         "eventType": {
           "type": "string",
-          "const": "thread.slack_message_sent"
+          "const": "thread.ms_teams_message_sent"
         },
         "thread": {
           "$ref": "#/definitions/thread"
         },
-        "slackMessage": {
-          "$ref": "#/definitions/slackMessage"
+        "msTeamsMessage": {
+          "$ref": "#/definitions/msTeamsMessage"
         }
       },
       "required": [
         "eventType",
         "thread",
-        "slackMessage"
+        "msTeamsMessage"
       ],
       "additionalProperties": true
     },

@@ -1,0 +1,17 @@
+mutation createKnowledgeSource($input: CreateKnowledgeSourceInput!) {
+  createKnowledgeSource(input: $input) {
+    knowledgeSource {
+      ...KnowledgeSourceParts
+    }
+    error {
+      type
+      code
+      message
+      fields {
+        type
+        field
+        message
+      }
+    }
+  }
+}

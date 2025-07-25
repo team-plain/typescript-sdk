@@ -281,7 +281,11 @@ export interface WebhooksSchemaDefinition {
     | CustomerUpdatedPublicEventPayload
     | CustomerDeletedPublicEventPayload
     | ThreadNoteCreatedEventPayload
-    | ThreadChatReceivedPublicEventPayload;
+    | ThreadChatReceivedPublicEventPayload
+    | ThreadSlackMessageUpdatedEventPayload
+    | ThreadDiscordMessageReceivedEventPayload
+    | ThreadDiscordMessageSentEventPayload
+    | ThreadDiscordMessageUpdatedEventPayload;
   id: Id;
   type:
     | "thread.thread_created"
@@ -291,6 +295,10 @@ export interface WebhooksSchemaDefinition {
     | "thread.email_sent"
     | "thread.slack_message_received"
     | "thread.slack_message_sent"
+    | "thread.slack_message_updated"
+    | "thread.discord_message_received"
+    | "thread.discord_message_sent"
+    | "thread.discord_message_updated"
     | "thread.ms_teams_message_sent"
     | "thread.ms_teams_message_received"
     | "thread.chat_sent"
@@ -717,6 +725,17 @@ export interface SlackMessage {
   slackChannelId: string;
   slackChannelName: string;
   slackMessageLink: string;
+  slackReactions?: {
+    name: string;
+    actors: {
+      actorId: Id;
+      actorType: "user" | "machineUser" | "customer" | "system";
+      slackUserId: string;
+      [k: string]: unknown;
+    }[];
+    imageUrl?: string | null;
+    [k: string]: unknown;
+  }[];
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
@@ -724,7 +743,13 @@ export interface SlackMessage {
   [k: string]: unknown;
 }
 export interface ThreadSlackMessageSentEventPayload {
-  eventType: "thread.ms_teams_message_sent";
+  eventType: "thread.slack_message_sent";
+  thread: Thread;
+  slackMessage: SlackMessage;
+  [k: string]: unknown;
+}
+export interface ThreadMSTeamsMessageReceivedEventPayload {
+  eventType: "thread.ms_teams_message_received";
   thread: Thread;
   msTeamsMessage: MsTeamsMessage;
   [k: string]: unknown;
@@ -744,16 +769,10 @@ export interface MsTeamsMessage {
   updatedBy: Actor;
   [k: string]: unknown;
 }
-export interface ThreadMSTeamsMessageReceivedEventPayload {
-  eventType: "thread.ms_teams_message_received";
+export interface ThreadMSTeamsMessageSentEventPayload {
+  eventType: "thread.ms_teams_message_sent";
   thread: Thread;
   msTeamsMessage: MsTeamsMessage;
-  [k: string]: unknown;
-}
-export interface ThreadMSTeamsMessageSentEventPayload {
-  eventType: "thread.slack_message_sent";
-  thread: Thread;
-  slackMessage: SlackMessage;
   [k: string]: unknown;
 }
 export interface ThreadLabelsChangedPublicEventPayload {
@@ -878,6 +897,48 @@ export interface ThreadChatReceivedPublicEventPayload {
   eventType: "thread.chat_received";
   chat: Chat;
   thread: Thread;
+  [k: string]: unknown;
+}
+export interface ThreadSlackMessageUpdatedEventPayload {
+  eventType: "thread.slack_message_updated";
+  thread: Thread;
+  slackMessage: SlackMessage;
+  [k: string]: unknown;
+}
+export interface ThreadDiscordMessageReceivedEventPayload {
+  eventType: "thread.discord_message_received";
+  thread: Thread;
+  discordMessage: DiscordMessage;
+  [k: string]: unknown;
+}
+export interface DiscordMessage {
+  timelineEntryId: Id;
+  id: Id;
+  discordGuildId: string;
+  discordChannelId: string;
+  discordThreadId: string;
+  discordId: string;
+  discordTimestamp: Datetime;
+  textContent: string;
+  attachments?: Attachment[];
+  lastEditedOnDiscordAt?: Datetime | null;
+  deletedOnDiscordAt?: Datetime | null;
+  createdAt: Datetime;
+  createdBy: Actor;
+  updatedAt: Datetime;
+  updatedBy: Actor;
+  [k: string]: unknown;
+}
+export interface ThreadDiscordMessageSentEventPayload {
+  eventType: "thread.discord_message_sent";
+  thread: Thread;
+  discordMessage: DiscordMessage;
+  [k: string]: unknown;
+}
+export interface ThreadDiscordMessageUpdatedEventPayload {
+  eventType: "thread.discord_message_updated";
+  thread: Thread;
+  discordMessage: DiscordMessage;
   [k: string]: unknown;
 }
 export interface WebhookMetadata {

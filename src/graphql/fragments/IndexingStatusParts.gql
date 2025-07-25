@@ -1,0 +1,18 @@
+fragment IndexingStatusParts on IndexingStatus {
+  ... on IndexingStatusPending {
+    startedAt {
+      ...DateTimeParts
+    }
+  }
+  ... on IndexingStatusFailed {
+    failedAt {
+      ...DateTimeParts
+    }
+    reason
+  }
+  ... on IndexingStatusIndexed {
+    indexedAt {
+      ...DateTimeParts
+    }
+  }
+}
