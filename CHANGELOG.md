@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.10.0
+
+### Minor Changes
+
+- 2eb9d9b: Add createKnowledgeSource mutation
+
 ## 5.9.0
 
 ### Minor Changes
