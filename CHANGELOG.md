@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.10.1
+
+### Patch Changes
+
+- c3592d5: Fix createKnowledgeSource changeset
+
 ## 5.10.0
 
 ### Minor Changes
