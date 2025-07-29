@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.10.3
+
+### Patch Changes
+
+- a283e8b: Add KnowledgeSourceUrl
+
 ## 5.10.2
 
 ### Patch Changes
