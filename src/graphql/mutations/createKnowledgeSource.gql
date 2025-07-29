@@ -4,14 +4,7 @@ mutation createKnowledgeSource($input: CreateKnowledgeSourceInput!) {
       ...KnowledgeSourceParts
     }
     error {
-      type
-      code
-      message
-      fields {
-        type
-        field
-        message
-      }
+      ...MutationErrorParts
     }
   }
 }
