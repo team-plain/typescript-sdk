@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.10.2
+
+### Patch Changes
+
+- 6186092: Remove label types from KnowledgeSourceParts fragment
+
 ## 5.10.1
 
 ### Patch Changes
