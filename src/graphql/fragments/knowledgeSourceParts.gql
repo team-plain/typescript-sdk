@@ -19,4 +19,24 @@ fragment KnowledgeSourceParts on KnowledgeSource {
       ...ActorParts
     }
   }
+  ... on KnowledgeSourceUrl {
+    id
+    url
+    type
+    status {
+      ...IndexingStatusParts
+    }
+    createdAt {
+      ...DateTimeParts
+    }
+    createdBy {
+      ...ActorParts
+    }
+    updatedAt {
+      ...DateTimeParts
+    }
+    updatedBy {
+      ...ActorParts
+    }
+  }
 }
