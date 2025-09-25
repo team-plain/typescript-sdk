@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.11.0
+
+### Minor Changes
+
+- b6e6b10: Added sendChat method which lets you send chat messages as a machine user
+
 ## 5.10.3
 
 ### Patch Changes
