@@ -36,6 +36,7 @@ export default {
       statusDetail: { type: 'CREATED', createdAt: '2024-03-06T12:37:09.732Z' },
       assignee: null,
       assignedAt: null,
+      additionalAssignees: [],
       labels: [],
       firstInboundMessageInfo: {
         timestamp: '2024-03-06T12:37:09.732Z',
@@ -105,7 +106,7 @@ export default {
   id: 'pEv_01HR9W91EMR655WS6VC2867D3C',
   webhookMetadata: {
     webhookTargetId: 'whTarget_01HR9VYX2GYKX1XCTFXRG1K3MX',
-    webhookTargetVersion: '2024-09-18',
+    webhookTargetVersion: '2025-08-06',
     webhookDeliveryAttemptId: 'whAttempt_01HR9W92RSJZA4011XDNHJ5VK7',
     webhookDeliveryAttemptNumber: 1,
     webhookDeliveryAttemptTimestamp: '2024-03-06T12:37:11.577Z',

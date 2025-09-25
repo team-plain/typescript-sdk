@@ -1,0 +1,10 @@
+mutation sendChat($input:SendChatInput!) {
+  sendChat(input:$input){
+    chat {
+      ...ChatParts
+    }
+    error {
+      ...MutationErrorParts
+    }
+  }
+}

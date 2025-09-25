@@ -45,6 +45,7 @@ export default {
       },
       assignee: null,
       assignedAt: null,
+      additionalAssignees: [],
       labels: [],
       firstInboundMessageInfo: null,
       firstOutboundMessageInfo: null,
@@ -66,7 +67,7 @@ export default {
   id: 'pEv_01HD44FHHJ0YABSNGKWMG3CJ5J',
   webhookMetadata: {
     webhookTargetId: 'whTarget_01HD4400VTDJQ646V6RY37SR7K',
-    webhookTargetVersion: '2024-09-18',
+    webhookTargetVersion: '2025-08-06',
     webhookDeliveryAttemptId: 'whAttempt_01HD44FJASQM23MNHYDYPAXEG8',
     webhookDeliveryAttemptNumber: 1,
     webhookDeliveryAttemptTimestamp: '2023-10-19T14:12:26.073Z',

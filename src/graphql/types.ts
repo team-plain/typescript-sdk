@@ -1024,6 +1024,34 @@ export type ConnectedDiscordChannelEdge = {
   node: ConnectedDiscordChannel;
 };
 
+export type ConnectedMsTeamsChannel = {
+  __typename?: 'ConnectedMSTeamsChannel';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  id: Scalars['ID'];
+  msTeamsChannelId: Scalars['ID'];
+  msTeamsTeamId: Scalars['ID'];
+  msTeamsTenantId: Scalars['ID'];
+  name: Scalars['String'];
+  teamName: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+  workspaceId: Scalars['ID'];
+};
+
+export type ConnectedMsTeamsChannelConnection = {
+  __typename?: 'ConnectedMSTeamsChannelConnection';
+  edges: Array<ConnectedMsTeamsChannelEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type ConnectedMsTeamsChannelEdge = {
+  __typename?: 'ConnectedMSTeamsChannelEdge';
+  cursor: Scalars['String'];
+  node: ConnectedMsTeamsChannel;
+};
+
 export type ConnectedSlackChannel = {
   __typename?: 'ConnectedSlackChannel';
   channelType: ConnectedSlackChannelType;
@@ -1031,6 +1059,7 @@ export type ConnectedSlackChannel = {
   createdBy: InternalActor;
   id: Scalars['ID'];
   isEnabled: Scalars['Boolean'];
+  isPrivate: Scalars['Boolean'];
   name: Scalars['String'];
   slackChannelId: Scalars['String'];
   slackTeamId: Scalars['String'];
@@ -1271,12 +1300,14 @@ export type CreateHelpCenterArticleGroupOutput = {
 };
 
 export type CreateHelpCenterInput = {
+  authMechanism?: InputMaybe<HelpCenterAuthMechanismInput>;
   bodyCustomJs?: InputMaybe<Scalars['String']>;
   color?: InputMaybe<Scalars['String']>;
   description: Scalars['String'];
   favicon?: InputMaybe<HelpCenterThemedImageInput>;
   headCustomJs?: InputMaybe<Scalars['String']>;
   internalName: Scalars['String'];
+  isChatEnabled?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<HelpCenterThemedImageInput>;
   publicName: Scalars['String'];
   socialPreviewImage?: InputMaybe<WorkspaceFileInput>;
@@ -1291,7 +1322,7 @@ export type CreateHelpCenterOutput = {
 };
 
 export type CreateIndexedDocumentInput = {
-  knowledgeSourceId?: InputMaybe<Scalars['ID']>;
+  knowledgeSourceId: Scalars['ID'];
   labelTypeIds?: InputMaybe<Array<Scalars['ID']>>;
   url: Scalars['String'];
 };
@@ -1536,9 +1567,9 @@ export type CreateThreadInput = {
    * @deprecated Use sendChat and sendCustomerChat mutations instead. Both allow you to backdate messages.
    */
   attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
-  /** The channel to create the thread for. Currently supported: API, EMAIL, SLACK. Defaults to API. */
+  /** The channel to create the thread for. Currently supported: API, EMAIL, SLACK, MS_TEAMS, or CHAT. Defaults to API. */
   channel?: InputMaybe<ThreadChannel>;
-  /** Channel details for the thread, required if channel is SLACK. */
+  /** Channel details for the thread, required if channel is SLACK or MS_TEAMS */
   channelDetails?: InputMaybe<ThreadChannelDetailsInput>;
   /**
    * The components used to create the first timeline entry in the thread.
@@ -2530,12 +2561,12 @@ export type DeleteHelpCenterOutput = {
   error: Maybe<MutationError>;
 };
 
-export type DeleteIndexedDocumentInput = {
-  indexedDocumentId: Scalars['ID'];
+export type DeleteKnowledgeSourceInput = {
+  knowledgeSourceId: Scalars['ID'];
 };
 
-export type DeleteIndexedDocumentOutput = {
-  __typename?: 'DeleteIndexedDocumentOutput';
+export type DeleteKnowledgeSourceOutput = {
+  __typename?: 'DeleteKnowledgeSourceOutput';
   error: Maybe<MutationError>;
 };
 
@@ -2629,6 +2660,36 @@ export type DeleteSnippetOutput = {
   __typename?: 'DeleteSnippetOutput';
   error: Maybe<MutationError>;
   snippet: Maybe<Snippet>;
+};
+
+export type DeleteTenantFieldInput = {
+  tenantFieldId: Scalars['ID'];
+};
+
+export type DeleteTenantFieldOutput = {
+  __typename?: 'DeleteTenantFieldOutput';
+  error: Maybe<MutationError>;
+  tenantField: Maybe<TenantField>;
+};
+
+export type DeleteTenantFieldSchemaInput = {
+  tenantFieldSchemaId: Scalars['ID'];
+};
+
+export type DeleteTenantFieldSchemaOutput = {
+  __typename?: 'DeleteTenantFieldSchemaOutput';
+  error: Maybe<MutationError>;
+  tenantFieldSchema: Maybe<TenantFieldSchema>;
+};
+
+export type DeleteTenantInput = {
+  tenantIdentifier: TenantIdentifierInput;
+};
+
+export type DeleteTenantOutput = {
+  __typename?: 'DeleteTenantOutput';
+  error: Maybe<MutationError>;
+  tenant: Maybe<Tenant>;
 };
 
 export type DeleteThreadChannelAssociationInput = {
@@ -2885,6 +2946,7 @@ export type Email = {
   __typename?: 'Email';
   additionalRecipients: Array<EmailParticipant>;
   attachments: Array<Attachment>;
+  category: EmailCategory;
   createdAt: DateTime;
   createdBy: Actor;
   customer: Customer;
@@ -2932,6 +2994,12 @@ export type EmailBounce = {
   recipient: EmailParticipant;
 };
 
+export enum EmailCategory {
+  CustomerSurvey = 'CUSTOMER_SURVEY',
+  Messaging = 'MESSAGING',
+  UnreadChatMessages = 'UNREAD_CHAT_MESSAGES'
+}
+
 export type EmailCustomerIdentity = {
   __typename?: 'EmailCustomerIdentity';
   email: Scalars['String'];
@@ -2945,6 +3013,8 @@ export type EmailEntry = {
   authenticity: EmailAuthenticity;
   /** If any of the recipients bounces the email, this will contain the list of bounces. */
   bounces: Array<EmailBounce>;
+  /** The category of the email. */
+  category: EmailCategory;
   emailId: Scalars['ID'];
   from: EmailParticipant;
   /** The full email's markdown content, including all replies. */
@@ -3240,11 +3310,13 @@ export type HeatmapMetricOptionsInput = {
 
 export type HelpCenter = {
   __typename?: 'HelpCenter';
+  access: Maybe<HelpCenterAccessSettings>;
   agentAvatarImage: HelpCenterThemedImage;
   /** All article groups in the help center. */
   articleGroups: HelpCenterArticleGroupConnection;
   /** All articles in the help center. */
   articles: HelpCenterArticleConnection;
+  authMechanism: HelpCenterAuthMechanism;
   bodyCustomJs: Maybe<Scalars['String']>;
   color: Maybe<Scalars['String']>;
   createdAt: DateTime;
@@ -3257,6 +3329,7 @@ export type HelpCenter = {
   headCustomJs: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   internalName: Scalars['String'];
+  isChatEnabled: Scalars['Boolean'];
   isDeleted: Scalars['Boolean'];
   logo: HelpCenterThemedImage;
   portalSettings: HelpCenterPortalSettings;
@@ -3283,6 +3356,21 @@ export type HelpCenterArticlesArgs = {
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
+};
+
+export type HelpCenterAccessSettings = {
+  __typename?: 'HelpCenterAccessSettings';
+  companyIds: Array<Scalars['String']>;
+  customerIds: Array<Scalars['String']>;
+  tenantIds: Array<Scalars['String']>;
+  tierIds: Array<Scalars['String']>;
+};
+
+export type HelpCenterAccessSettingsInput = {
+  companyIds?: InputMaybe<Array<Scalars['String']>>;
+  customerIds?: InputMaybe<Array<Scalars['String']>>;
+  tenantIds?: InputMaybe<Array<Scalars['String']>>;
+  tierIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type HelpCenterAiConversationMessageEntry = {
@@ -3368,10 +3456,42 @@ export type HelpCenterArticleGroupEdge = {
   node: HelpCenterArticleGroup;
 };
 
+export type HelpCenterArticleSearchResult = {
+  __typename?: 'HelpCenterArticleSearchResult';
+  content: Scalars['String'];
+  helpCenter: HelpCenter;
+  helpCenterArticle: HelpCenterArticle;
+};
+
 export enum HelpCenterArticleStatus {
   Draft = 'DRAFT',
   Published = 'PUBLISHED'
 }
+
+export type HelpCenterAuthMechanism = HelpCenterAuthMechanismWorkosAuthkit | HelpCenterAuthMechanismWorkosConnect;
+
+export type HelpCenterAuthMechanismInput = {
+  workosAuthkitAuthMechanism?: InputMaybe<HelpCenterWorkosAuthkitAuthMechanismInput>;
+  workosConnectAuthMechanism?: InputMaybe<WorkosConnectAuthMechanismInput>;
+};
+
+export enum HelpCenterAuthMechanismType {
+  WorkosAuthkit = 'WORKOS_AUTHKIT',
+  WorkosConnect = 'WORKOS_CONNECT'
+}
+
+export type HelpCenterAuthMechanismWorkosAuthkit = {
+  __typename?: 'HelpCenterAuthMechanismWorkosAuthkit';
+  type: HelpCenterAuthMechanismType;
+};
+
+export type HelpCenterAuthMechanismWorkosConnect = {
+  __typename?: 'HelpCenterAuthMechanismWorkosConnect';
+  apiHost: Scalars['String'];
+  appClientId: Scalars['String'];
+  appSecretMasked: Scalars['String'];
+  type: HelpCenterAuthMechanismType;
+};
 
 export type HelpCenterConnection = {
   __typename?: 'HelpCenterConnection';
@@ -3433,30 +3553,95 @@ export enum HelpCenterIndexItemType {
 export type HelpCenterPortalSettings = {
   __typename?: 'HelpCenterPortalSettings';
   formFields: Array<HelpCenterPortalSettingsFormField>;
+  isAdditionalRecipientsEnabled: Scalars['Boolean'];
   isEnabled: Scalars['Boolean'];
   threadVisibility: HelpCenterPortalSettingsThreadVisibility;
 };
 
-export type HelpCenterPortalSettingsFormField = {
-  __typename?: 'HelpCenterPortalSettingsFormField';
-  id: Maybe<Scalars['ID']>;
+export type HelpCenterPortalSettingsDropdownFormField = {
+  __typename?: 'HelpCenterPortalSettingsDropdownFormField';
+  dropdownOptions: Array<HelpCenterPortalSettingsDropdownOption>;
+  id: Scalars['ID'];
+  isRequired: Scalars['Boolean'];
+  label: Scalars['String'];
+  placeholder: Maybe<Scalars['String']>;
   type: HelpCenterPortalSettingsFormFieldType;
 };
 
+export type HelpCenterPortalSettingsDropdownOption = {
+  __typename?: 'HelpCenterPortalSettingsDropdownOption';
+  dropdownOptionId: Maybe<Scalars['ID']>;
+  label: Scalars['String'];
+  threadDetails: Maybe<HelpCenterPortalSettingsThreadDetails>;
+};
+
+export type HelpCenterPortalSettingsDropdownOptionInput = {
+  dropdownOptionId?: InputMaybe<Scalars['ID']>;
+  label: Scalars['String'];
+  threadDetails?: InputMaybe<HelpCenterPortalSettingsThreadDetailsInput>;
+};
+
+export type HelpCenterPortalSettingsFormField = HelpCenterPortalSettingsDropdownFormField | HelpCenterPortalSettingsTextFormField;
+
 export type HelpCenterPortalSettingsFormFieldInput = {
+  dropdownOptions?: InputMaybe<Array<HelpCenterPortalSettingsDropdownOptionInput>>;
   id?: InputMaybe<Scalars['ID']>;
+  isRequired: Scalars['Boolean'];
+  label: Scalars['String'];
+  placeholder?: InputMaybe<Scalars['String']>;
+  threadDetails?: InputMaybe<HelpCenterPortalSettingsThreadDetailsInput>;
   type: HelpCenterPortalSettingsFormFieldType;
 };
 
 export enum HelpCenterPortalSettingsFormFieldType {
-  Priority = 'PRIORITY',
-  ThreadField = 'THREAD_FIELD'
+  Dropdown = 'DROPDOWN',
+  TextArea = 'TEXT_AREA',
+  TextInput = 'TEXT_INPUT'
 }
 
 export type HelpCenterPortalSettingsInput = {
   formFields?: InputMaybe<Array<HelpCenterPortalSettingsFormFieldInput>>;
+  isAdditionalRecipientsEnabled?: InputMaybe<Scalars['Boolean']>;
   isEnabled?: InputMaybe<Scalars['Boolean']>;
   threadVisibility?: InputMaybe<HelpCenterPortalSettingsThreadVisibilityInput>;
+};
+
+export type HelpCenterPortalSettingsTextFormField = {
+  __typename?: 'HelpCenterPortalSettingsTextFormField';
+  id: Scalars['ID'];
+  isRequired: Scalars['Boolean'];
+  label: Scalars['String'];
+  placeholder: Maybe<Scalars['String']>;
+  threadDetails: Maybe<HelpCenterPortalSettingsThreadDetails>;
+  type: HelpCenterPortalSettingsFormFieldType;
+};
+
+export type HelpCenterPortalSettingsThreadDetails = {
+  __typename?: 'HelpCenterPortalSettingsThreadDetails';
+  assignees: Maybe<Array<ThreadAssignee>>;
+  labelTypes: Maybe<Array<LabelType>>;
+  priority: Maybe<Scalars['Int']>;
+  threadFields: Maybe<Array<HelpCenterPortalSettingsThreadFields>>;
+};
+
+export type HelpCenterPortalSettingsThreadDetailsInput = {
+  assignees?: InputMaybe<Array<ThreadAssigneeInput>>;
+  labelTypeIds?: InputMaybe<Array<Scalars['ID']>>;
+  priority?: InputMaybe<Scalars['Int']>;
+  threadFields?: InputMaybe<Array<HelpCenterPortalSettingsThreadFieldsInput>>;
+};
+
+export type HelpCenterPortalSettingsThreadFields = {
+  __typename?: 'HelpCenterPortalSettingsThreadFields';
+  selectedBooleanValue: Maybe<Scalars['Boolean']>;
+  selectedStringValue: Maybe<Scalars['String']>;
+  threadFieldSchema: ThreadFieldSchema;
+};
+
+export type HelpCenterPortalSettingsThreadFieldsInput = {
+  selectedBooleanValue?: InputMaybe<Scalars['Boolean']>;
+  selectedStringValue?: InputMaybe<Scalars['String']>;
+  threadFieldSchemaId: Scalars['ID'];
 };
 
 export type HelpCenterPortalSettingsThreadVisibility = {
@@ -3486,6 +3671,10 @@ export enum HelpCenterType {
   Private = 'PRIVATE',
   Public = 'PUBLIC'
 }
+
+export type HelpCenterWorkosAuthkitAuthMechanismInput = {
+  ignore?: InputMaybe<Scalars['Boolean']>;
+};
 
 export type ImpersonationInput = {
   asCustomer: CustomerImpersonationInput;
@@ -3521,6 +3710,12 @@ export type IndexedDocumentEdge = {
   node: IndexedDocument;
 };
 
+export type IndexedDocumentSearchResult = {
+  __typename?: 'IndexedDocumentSearchResult';
+  content: Scalars['String'];
+  indexedDocument: IndexedDocument;
+};
+
 export type IndexedDocumentStatus = IndexedDocumentStatusFailed | IndexedDocumentStatusIndexed | IndexedDocumentStatusPending;
 
 export type IndexedDocumentStatusFailed = {
@@ -3537,6 +3732,10 @@ export type IndexedDocumentStatusIndexed = {
 export type IndexedDocumentStatusPending = {
   __typename?: 'IndexedDocumentStatusPending';
   startedAt: DateTime;
+};
+
+export type IndexedDocumentsFilter = {
+  knowledgeSourceId?: InputMaybe<Scalars['ID']>;
 };
 
 export type IndexingStatus = IndexingStatusFailed | IndexingStatusIndexed | IndexingStatusPending;
@@ -3661,6 +3860,20 @@ export type JiraSiteIntegration = ServiceIntegration & {
 
 export type KnowledgeSource = KnowledgeSourceSitemap | KnowledgeSourceUrl;
 
+export type KnowledgeSourceConnection = {
+  __typename?: 'KnowledgeSourceConnection';
+  edges: Array<KnowledgeSourceEdge>;
+  pageInfo: PageInfo;
+};
+
+export type KnowledgeSourceEdge = {
+  __typename?: 'KnowledgeSourceEdge';
+  cursor: Scalars['String'];
+  node: KnowledgeSource;
+};
+
+export type KnowledgeSourceSearchResult = HelpCenterArticleSearchResult | IndexedDocumentSearchResult;
+
 export type KnowledgeSourceSitemap = {
   __typename?: 'KnowledgeSourceSitemap';
   createdAt: DateTime;
@@ -3692,14 +3905,18 @@ export type KnowledgeSourceUrl = {
   url: Scalars['String'];
 };
 
+export type KnowledgeSourcesFilter = {
+  type?: InputMaybe<KnowledgeSourceType>;
+};
+
 export type Label = {
   __typename?: 'Label';
   createdAt: DateTime;
-  createdBy: InternalActor;
+  createdBy: Actor;
   id: Scalars['ID'];
   labelType: LabelType;
   updatedAt: DateTime;
-  updatedBy: InternalActor;
+  updatedBy: Actor;
 };
 
 export type LabelType = {
@@ -3807,19 +4024,43 @@ export type LinearIssueThreadLinkStateTransitionedEntry = {
   previousLinearStateId: Scalars['ID'];
 };
 
+export type MsTeamsChannelMember = {
+  __typename?: 'MSTeamsChannelMember';
+  displayName: Scalars['String'];
+  email: Scalars['String'];
+  id: Scalars['ID'];
+  roles: Array<MsTeamsChannelMemberRole>;
+  tenantId: Scalars['ID'];
+  userId: Scalars['ID'];
+  visibleHistoryStartDateTime: Scalars['String'];
+};
+
+export enum MsTeamsChannelMemberRole {
+  Guest = 'guest',
+  Owner = 'owner'
+}
+
+export type MsTeamsChannelMembers = {
+  __typename?: 'MSTeamsChannelMembers';
+  members: Array<MsTeamsChannelMember>;
+};
+
 export type MsTeamsMessage = {
   __typename?: 'MSTeamsMessage';
   attachments: Array<Attachment>;
   createdAt: DateTime;
   createdBy: Actor;
   deletedOnMsTeamsAt: Maybe<DateTime>;
-  html: Scalars['String'];
+  hasUnprocessedAttachments: Scalars['Boolean'];
   id: Scalars['ID'];
   lastEditedOnMsTeamsAt: Maybe<DateTime>;
+  markdownContent: Maybe<Scalars['String']>;
   msTeamsConversationId: Maybe<Scalars['ID']>;
   msTeamsMessageId: Maybe<Scalars['ID']>;
+  msTeamsMessageLink: Scalars['String'];
   msTeamsTeamId: Maybe<Scalars['ID']>;
   msTeamsTenantId: Maybe<Scalars['ID']>;
+  parentMessageId: Maybe<Scalars['ID']>;
   text: Scalars['String'];
   threadId: Maybe<Scalars['ID']>;
   updatedAt: DateTime;
@@ -3831,9 +4072,25 @@ export type MsTeamsMessageEntry = {
   attachments: Array<Attachment>;
   customerId: Scalars['ID'];
   deletedOnMsTeamsAt: Maybe<DateTime>;
+  hasUnprocessedAttachments: Scalars['Boolean'];
   lastEditedOnMsTeamsAt: Maybe<DateTime>;
+  markdownContent: Maybe<Scalars['String']>;
   msTeamsMessageId: Scalars['ID'];
+  msTeamsMessageLink: Scalars['String'];
   text: Scalars['String'];
+};
+
+export type MsTeamsThreadChannelDetails = {
+  __typename?: 'MSTeamsThreadChannelDetails';
+  msTeamsChannelId: Scalars['ID'];
+  msTeamsChannelName: Scalars['String'];
+  msTeamsTeamId: Scalars['ID'];
+  msTeamsTeamName: Scalars['String'];
+};
+
+export type MsTeamsThreadChannelDetailsInput = {
+  msTeamsChannelId: Scalars['ID'];
+  msTeamsTeamId: Scalars['ID'];
 };
 
 export type MachineUser = {
@@ -3939,6 +4196,11 @@ export type MarkThreadDiscussionAsResolvedOutput = {
   error: Maybe<MutationError>;
 };
 
+export type MentionInput = {
+  displayName: Scalars['String'];
+  userId: Scalars['ID'];
+};
+
 export enum MessageSource {
   Api = 'API',
   Chat = 'CHAT',
@@ -3968,9 +4230,18 @@ export enum MetricDimensionType {
   LabelType = 'LABEL_TYPE',
   MessageSource = 'MESSAGE_SOURCE',
   Priority = 'PRIORITY',
+  TenantField = 'TENANT_FIELD',
   ThreadField = 'THREAD_FIELD',
   Tier = 'TIER'
 }
+
+export type MinimalThreadWithDistance = {
+  __typename?: 'MinimalThreadWithDistance';
+  customerId: Scalars['ID'];
+  distance: Scalars['Float'];
+  threadId: Scalars['ID'];
+  tierId: Maybe<Scalars['ID']>;
+};
 
 export type MoveLabelTypeInput = {
   /** Move the label type immediately after the label type with the given ID. Required if beforeLabelTypeId is not provided. */
@@ -4084,7 +4355,7 @@ export type Mutation = {
   deleteHelpCenter: DeleteHelpCenterOutput;
   deleteHelpCenterArticle: DeleteHelpCenterArticleOutput;
   deleteHelpCenterArticleGroup: DeleteHelpCenterArticleGroupOutput;
-  deleteIndexedDocument: DeleteIndexedDocumentOutput;
+  deleteKnowledgeSource: DeleteKnowledgeSourceOutput;
   deleteMachineUser: DeleteMachineUserOutput;
   deleteMyFavoritePage: DeleteMyFavoritePageOutput;
   deleteMyLinearIntegration: DeleteMyLinearIntegrationOutput;
@@ -4098,6 +4369,9 @@ export type Mutation = {
   deleteServiceAuthorization: DeleteServiceAuthorizationOutput;
   deleteServiceLevelAgreement: DeleteServiceLevelAgreementOutput;
   deleteSnippet: DeleteSnippetOutput;
+  deleteTenant: DeleteTenantOutput;
+  deleteTenantField: DeleteTenantFieldOutput;
+  deleteTenantFieldSchema: DeleteTenantFieldSchemaOutput;
   deleteThreadChannelAssociation: DeleteThreadChannelAssociationOutput;
   deleteThreadField: DeleteThreadFieldOutput;
   deleteThreadFieldSchema: DeleteThreadFieldSchemaOutput;
@@ -4144,6 +4418,7 @@ export type Mutation = {
   removeLabels: RemoveLabelsOutput;
   removeLabelsFromUser: RemoveLabelsFromUserOutput;
   removeMembersFromTier: RemoveMembersFromTierOutput;
+  removeTenantFieldSchemaMapping: RemoveTenantFieldSchemaMappingOutput;
   removeUserFromActiveBillingRota: RemoveUserFromActiveBillingRotaOutput;
   removeWorkspaceAlternateSupportEmailAddress: RemoveWorkspaceAlternateSupportEmailAddressOutput;
   reorderAutoresponders: ReorderAutorespondersOutput;
@@ -4164,6 +4439,7 @@ export type Mutation = {
    * a Slack message, an email or a form submission. If the thread is empty, it will send an email to the customer.
    */
   replyToThread: ReplyToThreadOutput;
+  resolveCustomerForMSTeamsChannel: ResolveCustomerForMsTeamsChannelOutput;
   /** Resolves a customer for a Slack channel by finding or creating a customer associated with one of the Slack users in the channel. */
   resolveCustomerForSlackChannel: ResolveCustomerForSlackChannelOutput;
   sendBulkEmail: SendBulkEmailOutput;
@@ -4175,12 +4451,14 @@ export type Mutation = {
   sendSlackMessage: SendSlackMessageOutput;
   sendThreadDiscussionMessage: SendThreadDiscussionMessageOutput;
   setCustomerTenants: SetCustomerTenantsOutput;
+  setupTenantFieldSchemaMapping: SetupTenantFieldSchemaMappingOutput;
   shareThreadToUserInSlack: ShareThreadToUserInSlackOutput;
   snoozeThread: SnoozeThreadOutput;
   startServiceAuthorization: StartServiceAuthorizationOutput;
   syncBusinessHoursSlots: SyncBusinessHoursSlotsOutput;
   /** Adds or removes a reaction from a slack message timeline entry. */
   toggleSlackMessageReaction: ToggleSlackMessageReactionOutput;
+  toggleWorkflowRulePublished: ToggleWorkflowRulePublishedOutput;
   unarchiveLabelType: UnarchiveLabelTypeOutput;
   unassignThread: UnassignThreadOutput;
   /** Removes the spam mark from a customer. */
@@ -4235,6 +4513,8 @@ export type Mutation = {
   upsertHelpCenterArticle: UpsertHelpCenterArticleOutput;
   upsertMyEmailSignature: UpsertMyEmailSignatureOutput;
   upsertTenant: UpsertTenantOutput;
+  upsertTenantField: UpsertTenantFieldOutput;
+  upsertTenantFieldSchema: UpsertTenantFieldSchemaOutput;
   upsertThreadField: UpsertThreadFieldOutput;
   verifyHelpCenterCustomDomainName: VerifyHelpCenterCustomDomainNameOutput;
   verifyWorkspaceEmailDnsSettings: VerifyWorkspaceEmailDnsSettingsOutput;
@@ -4652,8 +4932,8 @@ export type MutationDeleteHelpCenterArticleGroupArgs = {
 };
 
 
-export type MutationDeleteIndexedDocumentArgs = {
-  input: DeleteIndexedDocumentInput;
+export type MutationDeleteKnowledgeSourceArgs = {
+  input: DeleteKnowledgeSourceInput;
 };
 
 
@@ -4694,6 +4974,21 @@ export type MutationDeleteServiceLevelAgreementArgs = {
 
 export type MutationDeleteSnippetArgs = {
   input: DeleteSnippetInput;
+};
+
+
+export type MutationDeleteTenantArgs = {
+  input: DeleteTenantInput;
+};
+
+
+export type MutationDeleteTenantFieldArgs = {
+  input: DeleteTenantFieldInput;
+};
+
+
+export type MutationDeleteTenantFieldSchemaArgs = {
+  input: DeleteTenantFieldSchemaInput;
 };
 
 
@@ -4877,6 +5172,11 @@ export type MutationRemoveMembersFromTierArgs = {
 };
 
 
+export type MutationRemoveTenantFieldSchemaMappingArgs = {
+  input: RemoveTenantFieldSchemaMappingInput;
+};
+
+
 export type MutationRemoveUserFromActiveBillingRotaArgs = {
   input: RemoveUserFromActiveBillingRotaInput;
 };
@@ -4914,6 +5214,11 @@ export type MutationReplyToEmailArgs = {
 
 export type MutationReplyToThreadArgs = {
   input: ReplyToThreadInput;
+};
+
+
+export type MutationResolveCustomerForMsTeamsChannelArgs = {
+  input: ResolveCustomerForMsTeamsChannelInput;
 };
 
 
@@ -4967,6 +5272,11 @@ export type MutationSetCustomerTenantsArgs = {
 };
 
 
+export type MutationSetupTenantFieldSchemaMappingArgs = {
+  input: SetupTenantFieldSchemaMappingInput;
+};
+
+
 export type MutationShareThreadToUserInSlackArgs = {
   input: ShareThreadToUserInSlackInput;
 };
@@ -4989,6 +5299,11 @@ export type MutationSyncBusinessHoursSlotsArgs = {
 
 export type MutationToggleSlackMessageReactionArgs = {
   input: ToggleSlackMessageReactionInput;
+};
+
+
+export type MutationToggleWorkflowRulePublishedArgs = {
+  input: ToggleWorkflowRulePublishedInput;
 };
 
 
@@ -5217,6 +5532,16 @@ export type MutationUpsertTenantArgs = {
 };
 
 
+export type MutationUpsertTenantFieldArgs = {
+  input: UpsertTenantFieldInput;
+};
+
+
+export type MutationUpsertTenantFieldSchemaArgs = {
+  input: UpsertTenantFieldSchemaInput;
+};
+
+
 export type MutationUpsertThreadFieldArgs = {
   input: UpsertThreadFieldInput;
 };
@@ -5415,6 +5740,8 @@ export type PriceTier = {
 
 export type Query = {
   __typename?: 'Query';
+  /** This API is in beta and may change without notice. */
+  activeThreadCluster: Maybe<ThreadCluster>;
   autoresponder: Maybe<Autoresponder>;
   autoresponders: AutoresponderConnection;
   billingPlans: BillingPlanConnection;
@@ -5431,6 +5758,7 @@ export type Query = {
   company: Maybe<Company>;
   /** Gets all Discord channels for this workspace, which match the specified filters. */
   connectedDiscordChannels: ConnectedDiscordChannelConnection;
+  connectedMSTeamsChannels: ConnectedMsTeamsChannelConnection;
   connectedSlackChannel: Maybe<ConnectedSlackChannel>;
   /** Gets all slack channels for this workspace, which match the specified filters. */
   connectedSlackChannels: ConnectedSlackChannelConnection;
@@ -5461,6 +5789,7 @@ export type Query = {
   escalationPaths: EscalationPathConnection;
   /** This API is in beta and may change without notice. */
   generatedReplies: Maybe<Array<GeneratedReply>>;
+  getMSTeamsMembersForChannel: MsTeamsChannelMembers;
   heatmapMetric: Maybe<HeatmapMetric>;
   helpCenter: Maybe<HelpCenter>;
   helpCenterArticle: Maybe<HelpCenterArticle>;
@@ -5473,6 +5802,8 @@ export type Query = {
   helpCenters: HelpCenterConnection;
   indexedDocuments: IndexedDocumentConnection;
   issueTrackerFields: Array<IssueTrackerField>;
+  knowledgeSource: Maybe<KnowledgeSource>;
+  knowledgeSources: KnowledgeSourceConnection;
   labelType: Maybe<LabelType>;
   labelTypes: LabelTypeConnection;
   machineUser: Maybe<MachineUser>;
@@ -5498,7 +5829,6 @@ export type Query = {
   myWorkspaceInvites: WorkspaceInviteConnection;
   myWorkspaces: WorkspaceConnection;
   permissions: Permissions;
-  /** This API is in beta and may change without notice. */
   relatedThreads: Array<ThreadWithDistance>;
   roles: RoleConnection;
   savedThreadsView: Maybe<SavedThreadsView>;
@@ -5509,6 +5839,7 @@ export type Query = {
    * they changed status (most recent first).
    */
   searchCustomers: CustomerSearchConnection;
+  searchKnowledgeSources: Array<KnowledgeSourceSearchResult>;
   /**
    * Searches for slack users in a slack channel based on a search term.
    * The search term can be part of either the slack's handle or full name.
@@ -5534,6 +5865,7 @@ export type Query = {
   /** List all the events types you can subscribe to. */
   subscriptionEventTypes: Array<SubscriptionEventType>;
   tenant: Maybe<Tenant>;
+  tenantFieldSchemas: TenantFieldSchemaConnection;
   tenants: TenantConnection;
   /** Get a thread by its ID. */
   thread: Maybe<Thread>;
@@ -5542,7 +5874,11 @@ export type Query = {
   /** Get a thread by its ref. */
   threadByRef: Maybe<Thread>;
   /** This API is in beta and may change without notice. */
+  threadCluster: Maybe<ThreadCluster>;
+  /** This API is in beta and may change without notice. */
   threadClusters: Array<ThreadCluster>;
+  /** This API is in beta and may change without notice. */
+  threadClustersPaginated: ThreadClusterConnection;
   threadDiscussion: Maybe<ThreadDiscussion>;
   threadFieldSchema: Maybe<ThreadFieldSchema>;
   threadFieldSchemas: ThreadFieldSchemaConnection;
@@ -5568,6 +5904,11 @@ export type Query = {
    * Deleted users are also returned, see isDeleted, deletedAt and deletedBy fields on the User type.
    */
   userByEmail: Maybe<User>;
+  /**
+   * Gets a list of Slack channels where the specified user is a member.
+   * This is a proxy to the Slack API's users.conversations endpoint.
+   */
+  userSlackChannelMemberships: Array<SlackChannelMembership>;
   users: UserConnection;
   /** Gets a webhook target. */
   webhookTarget: Maybe<WebhookTarget>;
@@ -5597,6 +5938,11 @@ export type Query = {
   workspaceSlackInstallationInfo: WorkspaceSlackInstallationInfo;
   workspaceSlackIntegration: Maybe<WorkspaceSlackIntegration>;
   workspaceSlackIntegrations: WorkspaceSlackIntegrationConnection;
+};
+
+
+export type QueryActiveThreadClusterArgs = {
+  threadId: Scalars['ID'];
 };
 
 
@@ -5657,6 +6003,14 @@ export type QueryConnectedDiscordChannelsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   discordGuildId: Scalars['String'];
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryConnectedMsTeamsChannelsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -5758,6 +6112,12 @@ export type QueryGeneratedRepliesArgs = {
 };
 
 
+export type QueryGetMsTeamsMembersForChannelArgs = {
+  msTeamsChannelId: Scalars['ID'];
+  msTeamsTeamId: Scalars['ID'];
+};
+
+
 export type QueryHeatmapMetricArgs = {
   name: Scalars['String'];
   options?: InputMaybe<HeatmapMetricOptionsInput>;
@@ -5807,6 +6167,7 @@ export type QueryHelpCentersArgs = {
 export type QueryIndexedDocumentsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<IndexedDocumentsFilter>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -5815,6 +6176,20 @@ export type QueryIndexedDocumentsArgs = {
 export type QueryIssueTrackerFieldsArgs = {
   issueTrackerType: Scalars['String'];
   selectedFields: Array<SelectedIssueTrackerField>;
+};
+
+
+export type QueryKnowledgeSourceArgs = {
+  knowledgeSourceId: Scalars['ID'];
+};
+
+
+export type QueryKnowledgeSourcesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<KnowledgeSourcesFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -5887,7 +6262,6 @@ export type QueryMyWorkspacesArgs = {
 
 export type QueryRelatedThreadsArgs = {
   threadId: Scalars['ID'];
-  variant?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -5928,6 +6302,12 @@ export type QuerySearchCustomersArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   searchQuery: CustomersSearchQuery;
+};
+
+
+export type QuerySearchKnowledgeSourcesArgs = {
+  pageSize?: InputMaybe<Scalars['Int']>;
+  searchQuery: Scalars['String'];
 };
 
 
@@ -6032,6 +6412,15 @@ export type QueryTenantArgs = {
 };
 
 
+export type QueryTenantFieldSchemasArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<TenantFieldSchemasFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryTenantsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -6056,8 +6445,22 @@ export type QueryThreadByRefArgs = {
 };
 
 
+export type QueryThreadClusterArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type QueryThreadClustersArgs = {
   variant?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryThreadClustersPaginatedArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<ThreadClustersFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -6179,6 +6582,11 @@ export type QueryUserAuthSlackIntegrationByThreadIdArgs = {
 
 export type QueryUserByEmailArgs = {
   email: Scalars['String'];
+};
+
+
+export type QueryUserSlackChannelMembershipsArgs = {
+  slackTeamId: Scalars['String'];
 };
 
 
@@ -6419,6 +6827,17 @@ export type RemoveMembersFromTierOutput = {
   memberships: Array<TierMembership>;
 };
 
+export type RemoveTenantFieldSchemaMappingInput = {
+  tenantFieldSchemaId: Scalars['ID'];
+};
+
+export type RemoveTenantFieldSchemaMappingOutput = {
+  __typename?: 'RemoveTenantFieldSchemaMappingOutput';
+  deletedTiers: Array<Tier>;
+  error: Maybe<MutationError>;
+  tenantFieldSchema: Maybe<TenantFieldSchema>;
+};
+
 export type RemoveUserFromActiveBillingRotaInput = {
   userId: Scalars['ID'];
 };
@@ -6524,6 +6943,17 @@ export type ReplyToThreadInput = {
 
 export type ReplyToThreadOutput = {
   __typename?: 'ReplyToThreadOutput';
+  error: Maybe<MutationError>;
+};
+
+export type ResolveCustomerForMsTeamsChannelInput = {
+  msTeamsChannelId: Scalars['ID'];
+  msTeamsTeamId: Scalars['ID'];
+};
+
+export type ResolveCustomerForMsTeamsChannelOutput = {
+  __typename?: 'ResolveCustomerForMSTeamsChannelOutput';
+  customer: Maybe<Customer>;
   error: Maybe<MutationError>;
 };
 
@@ -6747,6 +7177,7 @@ export type SendDiscordMessageOutput = {
 export type SendMsTeamsMessageInput = {
   attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
   markdownContent?: InputMaybe<Scalars['String']>;
+  mentions?: InputMaybe<Array<MentionInput>>;
   threadId: Scalars['ID'];
 };
 
@@ -6834,7 +7265,7 @@ export type ServiceAuthorizationConnectionDetails = {
   __typename?: 'ServiceAuthorizationConnectionDetails';
   hmacDigest: Scalars['String'];
   serviceAuthorizationId: Scalars['ID'];
-  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira. */
+  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira, shortcut, rootly, incidentio, github-app-oauth. */
   serviceIntegrationKey: Scalars['String'];
 };
 
@@ -6872,7 +7303,7 @@ export enum ServiceAuthorizationStatus {
 }
 
 export type ServiceAuthorizationsFilter = {
-  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira. */
+  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira, shortcut, rootly, incidentio, github-app-oauth. */
   serviceIntegrationKey?: InputMaybe<Scalars['String']>;
 };
 
@@ -7087,6 +7518,18 @@ export type SettingValueInput = {
   stringArray?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
+export type SetupTenantFieldSchemaMappingInput = {
+  mapsTo: TenantFieldMappingConcept;
+  tenantFieldSchemaId: Scalars['ID'];
+};
+
+export type SetupTenantFieldSchemaMappingOutput = {
+  __typename?: 'SetupTenantFieldSchemaMappingOutput';
+  createdTiers: Array<Tier>;
+  error: Maybe<MutationError>;
+  tenantFieldSchema: Maybe<TenantFieldSchema>;
+};
+
 export type ShareThreadToUserInSlackInput = {
   threadId: Scalars['ID'];
   userId: Scalars['ID'];
@@ -7122,6 +7565,11 @@ export type SingleValueMetricValue = {
   dimension: Maybe<MetricDimension>;
   userId: Maybe<Scalars['ID']>;
   value: Maybe<Scalars['Float']>;
+};
+
+export type SlackChannelMembership = {
+  __typename?: 'SlackChannelMembership';
+  slackChannelId: Scalars['ID'];
 };
 
 export type SlackCustomerIdentity = {
@@ -7273,7 +7721,7 @@ export enum SortDirection {
 }
 
 export type StartServiceAuthorizationInput = {
-  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira, shortcut. */
+  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira, shortcut, rootly, incidentio, github-app-oauth. */
   serviceIntegrationKey: Scalars['String'];
 };
 
@@ -7430,6 +7878,8 @@ export type Tenant = {
   externalId: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  source: TenantSource;
+  tenantFields: Array<TenantField>;
   tier: Maybe<Tier>;
   updatedAt: DateTime;
   updatedBy: InternalActor;
@@ -7447,6 +7897,114 @@ export type TenantEdge = {
   cursor: Scalars['String'];
   node: Tenant;
 };
+
+export type TenantField = {
+  __typename?: 'TenantField';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  externalFieldId: Scalars['ID'];
+  id: Scalars['ID'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+  value: TenantFieldValue;
+};
+
+export type TenantFieldBooleanValue = {
+  __typename?: 'TenantFieldBooleanValue';
+  booleanValue: Scalars['Boolean'];
+};
+
+export type TenantFieldDateTimeValue = {
+  __typename?: 'TenantFieldDateTimeValue';
+  dateValue: DateTime;
+};
+
+export type TenantFieldFilter = {
+  booleanValue?: InputMaybe<Scalars['Boolean']>;
+  dateValue?: InputMaybe<Scalars['String']>;
+  externalFieldId: Scalars['String'];
+  numberValue?: InputMaybe<Scalars['Float']>;
+  stringArrayValue?: InputMaybe<Array<Scalars['String']>>;
+  stringValue?: InputMaybe<Scalars['String']>;
+};
+
+export type TenantFieldIdentifier = {
+  externalFieldId: Scalars['ID'];
+  tenantId: Scalars['ID'];
+};
+
+export enum TenantFieldMappingConcept {
+  Tier = 'TIER'
+}
+
+export type TenantFieldNumberValue = {
+  __typename?: 'TenantFieldNumberValue';
+  numberValue: Scalars['Float'];
+};
+
+export type TenantFieldSchema = {
+  __typename?: 'TenantFieldSchema';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  externalFieldId: Scalars['ID'];
+  id: Scalars['ID'];
+  isVisible: Scalars['Boolean'];
+  label: Scalars['String'];
+  /** The concept this field maps to, if any. Used for automatic tier assignment. */
+  mapsTo: Maybe<TenantFieldMappingConcept>;
+  options: Maybe<Array<Scalars['String']>>;
+  order: Scalars['Int'];
+  source: Scalars['String'];
+  type: TenantFieldType;
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+};
+
+export type TenantFieldSchemaConnection = {
+  __typename?: 'TenantFieldSchemaConnection';
+  edges: Array<TenantFieldSchemaEdge>;
+  pageInfo: PageInfo;
+};
+
+export type TenantFieldSchemaEdge = {
+  __typename?: 'TenantFieldSchemaEdge';
+  cursor: Scalars['String'];
+  node: TenantFieldSchema;
+};
+
+export type TenantFieldSchemaInput = {
+  externalFieldId: Scalars['ID'];
+  isVisible: Scalars['Boolean'];
+  label: Scalars['String'];
+  options?: InputMaybe<Array<Scalars['String']>>;
+  order: Scalars['Int'];
+  source: Scalars['String'];
+  type: TenantFieldType;
+};
+
+export type TenantFieldSchemasFilter = {
+  source?: InputMaybe<Scalars['String']>;
+};
+
+export type TenantFieldStringArrayValue = {
+  __typename?: 'TenantFieldStringArrayValue';
+  arrayValue: Array<Scalars['String']>;
+};
+
+export type TenantFieldStringValue = {
+  __typename?: 'TenantFieldStringValue';
+  stringValue: Scalars['String'];
+};
+
+export enum TenantFieldType {
+  BooleanType = 'BOOLEAN_TYPE',
+  DatetimeType = 'DATETIME_TYPE',
+  NumberType = 'NUMBER_TYPE',
+  StringArray = 'STRING_ARRAY',
+  StringType = 'STRING_TYPE'
+}
+
+export type TenantFieldValue = TenantFieldBooleanValue | TenantFieldDateTimeValue | TenantFieldNumberValue | TenantFieldStringArrayValue | TenantFieldStringValue;
 
 export type TenantIdentifierInput = {
   externalId?: InputMaybe<Scalars['String']>;
@@ -7469,6 +8027,12 @@ export type TenantSearchResultEdge = {
   cursor: Scalars['String'];
   node: TenantSearchResult;
 };
+
+export enum TenantSource {
+  Api = 'API',
+  Hubspot = 'HUBSPOT',
+  Salesforce = 'SALESFORCE'
+}
 
 export type TenantTierMembership = {
   __typename?: 'TenantTierMembership';
@@ -7610,6 +8174,11 @@ export type ThreadAdditionalAssigneesTransitionedEntry = {
 
 export type ThreadAssignee = MachineUser | System | User;
 
+export type ThreadAssigneeInput = {
+  machineUserId?: InputMaybe<Scalars['ID']>;
+  userId?: InputMaybe<Scalars['ID']>;
+};
+
 export type ThreadAssignmentTransitionedEntry = {
   __typename?: 'ThreadAssignmentTransitionedEntry';
   nextAssignee: Maybe<ThreadAssignee>;
@@ -7641,22 +8210,43 @@ export type ThreadChannelAssociation = {
   updatedBy: InternalActor;
 };
 
-export type ThreadChannelDetails = ChatThreadChannelDetails | DiscordThreadChannelDetails | ImportThreadChannelDetails | SlackThreadChannelDetails;
+export type ThreadChannelDetails = ChatThreadChannelDetails | DiscordThreadChannelDetails | ImportThreadChannelDetails | MsTeamsThreadChannelDetails | SlackThreadChannelDetails;
 
 export type ThreadChannelDetailsInput = {
+  msTeams?: InputMaybe<MsTeamsThreadChannelDetailsInput>;
   slack?: InputMaybe<SlackThreadChannelDetailsInput>;
 };
 
 export type ThreadCluster = {
   __typename?: 'ThreadCluster';
   category: Scalars['String'];
+  confidence: Maybe<Scalars['Float']>;
+  createdAt: DateTime;
+  createdBy: Actor;
   description: Scalars['String'];
   emoji: Scalars['String'];
   id: Scalars['ID'];
-  meanDistance: Scalars['Float'];
   sentiment: Scalars['String'];
-  threads: Array<ThreadWithDistance>;
+  threads: Array<MinimalThreadWithDistance>;
   title: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: Actor;
+};
+
+export type ThreadClusterConnection = {
+  __typename?: 'ThreadClusterConnection';
+  edges: Array<ThreadClusterEdge>;
+  pageInfo: PageInfo;
+};
+
+export type ThreadClusterEdge = {
+  __typename?: 'ThreadClusterEdge';
+  cursor: Scalars['String'];
+  node: ThreadCluster;
+};
+
+export type ThreadClustersFilter = {
+  variant?: InputMaybe<Scalars['String']>;
 };
 
 export type ThreadConnection = {
@@ -7792,7 +8382,7 @@ export type ThreadField = {
   __typename?: 'ThreadField';
   booleanValue: Maybe<Scalars['Boolean']>;
   createdAt: DateTime;
-  createdBy: InternalActor;
+  createdBy: Actor;
   id: Scalars['ID'];
   isAiGenerated: Scalars['Boolean'];
   key: Scalars['String'];
@@ -7800,7 +8390,7 @@ export type ThreadField = {
   threadId: Scalars['ID'];
   type: ThreadFieldSchemaType;
   updatedAt: DateTime;
-  updatedBy: InternalActor;
+  updatedBy: Actor;
 };
 
 export type ThreadFieldFilter = {
@@ -8257,6 +8847,7 @@ export type ThreadsFilter = {
   statuses?: InputMaybe<Array<ThreadStatus>>;
   supportEmailAddresses?: InputMaybe<Array<Scalars['String']>>;
   surveyResponse?: InputMaybe<SurveyResponseFilter>;
+  tenantFields?: InputMaybe<Array<TenantFieldFilter>>;
   tenantIdentifiers?: InputMaybe<Array<TenantIdentifierInput>>;
   threadFields?: InputMaybe<Array<ThreadFieldFilter>>;
   threadIds?: InputMaybe<Array<Scalars['ID']>>;
@@ -8326,6 +8917,8 @@ export type Tier = {
   id: Scalars['ID'];
   /** If true, this tier will be applied to all threads that do not match any other tier. Only one tier can be the default tier. */
   isDefault: Scalars['Boolean'];
+  /** If true, this tier was automatically created based on tenant field values and should not be manually modified. */
+  isMachineTier: Scalars['Boolean'];
   memberships: TierMembershipConnection;
   /** The name of this tier. */
   name: Scalars['String'];
@@ -8410,6 +9003,7 @@ export enum TimeSeriesMetricDimensionType {
   LabelType = 'LABEL_TYPE',
   MessageSource = 'MESSAGE_SOURCE',
   Priority = 'PRIORITY',
+  TenantField = 'TENANT_FIELD',
   ThreadField = 'THREAD_FIELD',
   Tier = 'TIER'
 }
@@ -8429,7 +9023,8 @@ export enum TimeSeriesMetricIntervalUnit {
   Hour = 'HOUR',
   Month = 'MONTH',
   Quarter = 'QUARTER',
-  Week = 'WEEK'
+  Week = 'WEEK',
+  Year = 'YEAR'
 }
 
 export type TimeSeriesMetricOptions = {
@@ -8516,6 +9111,16 @@ export type ToggleSlackMessageReactionInput = {
 export type ToggleSlackMessageReactionOutput = {
   __typename?: 'ToggleSlackMessageReactionOutput';
   error: Maybe<MutationError>;
+};
+
+export type ToggleWorkflowRulePublishedInput = {
+  workflowRuleId: Scalars['ID'];
+};
+
+export type ToggleWorkflowRulePublishedOutput = {
+  __typename?: 'ToggleWorkflowRulePublishedOutput';
+  error: Maybe<MutationError>;
+  workflowRule: Maybe<WorkflowRule>;
 };
 
 export type UnarchiveLabelTypeInput = {
@@ -8765,7 +9370,9 @@ export type UpdateHelpCenterIndexOutput = {
 };
 
 export type UpdateHelpCenterInput = {
+  access?: InputMaybe<HelpCenterAccessSettingsInput>;
   agentAvatarImage?: InputMaybe<HelpCenterThemedImageInput>;
+  authMechanism?: InputMaybe<HelpCenterAuthMechanismInput>;
   bodyCustomJs?: InputMaybe<StringInput>;
   color?: InputMaybe<StringInput>;
   description?: InputMaybe<Scalars['String']>;
@@ -8773,6 +9380,7 @@ export type UpdateHelpCenterInput = {
   headCustomJs?: InputMaybe<StringInput>;
   helpCenterId: Scalars['ID'];
   internalName?: InputMaybe<Scalars['String']>;
+  isChatEnabled?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<HelpCenterThemedImageInput>;
   portalSettings?: InputMaybe<HelpCenterPortalSettingsInput>;
   publicName?: InputMaybe<Scalars['String']>;
@@ -9159,6 +9767,34 @@ export enum UpsertResult {
   Updated = 'UPDATED'
 }
 
+export type UpsertTenantFieldInput = {
+  arrayValue?: InputMaybe<Array<Scalars['String']>>;
+  booleanValue?: InputMaybe<Scalars['Boolean']>;
+  dateValue?: InputMaybe<Scalars['String']>;
+  numberValue?: InputMaybe<Scalars['Float']>;
+  stringValue?: InputMaybe<Scalars['String']>;
+  tenantFieldIdentifier: TenantFieldIdentifier;
+  type: TenantFieldType;
+};
+
+export type UpsertTenantFieldOutput = {
+  __typename?: 'UpsertTenantFieldOutput';
+  error: Maybe<MutationError>;
+  result: Maybe<UpsertResult>;
+  tenantField: Maybe<TenantField>;
+};
+
+export type UpsertTenantFieldSchemaInput = {
+  tenantFieldSchemas: Array<TenantFieldSchemaInput>;
+};
+
+export type UpsertTenantFieldSchemaOutput = {
+  __typename?: 'UpsertTenantFieldSchemaOutput';
+  error: Maybe<MutationError>;
+  result: Maybe<UpsertResult>;
+  tenantFieldSchemas: Array<TenantFieldSchema>;
+};
+
 export type UpsertTenantInput = {
   externalId: Scalars['String'];
   identifier: TenantIdentifierInput;
@@ -9472,6 +10108,7 @@ export type WorkflowRule = {
   name: Scalars['String'];
   /** JSON-encoded payload of the rule definition. */
   payload: Scalars['String'];
+  publishedAt: Maybe<DateTime>;
   updatedAt: DateTime;
   updatedBy: InternalActor;
 };
@@ -9486,6 +10123,12 @@ export type WorkflowRuleEdge = {
   __typename?: 'WorkflowRuleEdge';
   cursor: Scalars['String'];
   node: WorkflowRule;
+};
+
+export type WorkosConnectAuthMechanismInput = {
+  apiHost: Scalars['String'];
+  appClientId: Scalars['String'];
+  appSecret: Scalars['String'];
 };
 
 export type Workspace = {
@@ -9845,7 +10488,7 @@ type KnowledgeSourceParts_KnowledgeSourceUrl_Fragment = { __typename?: 'Knowledg
 
 export type KnowledgeSourcePartsFragment = KnowledgeSourceParts_KnowledgeSourceSitemap_Fragment | KnowledgeSourceParts_KnowledgeSourceUrl_Fragment;
 
-export type LabelPartsFragment = { __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } };
+export type LabelPartsFragment = { __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } };
 
 export type LabelTypePartsFragment = { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } };
 
@@ -9907,9 +10550,9 @@ export type ThreadAssigneePartsFragment = ThreadAssigneeParts_MachineUser_Fragme
 
 export type ThreadEventPartsFragment = { __typename?: 'ThreadEvent', id: string, threadId: string, title: string, customerId: string, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } };
 
-export type ThreadFieldPartsFragment = { __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } };
+export type ThreadFieldPartsFragment = { __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } };
 
-export type ThreadPartsFragment = { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } };
+export type ThreadPartsFragment = { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } };
 
 type TierMembershipParts_CompanyTierMembership_Fragment = { __typename: 'CompanyTierMembership', id: string, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } };
 
@@ -9948,7 +10591,7 @@ export type AddLabelsMutationVariables = Exact<{
 }>;
 
 
-export type AddLabelsMutation = { __typename?: 'Mutation', addLabels: { __typename?: 'AddLabelsOutput', labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type AddLabelsMutation = { __typename?: 'Mutation', addLabels: { __typename?: 'AddLabelsOutput', labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type AddMembersToTierMutationVariables = Exact<{
   input: AddMembersToTierInput;
@@ -9969,14 +10612,14 @@ export type AssignThreadMutationVariables = Exact<{
 }>;
 
 
-export type AssignThreadMutation = { __typename?: 'Mutation', assignThread: { __typename?: 'AssignThreadOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type AssignThreadMutation = { __typename?: 'Mutation', assignThread: { __typename?: 'AssignThreadOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type ChangeThreadPriorityMutationVariables = Exact<{
   input: ChangeThreadPriorityInput;
 }>;
 
 
-export type ChangeThreadPriorityMutation = { __typename?: 'Mutation', changeThreadPriority: { __typename?: 'ChangeThreadPriorityOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type ChangeThreadPriorityMutation = { __typename?: 'Mutation', changeThreadPriority: { __typename?: 'ChangeThreadPriorityOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type CreateAttachmentUploadUrlMutationVariables = Exact<{
   input: CreateAttachmentUploadUrlInput;
@@ -10025,7 +10668,7 @@ export type CreateThreadMutationVariables = Exact<{
 }>;
 
 
-export type CreateThreadMutation = { __typename?: 'Mutation', createThread: { __typename?: 'CreateThreadOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type CreateThreadMutation = { __typename?: 'Mutation', createThread: { __typename?: 'CreateThreadOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type CreateThreadEventMutationVariables = Exact<{
   input: CreateThreadEventInput;
@@ -10081,14 +10724,14 @@ export type MarkThreadAsDoneMutationVariables = Exact<{
 }>;
 
 
-export type MarkThreadAsDoneMutation = { __typename?: 'Mutation', markThreadAsDone: { __typename?: 'MarkThreadAsDoneOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type MarkThreadAsDoneMutation = { __typename?: 'Mutation', markThreadAsDone: { __typename?: 'MarkThreadAsDoneOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type MarkThreadAsTodoMutationVariables = Exact<{
   input: MarkThreadAsTodoInput;
 }>;
 
 
-export type MarkThreadAsTodoMutation = { __typename?: 'Mutation', markThreadAsTodo: { __typename?: 'MarkThreadAsTodoOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type MarkThreadAsTodoMutation = { __typename?: 'Mutation', markThreadAsTodo: { __typename?: 'MarkThreadAsTodoOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type RemoveCustomerFromCustomerGroupsMutationVariables = Exact<{
   input: RemoveCustomerFromCustomerGroupsInput;
@@ -10132,6 +10775,13 @@ export type ReplyToThreadMutationVariables = Exact<{
 
 export type ReplyToThreadMutation = { __typename?: 'Mutation', replyToThread: { __typename?: 'ReplyToThreadOutput', error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
+export type SendChatMutationVariables = Exact<{
+  input: SendChatInput;
+}>;
+
+
+export type SendChatMutation = { __typename?: 'Mutation', sendChat: { __typename?: 'SendChatOutput', chat: { __typename?: 'Chat', id: string, text: string | null, attachments: Array<{ __typename?: 'Attachment', id: string }>, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+
 export type SendCustomerChatMutationVariables = Exact<{
   input: SendCustomerChatInput;
 }>;
@@ -10158,14 +10808,14 @@ export type SnoozeThreadMutationVariables = Exact<{
 }>;
 
 
-export type SnoozeThreadMutation = { __typename?: 'Mutation', snoozeThread: { __typename?: 'SnoozeThreadOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type SnoozeThreadMutation = { __typename?: 'Mutation', snoozeThread: { __typename?: 'SnoozeThreadOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type UnassignThreadMutationVariables = Exact<{
   input: UnassignThreadInput;
 }>;
 
 
-export type UnassignThreadMutation = { __typename?: 'Mutation', unassignThread: { __typename?: 'UnassignThreadOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type UnassignThreadMutation = { __typename?: 'Mutation', unassignThread: { __typename?: 'UnassignThreadOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type UpdateCompanyTierMutationVariables = Exact<{
   input: UpdateCompanyTierInput;
@@ -10200,7 +10850,7 @@ export type UpdateThreadTenantMutationVariables = Exact<{
 }>;
 
 
-export type UpdateThreadTenantMutation = { __typename?: 'Mutation', updateThreadTenant: { __typename?: 'UpdateThreadTenantOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type UpdateThreadTenantMutation = { __typename?: 'Mutation', updateThreadTenant: { __typename?: 'UpdateThreadTenantOutput', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type UpdateWebhookTargetMutationVariables = Exact<{
   input: UpdateWebhookTargetInput;
@@ -10235,7 +10885,7 @@ export type UpsertThreadFieldMutationVariables = Exact<{
 }>;
 
 
-export type UpsertThreadFieldMutation = { __typename?: 'Mutation', upsertThreadField: { __typename?: 'UpsertThreadFieldOutput', result: UpsertResult | null, threadField: { __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
+export type UpsertThreadFieldMutation = { __typename?: 'Mutation', upsertThreadField: { __typename?: 'UpsertThreadFieldOutput', result: UpsertResult | null, threadField: { __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, error: { __typename: 'MutationError', message: string, type: MutationErrorType, code: string, fields: Array<{ __typename?: 'MutationFieldError', field: string, message: string, type: MutationFieldErrorType }> } | null } };
 
 export type CompaniesQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -10387,7 +11037,7 @@ export type ThreadQueryVariables = Exact<{
 }>;
 
 
-export type ThreadQuery = { __typename?: 'Query', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null };
+export type ThreadQuery = { __typename?: 'Query', thread: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null };
 
 export type ThreadByExternalIdQueryVariables = Exact<{
   customerId: Scalars['ID'];
@@ -10395,14 +11045,14 @@ export type ThreadByExternalIdQueryVariables = Exact<{
 }>;
 
 
-export type ThreadByExternalIdQuery = { __typename?: 'Query', threadByExternalId: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null };
+export type ThreadByExternalIdQuery = { __typename?: 'Query', threadByExternalId: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null };
 
 export type ThreadByRefQueryVariables = Exact<{
   ref: Scalars['String'];
 }>;
 
 
-export type ThreadByRefQuery = { __typename?: 'Query', threadByRef: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null };
+export type ThreadByRefQuery = { __typename?: 'Query', threadByRef: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null };
 
 export type ThreadsQueryVariables = Exact<{
   filters?: InputMaybe<ThreadsFilter>;
@@ -10414,7 +11064,7 @@ export type ThreadsQueryVariables = Exact<{
 }>;
 
 
-export type ThreadsQuery = { __typename?: 'Query', threads: { __typename?: 'ThreadConnection', edges: Array<{ __typename?: 'ThreadEdge', cursor: string, node: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
+export type ThreadsQuery = { __typename?: 'Query', threads: { __typename?: 'ThreadConnection', edges: Array<{ __typename?: 'ThreadEdge', cursor: string, node: { __typename: 'Thread', id: string, ref: string, externalId: string | null, status: ThreadStatus, title: string, description: string | null, previewText: string | null, priority: number, customer: { __typename?: 'Customer', id: string }, statusDetail: { __typename: 'ThreadStatusDetailCreated', createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneAutomaticallySet', afterSeconds: number | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailDoneManuallySet', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailIgnored', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailInProgress', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailLinearUpdated' } | { __typename: 'ThreadStatusDetailNewReply', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailReplied' } | { __typename?: 'ThreadStatusDetailSnoozed' } | { __typename: 'ThreadStatusDetailThreadDiscussionResolved', threadDiscussionId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailThreadLinkUpdated', linearIssueId: string | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename?: 'ThreadStatusDetailUnsnoozed' } | { __typename: 'ThreadStatusDetailWaitingForCustomer', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'ThreadStatusDetailWaitingForDuration', statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, waitingUntil: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, statusChangedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, tenant: { __typename: 'Tenant', id: string, name: string, externalId: string, url: string | null, tier: { __typename: 'Tier', id: string, name: string, externalId: string | null, defaultThreadPriority: number, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } | null, labels: Array<{ __typename: 'Label', id: string, labelType: { __typename: 'LabelType', id: string, name: string, icon: string | null, isArchived: boolean, archivedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, archivedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, threadFields: Array<{ __typename: 'ThreadField', id: string, key: string, type: ThreadFieldSchemaType, threadId: string, stringValue: string | null, booleanValue: boolean | null, isAiGenerated: boolean, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename?: 'CustomerActor' } | { __typename?: 'DeletedCustomerActor' } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } }>, assignedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } | null, assignedTo: { __typename: 'MachineUser', id: string, fullName: string, publicName: string, description: string | null, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | { __typename: 'System', id: string } | { __typename: 'User', id: string, fullName: string, publicName: string, email: string, slackIdentities: Array<{ __typename?: 'SlackUserIdentity', slackTeamId: string, slackUserId: string }>, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string } } | null, createdAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, createdBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string }, updatedAt: { __typename: 'DateTime', iso8601: string, unixTimestamp: string }, updatedBy: { __typename: 'CustomerActor', customerId: string } | { __typename: 'DeletedCustomerActor', customerId: string } | { __typename: 'MachineUserActor', machineUserId: string } | { __typename: 'SystemActor', systemId: string } | { __typename: 'UserActor', userId: string } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
 
 export type TierQueryVariables = Exact<{
   tierId: Scalars['ID'];
@@ -10539,6 +11189,7 @@ export const RemoveLabelsDocument = {"kind":"Document","definitions":[{"kind":"O
 export const RemoveMembersFromTierDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"removeMembersFromTier"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoveMembersFromTierInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeMembersFromTier"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<RemoveMembersFromTierMutation, RemoveMembersFromTierMutationVariables>;
 export const ReplyToEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"replyToEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ReplyToEmailInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"replyToEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"customerId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SupportEmailAddressEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"supportEmailAddress"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DeletedCustomerEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"customerId"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailParticipantParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EmailParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"emailActor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FileSizeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FileSize"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"kiloBytes"}},{"kind":"Field","name":{"kind":"Name","value":"megaBytes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AttachmentParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Attachment"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"fileSize"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FileSizeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fileExtension"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Email"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"inReplyToEmailId"}},{"kind":"Field","name":{"kind":"Name","value":"from"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"to"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"additionalRecipients"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"hiddenRecipients"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"textContent"}},{"kind":"Field","name":{"kind":"Name","value":"markdownContent"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AttachmentParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<ReplyToEmailMutation, ReplyToEmailMutationVariables>;
 export const ReplyToThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"replyToThread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ReplyToThreadInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"replyToThread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<ReplyToThreadMutation, ReplyToThreadMutationVariables>;
+export const SendChatDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"sendChat"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendChatInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendChat"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ChatParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ChatParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Chat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<SendChatMutation, SendChatMutationVariables>;
 export const SendCustomerChatDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"sendCustomerChat"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendCustomerChatInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendCustomerChat"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chat"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ChatParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ChatParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Chat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<SendCustomerChatMutation, SendCustomerChatMutationVariables>;
 export const SendNewEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"sendNewEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendNewEmailInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendNewEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailActorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"customerId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SupportEmailAddressEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"supportEmailAddress"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DeletedCustomerEmailActor"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"customerId"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailParticipantParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"EmailParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"emailActor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailActorParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateTimeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"iso8601"}},{"kind":"Field","name":{"kind":"Name","value":"unixTimestamp"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FileSizeParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FileSize"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"kiloBytes"}},{"kind":"Field","name":{"kind":"Name","value":"megaBytes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AttachmentParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Attachment"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"fileSize"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FileSizeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fileExtension"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EmailParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Email"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"inReplyToEmailId"}},{"kind":"Field","name":{"kind":"Name","value":"from"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"to"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"additionalRecipients"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"hiddenRecipients"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"EmailParticipantParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"textContent"}},{"kind":"Field","name":{"kind":"Name","value":"markdownContent"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DateTimeParts"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AttachmentParts"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<SendNewEmailMutation, SendNewEmailMutationVariables>;
 export const SetCustomerTenantsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"setCustomerTenants"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SetCustomerTenantsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setCustomerTenants"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MutationErrorParts"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MutationErrorParts"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MutationError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<SetCustomerTenantsMutation, SetCustomerTenantsMutationVariables>;

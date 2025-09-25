@@ -582,6 +582,7 @@ export interface Thread {
   statusDetail: ThreadStatusDetail | null;
   assignee: ThreadAssignee | null;
   assignedAt: Datetime | null;
+  additionalAssignees?: ThreadAssignee[];
   labels: Label[];
   firstInboundMessageInfo: ThreadMessageInfo | null;
   firstOutboundMessageInfo: ThreadMessageInfo | null;
@@ -802,9 +803,9 @@ export interface ThreadField {
   stringValue: string | null;
   booleanValue: boolean | null;
   createdAt: Datetime;
-  createdBy: InternalActor;
+  createdBy: Actor;
   updatedAt: Datetime;
-  updatedBy: InternalActor;
+  updatedBy: Actor;
   [k: string]: unknown;
 }
 export interface ThreadFieldUpdatedPublicEventPayload {
@@ -943,7 +944,7 @@ export interface ThreadDiscordMessageUpdatedEventPayload {
 }
 export interface WebhookMetadata {
   webhookTargetId: Id;
-  webhookTargetVersion: "2024-09-18";
+  webhookTargetVersion: "2025-08-06";
   webhookDeliveryAttemptId: Id;
   webhookDeliveryAttemptNumber: number;
   webhookDeliveryAttemptTimestamp: Datetime;
