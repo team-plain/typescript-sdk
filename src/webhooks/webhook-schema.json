@@ -1981,13 +1981,13 @@
           "$ref": "#/definitions/datetime"
         },
         "createdBy": {
-          "$ref": "#/definitions/internalActor"
+          "$ref": "#/definitions/actor"
         },
         "updatedAt": {
           "$ref": "#/definitions/datetime"
         },
         "updatedBy": {
-          "$ref": "#/definitions/internalActor"
+          "$ref": "#/definitions/actor"
         }
       },
       "required": [
@@ -2091,6 +2091,13 @@
               "type": "null"
             }
           ]
+        },
+        "additionalAssignees": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/threadAssignee"
+          },
+          "default": []
         },
         "labels": {
           "type": "array",
@@ -3091,7 +3098,7 @@
         },
         "webhookTargetVersion": {
           "type": "string",
-          "const": "2024-09-18"
+          "const": "2025-08-06"
         },
         "webhookDeliveryAttemptId": {
           "$ref": "#/definitions/id"

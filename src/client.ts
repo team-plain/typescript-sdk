@@ -64,6 +64,7 @@ import {
   ReplyToThreadDocument,
   SearchCompaniesDocument,
   SearchTenantsDocument,
+  SendChatDocument,
   SendCustomerChatDocument,
   SendNewEmailDocument,
   SetCustomerTenantsDocument,
@@ -1217,6 +1218,19 @@ export class PlainClient {
     });
 
     return unwrapData(res, (q) => nonNullable(q.sendCustomerChat.chat));
+  }
+
+  async sendChat(
+    input: VariablesOf<typeof SendChatDocument>['input']
+  ): SDKResult<ChatPartsFragment> {
+    const res = await request(this.#ctx, {
+      query: SendChatDocument,
+      variables: {
+        input,
+      },
+    });
+
+    return unwrapData(res, (q) => nonNullable(q.sendChat.chat));
   }
 
   async createKnowledgeSource(
