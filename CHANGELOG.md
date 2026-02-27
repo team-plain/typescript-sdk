@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.12.0
+
+### Minor Changes
+
+- cf84fdf: Update webhook schema to 2026-02-27
+
 ## 5.11.0
 
 ### Minor Changes
