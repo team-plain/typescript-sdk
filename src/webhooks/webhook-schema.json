@@ -127,6 +127,7 @@
         "thread.thread_field_updated",
         "thread.thread_field_deleted",
         "thread.service_level_agreement_status_transitioned",
+        "thread.thread_tenant_updated",
         "customer.customer_created",
         "customer.customer_updated",
         "customer.customer_deleted",
@@ -171,6 +172,42 @@
     "datetime": {
       "type": "string",
       "format": "date-time"
+    },
+    "nullableString": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "nullableDatetime": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/datetime"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullableActor": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/actor"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullableInternalActor": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/internalActor"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "userActor": {
       "type": "object",
@@ -306,6 +343,7 @@
             "ONLINE",
             "OFFLINE",
             "BREAK",
+            "AWAY",
             "UNKNOWN_USER_STATUS"
           ]
         },
@@ -325,24 +363,10 @@
           "$ref": "#/definitions/internalActor"
         },
         "deletedAt": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/datetime"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "#/definitions/nullableDatetime"
         },
         "deletedBy": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/internalActor"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "#/definitions/nullableInternalActor"
         }
       },
       "required": [
@@ -392,24 +416,10 @@
           "$ref": "#/definitions/internalActor"
         },
         "deletedAt": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/datetime"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "#/definitions/nullableDatetime"
         },
         "deletedBy": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/internalActor"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "#/definitions/nullableInternalActor"
         }
       },
       "required": [
@@ -637,10 +647,7 @@
           "minLength": 1
         },
         "fileExtension": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "$ref": "#/definitions/nullableString"
         },
         "createdAt": {
           "$ref": "#/definitions/datetime"
@@ -959,10 +966,7 @@
           "$ref": "#/definitions/attachment/properties/fileMimeType"
         },
         "fileExtension": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "$ref": "#/definitions/nullableString"
         },
         "createdAt": {
           "$ref": "#/definitions/datetime"
@@ -1011,10 +1015,7 @@
           "$ref": "#/definitions/attachment/properties/fileMimeType"
         },
         "fileExtension": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "$ref": "#/definitions/nullableString"
         },
         "createdAt": {
           "$ref": "#/definitions/datetime"
@@ -1063,10 +1064,7 @@
           "$ref": "#/definitions/attachment/properties/fileMimeType"
         },
         "fileExtension": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "$ref": "#/definitions/nullableString"
         },
         "createdAt": {
           "$ref": "#/definitions/datetime"
@@ -1573,6 +1571,22 @@
             }
           ]
         },
+        "externalId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "isExcludedFromAi": {
+          "type": "boolean",
+          "default": false
+        },
         "createdAt": {
           "$ref": "#/definitions/datetime"
         },
@@ -1694,10 +1708,27 @@
     "threadPriority": {
       "type": "number"
     },
+    "threadPriorityFilter": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/threadPriority"
+      },
+      "minItems": 1
+    },
     "threadAssignee": {
       "anyOf": [
         {
-          "$ref": "#/definitions/componentRowContent/anyOf/0"
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "UNKNOWN"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
         },
         {
           "$ref": "#/definitions/user"
@@ -1779,7 +1810,17 @@
     "threadStatusDetail": {
       "anyOf": [
         {
-          "$ref": "#/definitions/componentRowContent/anyOf/0"
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "UNKNOWN"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -1962,6 +2003,9 @@
             "STRING",
             "BOOL",
             "ENUM",
+            "NUMBER",
+            "CURRENCY",
+            "DATE",
             "UNKNOWN_THREAD_FIELD_SCHEMA_TYPE"
           ]
         },
@@ -1976,6 +2020,20 @@
             "boolean",
             "null"
           ]
+        },
+        "numberValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": null
+        },
+        "dateValue": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
         },
         "createdAt": {
           "$ref": "#/definitions/datetime"
@@ -2201,7 +2259,7 @@
         "text": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 5000
+          "maxLength": 10000
         },
         "markdown": {
           "anyOf": [
@@ -2621,7 +2679,17 @@
     "serviceLevelAgreement": {
       "anyOf": [
         {
-          "$ref": "#/definitions/componentRowContent/anyOf/0"
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "UNKNOWN"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -2636,10 +2704,7 @@
               "type": "boolean"
             },
             "threadPriorityFilter": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/threadPriority"
-              }
+              "$ref": "#/definitions/threadPriorityFilter"
             },
             "createdAt": {
               "$ref": "#/definitions/datetime"
@@ -2688,10 +2753,7 @@
               "$ref": "#/definitions/serviceLevelAgreement/anyOf/1/properties/useBusinessHoursOnly"
             },
             "threadPriorityFilter": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/threadPriority"
-              }
+              "$ref": "#/definitions/threadPriorityFilter"
             },
             "createdAt": {
               "$ref": "#/definitions/datetime"
@@ -3044,7 +3106,8 @@
         "customer",
         "previousCustomer"
       ],
-      "additionalProperties": true
+      "additionalProperties": true,
+      "description": "A customer has been created or updated"
     },
     "timelineEntryChangedPayload": {
       "type": "object",
@@ -3061,7 +3124,8 @@
             {
               "type": "null"
             }
-          ]
+          ],
+          "description": "null if changeType=ADDED"
         },
         "timelineEntry": {
           "anyOf": [
@@ -3071,7 +3135,8 @@
             {
               "type": "null"
             }
-          ]
+          ],
+          "description": "null if changeType=REMOVED"
         },
         "changeType": {
           "type": "string",
@@ -3088,7 +3153,8 @@
         "timelineEntry",
         "changeType"
       ],
-      "additionalProperties": true
+      "additionalProperties": true,
+      "description": "A timeline entry has been added, updated or removed"
     },
     "webhookMetadata": {
       "type": "object",
@@ -3098,7 +3164,7 @@
         },
         "webhookTargetVersion": {
           "type": "string",
-          "const": "2025-08-06"
+          "const": "2026-02-27"
         },
         "webhookDeliveryAttemptId": {
           "$ref": "#/definitions/id"
@@ -3332,7 +3398,11 @@
           "const": "thread.thread_labels_changed"
         },
         "changeType": {
-          "$ref": "#/definitions/customerGroupMembershipsChangedPayload/properties/changeType"
+          "type": "string",
+          "enum": [
+            "ADDED",
+            "REMOVED"
+          ]
         },
         "thread": {
           "$ref": "#/definitions/thread"
@@ -3501,7 +3571,7 @@
             "text": {
               "type": "string",
               "minLength": 1,
-              "maxLength": 5000
+              "maxLength": 10000
             },
             "markdown": {
               "anyOf": [
@@ -3528,24 +3598,10 @@
               "$ref": "#/definitions/internalActor"
             },
             "deletedAt": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/datetime"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/nullableDatetime"
             },
             "deletedBy": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/internalActor"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/nullableInternalActor"
             }
           },
           "required": [
@@ -3648,6 +3704,15 @@
           "type": "string",
           "const": "thread.slack_message_updated"
         },
+        "changeType": {
+          "type": "string",
+          "enum": [
+            "MESSAGE_EDITED",
+            "MESSAGE_DELETED",
+            "REACTIONS_CHANGED",
+            "UNKNOWN_SLACK_MESSAGE_CHANGE_TYPE"
+          ]
+        },
         "thread": {
           "$ref": "#/definitions/thread"
         },
@@ -3657,6 +3722,7 @@
       },
       "required": [
         "eventType",
+        "changeType",
         "thread",
         "slackMessage"
       ],
@@ -3782,7 +3848,8 @@
         "eventType",
         "customer"
       ],
-      "additionalProperties": true
+      "additionalProperties": true,
+      "description": "A customer has been created"
     },
     "customerUpdatedPublicEventPayload": {
       "type": "object",
@@ -3803,7 +3870,8 @@
         "customer",
         "previousCustomer"
       ],
-      "additionalProperties": true
+      "additionalProperties": true,
+      "description": "A customer has been updated"
     },
     "customerDeletedPublicEventPayload": {
       "type": "object",
@@ -3820,7 +3888,8 @@
         "eventType",
         "previousCustomer"
       ],
-      "additionalProperties": true
+      "additionalProperties": true,
+      "description": "A customer has been deleted"
     }
   },
   "$schema": "http://json-schema.org/draft-07/schema#"

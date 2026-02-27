@@ -25,6 +25,7 @@ export type Actor =
   | MachineUserActor
   | SystemActor
   | CustomerActor;
+export type NullableString = string | null;
 export type EmailActor =
   | {
       actorType: "UNKNOWN";
@@ -182,6 +183,8 @@ export type ThreadAssignee =
       id: string;
       [k: string]: unknown;
     };
+export type NullableDatetime = Datetime | null;
+export type NullableInternalActor = InternalActor | null;
 export type ServiceLevelAgreement =
   | {
       type: "UNKNOWN";
@@ -191,7 +194,7 @@ export type ServiceLevelAgreement =
       id: Id;
       tier: Tier;
       useBusinessHoursOnly: boolean;
-      threadPriorityFilter: ThreadPriority[];
+      threadPriorityFilter: ThreadPriorityFilter;
       createdAt: Datetime;
       createdBy: InternalActor;
       updatedAt: Datetime;
@@ -204,7 +207,7 @@ export type ServiceLevelAgreement =
       id: Id;
       tier: Tier;
       useBusinessHoursOnly: boolean;
-      threadPriorityFilter: ThreadPriority[];
+      threadPriorityFilter: ThreadPriorityFilter;
       createdAt: Datetime;
       createdBy: InternalActor;
       updatedAt: Datetime;
@@ -213,6 +216,10 @@ export type ServiceLevelAgreement =
       nextResponseTimeMinutes: number;
       [k: string]: unknown;
     };
+/**
+ * @minItems 1
+ */
+export type ThreadPriorityFilter = [ThreadPriority, ...ThreadPriority[]];
 export type ServiceLevelAgreementStatusDetail =
   | {
       status: "UNKNOWN";
@@ -310,6 +317,7 @@ export interface WebhooksSchemaDefinition {
     | "thread.thread_field_updated"
     | "thread.thread_field_deleted"
     | "thread.service_level_agreement_status_transitioned"
+    | "thread.thread_tenant_updated"
     | "customer.customer_created"
     | "customer.customer_updated"
     | "customer.customer_deleted"
@@ -320,6 +328,9 @@ export interface WebhooksSchemaDefinition {
   webhookMetadata: WebhookMetadata;
   [k: string]: unknown;
 }
+/**
+ * A customer has been created or updated
+ */
 export interface CustomerChangedPayload {
   changeType: "ADDED" | "UPDATED";
   eventType: "customer.customer_changed";
@@ -397,9 +408,18 @@ export interface CustomerGroupMembershipsChangedPayload {
   previousCustomer: Customer;
   [k: string]: unknown;
 }
+/**
+ * A timeline entry has been added, updated or removed
+ */
 export interface TimelineEntryChangedPayload {
   eventType: "timeline.timeline_entry_changed";
+  /**
+   * null if changeType=ADDED
+   */
   previousTimelineEntry: TimelineEntry | null;
+  /**
+   * null if changeType=REMOVED
+   */
   timelineEntry: TimelineEntry | null;
   changeType: "ADDED" | "UPDATED" | "REMOVED";
   [k: string]: unknown;
@@ -441,7 +461,7 @@ export interface ChatEntryAttachment {
   fileName: string;
   fileSizeBytes: number;
   fileMimeType: string;
-  fileExtension: string | null;
+  fileExtension: NullableString;
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
@@ -480,7 +500,7 @@ export interface EmailEntryAttachment {
   fileName: string;
   fileSizeBytes: number;
   fileMimeType: string;
-  fileExtension: string | null;
+  fileExtension: NullableString;
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
@@ -556,7 +576,7 @@ export interface CustomEntryAttachment {
   fileName: string;
   fileSizeBytes: number;
   fileMimeType: string;
-  fileExtension: string | null;
+  fileExtension: NullableString;
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
@@ -600,14 +620,14 @@ export interface User {
   email: EmailAddress;
   fullName: string;
   publicName: string;
-  status: "ONLINE" | "OFFLINE" | "BREAK" | "UNKNOWN_USER_STATUS";
+  status: "ONLINE" | "OFFLINE" | "BREAK" | "AWAY" | "UNKNOWN_USER_STATUS";
   statusChangedAt: Datetime;
   createdAt: Datetime;
   createdBy: InternalActor;
   updatedAt: Datetime;
   updatedBy: InternalActor;
-  deletedAt: Datetime | null;
-  deletedBy: InternalActor | null;
+  deletedAt: NullableDatetime;
+  deletedBy: NullableInternalActor;
   [k: string]: unknown;
 }
 export interface MachineUser {
@@ -619,8 +639,8 @@ export interface MachineUser {
   createdBy: InternalActor;
   updatedAt: Datetime;
   updatedBy: InternalActor;
-  deletedAt: Datetime | null;
-  deletedBy: InternalActor | null;
+  deletedAt: NullableDatetime;
+  deletedBy: NullableInternalActor;
   [k: string]: unknown;
 }
 export interface Label {
@@ -639,6 +659,8 @@ export interface LabelType {
   isArchived?: boolean;
   archivedAt: Datetime | null;
   archivedBy: InternalActor | null;
+  externalId?: string | null;
+  isExcludedFromAi?: boolean;
   createdAt: Datetime;
   createdBy: InternalActor;
   updatedAt: Datetime;
@@ -698,7 +720,7 @@ export interface Attachment {
   fileName: string;
   fileSizeBytes: number;
   fileMimeType: string;
-  fileExtension: string | null;
+  fileExtension: NullableString;
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
@@ -799,9 +821,11 @@ export interface ThreadField {
   id: Id;
   threadId: Id;
   key: string;
-  type: "STRING" | "BOOL" | "ENUM" | "UNKNOWN_THREAD_FIELD_SCHEMA_TYPE";
+  type: "STRING" | "BOOL" | "ENUM" | "NUMBER" | "CURRENCY" | "DATE" | "UNKNOWN_THREAD_FIELD_SCHEMA_TYPE";
   stringValue: string | null;
   booleanValue: boolean | null;
+  numberValue?: number | null;
+  dateValue?: string | null;
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
@@ -860,17 +884,26 @@ export interface Tier {
   updatedBy: InternalActor;
   [k: string]: unknown;
 }
+/**
+ * A customer has been created
+ */
 export interface CustomerCreatedPublicEventPayload {
   eventType: "customer.customer_created";
   customer: Customer;
   [k: string]: unknown;
 }
+/**
+ * A customer has been updated
+ */
 export interface CustomerUpdatedPublicEventPayload {
   eventType: "customer.customer_updated";
   customer: Customer;
   previousCustomer: Customer;
   [k: string]: unknown;
 }
+/**
+ * A customer has been deleted
+ */
 export interface CustomerDeletedPublicEventPayload {
   eventType: "customer.customer_deleted";
   previousCustomer: Customer;
@@ -888,8 +921,8 @@ export interface ThreadNoteCreatedEventPayload {
     createdBy: InternalActor;
     updatedAt: Datetime;
     updatedBy: InternalActor;
-    deletedAt: Datetime | null;
-    deletedBy: InternalActor | null;
+    deletedAt: NullableDatetime;
+    deletedBy: NullableInternalActor;
     [k: string]: unknown;
   };
   [k: string]: unknown;
@@ -902,6 +935,7 @@ export interface ThreadChatReceivedPublicEventPayload {
 }
 export interface ThreadSlackMessageUpdatedEventPayload {
   eventType: "thread.slack_message_updated";
+  changeType: "MESSAGE_EDITED" | "MESSAGE_DELETED" | "REACTIONS_CHANGED" | "UNKNOWN_SLACK_MESSAGE_CHANGE_TYPE";
   thread: Thread;
   slackMessage: SlackMessage;
   [k: string]: unknown;
@@ -944,7 +978,7 @@ export interface ThreadDiscordMessageUpdatedEventPayload {
 }
 export interface WebhookMetadata {
   webhookTargetId: Id;
-  webhookTargetVersion: "2025-08-06";
+  webhookTargetVersion: "2026-02-27";
   webhookDeliveryAttemptId: Id;
   webhookDeliveryAttemptNumber: number;
   webhookDeliveryAttemptTimestamp: Datetime;
