@@ -25,6 +25,7 @@ export type Actor =
   | MachineUserActor
   | SystemActor
   | CustomerActor;
+export type NullableString = string | null;
 export type EmailActor =
   | {
       actorType: "UNKNOWN";
@@ -182,6 +183,8 @@ export type ThreadAssignee =
       id: string;
       [k: string]: unknown;
     };
+export type NullableDatetime = Datetime | null;
+export type NullableInternalActor = InternalActor | null;
 export type ServiceLevelAgreement =
   | {
       type: "UNKNOWN";
@@ -191,7 +194,7 @@ export type ServiceLevelAgreement =
       id: Id;
       tier: Tier;
       useBusinessHoursOnly: boolean;
-      threadPriorityFilter: ThreadPriority[];
+      threadPriorityFilter: ThreadPriorityFilter;
       createdAt: Datetime;
       createdBy: InternalActor;
       updatedAt: Datetime;
@@ -204,7 +207,7 @@ export type ServiceLevelAgreement =
       id: Id;
       tier: Tier;
       useBusinessHoursOnly: boolean;
-      threadPriorityFilter: ThreadPriority[];
+      threadPriorityFilter: ThreadPriorityFilter;
       createdAt: Datetime;
       createdBy: InternalActor;
       updatedAt: Datetime;
@@ -213,6 +216,10 @@ export type ServiceLevelAgreement =
       nextResponseTimeMinutes: number;
       [k: string]: unknown;
     };
+/**
+ * @minItems 1
+ */
+export type ThreadPriorityFilter = [ThreadPriority, ...ThreadPriority[]];
 export type ServiceLevelAgreementStatusDetail =
   | {
       status: "UNKNOWN";
@@ -281,7 +288,11 @@ export interface WebhooksSchemaDefinition {
     | CustomerUpdatedPublicEventPayload
     | CustomerDeletedPublicEventPayload
     | ThreadNoteCreatedEventPayload
-    | ThreadChatReceivedPublicEventPayload;
+    | ThreadChatReceivedPublicEventPayload
+    | ThreadSlackMessageUpdatedEventPayload
+    | ThreadDiscordMessageReceivedEventPayload
+    | ThreadDiscordMessageSentEventPayload
+    | ThreadDiscordMessageUpdatedEventPayload;
   id: Id;
   type:
     | "thread.thread_created"
@@ -291,6 +302,10 @@ export interface WebhooksSchemaDefinition {
     | "thread.email_sent"
     | "thread.slack_message_received"
     | "thread.slack_message_sent"
+    | "thread.slack_message_updated"
+    | "thread.discord_message_received"
+    | "thread.discord_message_sent"
+    | "thread.discord_message_updated"
     | "thread.ms_teams_message_sent"
     | "thread.ms_teams_message_received"
     | "thread.chat_sent"
@@ -302,6 +317,7 @@ export interface WebhooksSchemaDefinition {
     | "thread.thread_field_updated"
     | "thread.thread_field_deleted"
     | "thread.service_level_agreement_status_transitioned"
+    | "thread.thread_tenant_updated"
     | "customer.customer_created"
     | "customer.customer_updated"
     | "customer.customer_deleted"
@@ -312,6 +328,9 @@ export interface WebhooksSchemaDefinition {
   webhookMetadata: WebhookMetadata;
   [k: string]: unknown;
 }
+/**
+ * A customer has been created or updated
+ */
 export interface CustomerChangedPayload {
   changeType: "ADDED" | "UPDATED";
   eventType: "customer.customer_changed";
@@ -389,9 +408,18 @@ export interface CustomerGroupMembershipsChangedPayload {
   previousCustomer: Customer;
   [k: string]: unknown;
 }
+/**
+ * A timeline entry has been added, updated or removed
+ */
 export interface TimelineEntryChangedPayload {
   eventType: "timeline.timeline_entry_changed";
+  /**
+   * null if changeType=ADDED
+   */
   previousTimelineEntry: TimelineEntry | null;
+  /**
+   * null if changeType=REMOVED
+   */
   timelineEntry: TimelineEntry | null;
   changeType: "ADDED" | "UPDATED" | "REMOVED";
   [k: string]: unknown;
@@ -433,7 +461,7 @@ export interface ChatEntryAttachment {
   fileName: string;
   fileSizeBytes: number;
   fileMimeType: string;
-  fileExtension: string | null;
+  fileExtension: NullableString;
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
@@ -472,7 +500,7 @@ export interface EmailEntryAttachment {
   fileName: string;
   fileSizeBytes: number;
   fileMimeType: string;
-  fileExtension: string | null;
+  fileExtension: NullableString;
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
@@ -548,7 +576,7 @@ export interface CustomEntryAttachment {
   fileName: string;
   fileSizeBytes: number;
   fileMimeType: string;
-  fileExtension: string | null;
+  fileExtension: NullableString;
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
@@ -574,6 +602,7 @@ export interface Thread {
   statusDetail: ThreadStatusDetail | null;
   assignee: ThreadAssignee | null;
   assignedAt: Datetime | null;
+  additionalAssignees?: ThreadAssignee[];
   labels: Label[];
   firstInboundMessageInfo: ThreadMessageInfo | null;
   firstOutboundMessageInfo: ThreadMessageInfo | null;
@@ -591,14 +620,14 @@ export interface User {
   email: EmailAddress;
   fullName: string;
   publicName: string;
-  status: "ONLINE" | "OFFLINE" | "BREAK" | "UNKNOWN_USER_STATUS";
+  status: "ONLINE" | "OFFLINE" | "BREAK" | "AWAY" | "UNKNOWN_USER_STATUS";
   statusChangedAt: Datetime;
   createdAt: Datetime;
   createdBy: InternalActor;
   updatedAt: Datetime;
   updatedBy: InternalActor;
-  deletedAt: Datetime | null;
-  deletedBy: InternalActor | null;
+  deletedAt: NullableDatetime;
+  deletedBy: NullableInternalActor;
   [k: string]: unknown;
 }
 export interface MachineUser {
@@ -610,8 +639,8 @@ export interface MachineUser {
   createdBy: InternalActor;
   updatedAt: Datetime;
   updatedBy: InternalActor;
-  deletedAt: Datetime | null;
-  deletedBy: InternalActor | null;
+  deletedAt: NullableDatetime;
+  deletedBy: NullableInternalActor;
   [k: string]: unknown;
 }
 export interface Label {
@@ -630,6 +659,8 @@ export interface LabelType {
   isArchived?: boolean;
   archivedAt: Datetime | null;
   archivedBy: InternalActor | null;
+  externalId?: string | null;
+  isExcludedFromAi?: boolean;
   createdAt: Datetime;
   createdBy: InternalActor;
   updatedAt: Datetime;
@@ -689,7 +720,7 @@ export interface Attachment {
   fileName: string;
   fileSizeBytes: number;
   fileMimeType: string;
-  fileExtension: string | null;
+  fileExtension: NullableString;
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
@@ -717,6 +748,17 @@ export interface SlackMessage {
   slackChannelId: string;
   slackChannelName: string;
   slackMessageLink: string;
+  slackReactions?: {
+    name: string;
+    actors: {
+      actorId: Id;
+      actorType: "user" | "machineUser" | "customer" | "system";
+      slackUserId: string;
+      [k: string]: unknown;
+    }[];
+    imageUrl?: string | null;
+    [k: string]: unknown;
+  }[];
   createdAt: Datetime;
   createdBy: Actor;
   updatedAt: Datetime;
@@ -724,7 +766,13 @@ export interface SlackMessage {
   [k: string]: unknown;
 }
 export interface ThreadSlackMessageSentEventPayload {
-  eventType: "thread.ms_teams_message_sent";
+  eventType: "thread.slack_message_sent";
+  thread: Thread;
+  slackMessage: SlackMessage;
+  [k: string]: unknown;
+}
+export interface ThreadMSTeamsMessageReceivedEventPayload {
+  eventType: "thread.ms_teams_message_received";
   thread: Thread;
   msTeamsMessage: MsTeamsMessage;
   [k: string]: unknown;
@@ -744,16 +792,10 @@ export interface MsTeamsMessage {
   updatedBy: Actor;
   [k: string]: unknown;
 }
-export interface ThreadMSTeamsMessageReceivedEventPayload {
-  eventType: "thread.ms_teams_message_received";
+export interface ThreadMSTeamsMessageSentEventPayload {
+  eventType: "thread.ms_teams_message_sent";
   thread: Thread;
   msTeamsMessage: MsTeamsMessage;
-  [k: string]: unknown;
-}
-export interface ThreadMSTeamsMessageSentEventPayload {
-  eventType: "thread.slack_message_sent";
-  thread: Thread;
-  slackMessage: SlackMessage;
   [k: string]: unknown;
 }
 export interface ThreadLabelsChangedPublicEventPayload {
@@ -779,13 +821,15 @@ export interface ThreadField {
   id: Id;
   threadId: Id;
   key: string;
-  type: "STRING" | "BOOL" | "ENUM" | "UNKNOWN_THREAD_FIELD_SCHEMA_TYPE";
+  type: "STRING" | "BOOL" | "ENUM" | "NUMBER" | "CURRENCY" | "DATE" | "UNKNOWN_THREAD_FIELD_SCHEMA_TYPE";
   stringValue: string | null;
   booleanValue: boolean | null;
+  numberValue?: number | null;
+  dateValue?: string | null;
   createdAt: Datetime;
-  createdBy: InternalActor;
+  createdBy: Actor;
   updatedAt: Datetime;
-  updatedBy: InternalActor;
+  updatedBy: Actor;
   [k: string]: unknown;
 }
 export interface ThreadFieldUpdatedPublicEventPayload {
@@ -840,17 +884,26 @@ export interface Tier {
   updatedBy: InternalActor;
   [k: string]: unknown;
 }
+/**
+ * A customer has been created
+ */
 export interface CustomerCreatedPublicEventPayload {
   eventType: "customer.customer_created";
   customer: Customer;
   [k: string]: unknown;
 }
+/**
+ * A customer has been updated
+ */
 export interface CustomerUpdatedPublicEventPayload {
   eventType: "customer.customer_updated";
   customer: Customer;
   previousCustomer: Customer;
   [k: string]: unknown;
 }
+/**
+ * A customer has been deleted
+ */
 export interface CustomerDeletedPublicEventPayload {
   eventType: "customer.customer_deleted";
   previousCustomer: Customer;
@@ -868,8 +921,8 @@ export interface ThreadNoteCreatedEventPayload {
     createdBy: InternalActor;
     updatedAt: Datetime;
     updatedBy: InternalActor;
-    deletedAt: Datetime | null;
-    deletedBy: InternalActor | null;
+    deletedAt: NullableDatetime;
+    deletedBy: NullableInternalActor;
     [k: string]: unknown;
   };
   [k: string]: unknown;
@@ -880,9 +933,52 @@ export interface ThreadChatReceivedPublicEventPayload {
   thread: Thread;
   [k: string]: unknown;
 }
+export interface ThreadSlackMessageUpdatedEventPayload {
+  eventType: "thread.slack_message_updated";
+  changeType: "MESSAGE_EDITED" | "MESSAGE_DELETED" | "REACTIONS_CHANGED" | "UNKNOWN_SLACK_MESSAGE_CHANGE_TYPE";
+  thread: Thread;
+  slackMessage: SlackMessage;
+  [k: string]: unknown;
+}
+export interface ThreadDiscordMessageReceivedEventPayload {
+  eventType: "thread.discord_message_received";
+  thread: Thread;
+  discordMessage: DiscordMessage;
+  [k: string]: unknown;
+}
+export interface DiscordMessage {
+  timelineEntryId: Id;
+  id: Id;
+  discordGuildId: string;
+  discordChannelId: string;
+  discordThreadId: string;
+  discordId: string;
+  discordTimestamp: Datetime;
+  textContent: string;
+  attachments?: Attachment[];
+  lastEditedOnDiscordAt?: Datetime | null;
+  deletedOnDiscordAt?: Datetime | null;
+  createdAt: Datetime;
+  createdBy: Actor;
+  updatedAt: Datetime;
+  updatedBy: Actor;
+  [k: string]: unknown;
+}
+export interface ThreadDiscordMessageSentEventPayload {
+  eventType: "thread.discord_message_sent";
+  thread: Thread;
+  discordMessage: DiscordMessage;
+  [k: string]: unknown;
+}
+export interface ThreadDiscordMessageUpdatedEventPayload {
+  eventType: "thread.discord_message_updated";
+  thread: Thread;
+  discordMessage: DiscordMessage;
+  [k: string]: unknown;
+}
 export interface WebhookMetadata {
   webhookTargetId: Id;
-  webhookTargetVersion: "2024-09-18";
+  webhookTargetVersion: "2026-02-27";
   webhookDeliveryAttemptId: Id;
   webhookDeliveryAttemptNumber: number;
   webhookDeliveryAttemptTimestamp: Datetime;

@@ -84,6 +84,18 @@
         },
         {
           "$ref": "#/definitions/threadChatReceivedPublicEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadSlackMessageUpdatedEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadDiscordMessageReceivedEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadDiscordMessageSentEventPayload"
+        },
+        {
+          "$ref": "#/definitions/threadDiscordMessageUpdatedEventPayload"
         }
       ]
     },
@@ -100,6 +112,10 @@
         "thread.email_sent",
         "thread.slack_message_received",
         "thread.slack_message_sent",
+        "thread.slack_message_updated",
+        "thread.discord_message_received",
+        "thread.discord_message_sent",
+        "thread.discord_message_updated",
         "thread.ms_teams_message_sent",
         "thread.ms_teams_message_received",
         "thread.chat_sent",
@@ -111,6 +127,7 @@
         "thread.thread_field_updated",
         "thread.thread_field_deleted",
         "thread.service_level_agreement_status_transitioned",
+        "thread.thread_tenant_updated",
         "customer.customer_created",
         "customer.customer_updated",
         "customer.customer_deleted",
@@ -155,6 +172,42 @@
     "datetime": {
       "type": "string",
       "format": "date-time"
+    },
+    "nullableString": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "nullableDatetime": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/datetime"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullableActor": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/actor"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullableInternalActor": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/internalActor"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "userActor": {
       "type": "object",
@@ -290,6 +343,7 @@
             "ONLINE",
             "OFFLINE",
             "BREAK",
+            "AWAY",
             "UNKNOWN_USER_STATUS"
           ]
         },
@@ -309,24 +363,10 @@
           "$ref": "#/definitions/internalActor"
         },
         "deletedAt": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/datetime"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "#/definitions/nullableDatetime"
         },
         "deletedBy": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/internalActor"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "#/definitions/nullableInternalActor"
         }
       },
       "required": [
@@ -376,24 +416,10 @@
           "$ref": "#/definitions/internalActor"
         },
         "deletedAt": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/datetime"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "#/definitions/nullableDatetime"
         },
         "deletedBy": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/internalActor"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "#/definitions/nullableInternalActor"
         }
       },
       "required": [
@@ -621,10 +647,7 @@
           "minLength": 1
         },
         "fileExtension": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "$ref": "#/definitions/nullableString"
         },
         "createdAt": {
           "$ref": "#/definitions/datetime"
@@ -943,10 +966,7 @@
           "$ref": "#/definitions/attachment/properties/fileMimeType"
         },
         "fileExtension": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "$ref": "#/definitions/nullableString"
         },
         "createdAt": {
           "$ref": "#/definitions/datetime"
@@ -995,10 +1015,7 @@
           "$ref": "#/definitions/attachment/properties/fileMimeType"
         },
         "fileExtension": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "$ref": "#/definitions/nullableString"
         },
         "createdAt": {
           "$ref": "#/definitions/datetime"
@@ -1047,10 +1064,7 @@
           "$ref": "#/definitions/attachment/properties/fileMimeType"
         },
         "fileExtension": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "$ref": "#/definitions/nullableString"
         },
         "createdAt": {
           "$ref": "#/definitions/datetime"
@@ -1557,6 +1571,22 @@
             }
           ]
         },
+        "externalId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "isExcludedFromAi": {
+          "type": "boolean",
+          "default": false
+        },
         "createdAt": {
           "$ref": "#/definitions/datetime"
         },
@@ -1678,10 +1708,27 @@
     "threadPriority": {
       "type": "number"
     },
+    "threadPriorityFilter": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/threadPriority"
+      },
+      "minItems": 1
+    },
     "threadAssignee": {
       "anyOf": [
         {
-          "$ref": "#/definitions/componentRowContent/anyOf/0"
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "UNKNOWN"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
         },
         {
           "$ref": "#/definitions/user"
@@ -1763,7 +1810,17 @@
     "threadStatusDetail": {
       "anyOf": [
         {
-          "$ref": "#/definitions/componentRowContent/anyOf/0"
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "UNKNOWN"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -1946,6 +2003,9 @@
             "STRING",
             "BOOL",
             "ENUM",
+            "NUMBER",
+            "CURRENCY",
+            "DATE",
             "UNKNOWN_THREAD_FIELD_SCHEMA_TYPE"
           ]
         },
@@ -1961,17 +2021,31 @@
             "null"
           ]
         },
+        "numberValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": null
+        },
+        "dateValue": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
         "createdAt": {
           "$ref": "#/definitions/datetime"
         },
         "createdBy": {
-          "$ref": "#/definitions/internalActor"
+          "$ref": "#/definitions/actor"
         },
         "updatedAt": {
           "$ref": "#/definitions/datetime"
         },
         "updatedBy": {
-          "$ref": "#/definitions/internalActor"
+          "$ref": "#/definitions/actor"
         }
       },
       "required": [
@@ -2076,6 +2150,13 @@
             }
           ]
         },
+        "additionalAssignees": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/threadAssignee"
+          },
+          "default": []
+        },
         "labels": {
           "type": "array",
           "items": {
@@ -2178,7 +2259,7 @@
         "text": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 5000
+          "maxLength": 10000
         },
         "markdown": {
           "anyOf": [
@@ -2598,7 +2679,17 @@
     "serviceLevelAgreement": {
       "anyOf": [
         {
-          "$ref": "#/definitions/componentRowContent/anyOf/0"
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "UNKNOWN"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
         },
         {
           "type": "object",
@@ -2613,10 +2704,7 @@
               "type": "boolean"
             },
             "threadPriorityFilter": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/threadPriority"
-              }
+              "$ref": "#/definitions/threadPriorityFilter"
             },
             "createdAt": {
               "$ref": "#/definitions/datetime"
@@ -2665,10 +2753,7 @@
               "$ref": "#/definitions/serviceLevelAgreement/anyOf/1/properties/useBusinessHoursOnly"
             },
             "threadPriorityFilter": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/threadPriority"
-              }
+              "$ref": "#/definitions/threadPriorityFilter"
             },
             "createdAt": {
               "$ref": "#/definitions/datetime"
@@ -2737,6 +2822,58 @@
         "slackMessageLink": {
           "type": "string"
         },
+        "slackReactions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "actors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "actorId": {
+                      "$ref": "#/definitions/id"
+                    },
+                    "actorType": {
+                      "$ref": "#/definitions/threadMessageInfo/properties/actorType/anyOf/0"
+                    },
+                    "slackUserId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "actorId",
+                    "actorType",
+                    "slackUserId"
+                  ],
+                  "additionalProperties": true
+                }
+              },
+              "imageUrl": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "name",
+              "actors"
+            ],
+            "additionalProperties": true
+          },
+          "default": []
+        },
         "createdAt": {
           "$ref": "#/definitions/datetime"
         },
@@ -2758,6 +2895,91 @@
         "slackChannelId",
         "slackChannelName",
         "slackMessageLink",
+        "createdAt",
+        "createdBy",
+        "updatedAt",
+        "updatedBy"
+      ],
+      "additionalProperties": true
+    },
+    "discordMessage": {
+      "type": "object",
+      "properties": {
+        "timelineEntryId": {
+          "$ref": "#/definitions/id"
+        },
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "discordGuildId": {
+          "type": "string"
+        },
+        "discordChannelId": {
+          "type": "string"
+        },
+        "discordThreadId": {
+          "type": "string"
+        },
+        "discordId": {
+          "type": "string"
+        },
+        "discordTimestamp": {
+          "$ref": "#/definitions/datetime"
+        },
+        "textContent": {
+          "type": "string"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
+          },
+          "default": []
+        },
+        "lastEditedOnDiscordAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/datetime"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "deletedOnDiscordAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/datetime"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "createdAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "createdBy": {
+          "$ref": "#/definitions/actor"
+        },
+        "updatedAt": {
+          "$ref": "#/definitions/datetime"
+        },
+        "updatedBy": {
+          "$ref": "#/definitions/actor"
+        }
+      },
+      "required": [
+        "timelineEntryId",
+        "id",
+        "discordGuildId",
+        "discordChannelId",
+        "discordThreadId",
+        "discordId",
+        "discordTimestamp",
+        "textContent",
         "createdAt",
         "createdBy",
         "updatedAt",
@@ -2884,7 +3106,8 @@
         "customer",
         "previousCustomer"
       ],
-      "additionalProperties": true
+      "additionalProperties": true,
+      "description": "A customer has been created or updated"
     },
     "timelineEntryChangedPayload": {
       "type": "object",
@@ -2901,7 +3124,8 @@
             {
               "type": "null"
             }
-          ]
+          ],
+          "description": "null if changeType=ADDED"
         },
         "timelineEntry": {
           "anyOf": [
@@ -2911,7 +3135,8 @@
             {
               "type": "null"
             }
-          ]
+          ],
+          "description": "null if changeType=REMOVED"
         },
         "changeType": {
           "type": "string",
@@ -2928,7 +3153,8 @@
         "timelineEntry",
         "changeType"
       ],
-      "additionalProperties": true
+      "additionalProperties": true,
+      "description": "A timeline entry has been added, updated or removed"
     },
     "webhookMetadata": {
       "type": "object",
@@ -2938,7 +3164,7 @@
         },
         "webhookTargetVersion": {
           "type": "string",
-          "const": "2024-09-18"
+          "const": "2026-02-27"
         },
         "webhookDeliveryAttemptId": {
           "$ref": "#/definitions/id"
@@ -3172,7 +3398,11 @@
           "const": "thread.thread_labels_changed"
         },
         "changeType": {
-          "$ref": "#/definitions/customerGroupMembershipsChangedPayload/properties/changeType"
+          "type": "string",
+          "enum": [
+            "ADDED",
+            "REMOVED"
+          ]
         },
         "thread": {
           "$ref": "#/definitions/thread"
@@ -3341,7 +3571,7 @@
             "text": {
               "type": "string",
               "minLength": 1,
-              "maxLength": 5000
+              "maxLength": 10000
             },
             "markdown": {
               "anyOf": [
@@ -3368,24 +3598,10 @@
               "$ref": "#/definitions/internalActor"
             },
             "deletedAt": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/datetime"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/nullableDatetime"
             },
             "deletedBy": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/internalActor"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "#/definitions/nullableInternalActor"
             }
           },
           "required": [
@@ -3465,19 +3681,113 @@
       "properties": {
         "eventType": {
           "type": "string",
-          "const": "thread.ms_teams_message_sent"
+          "const": "thread.slack_message_sent"
         },
         "thread": {
           "$ref": "#/definitions/thread"
         },
-        "msTeamsMessage": {
-          "$ref": "#/definitions/msTeamsMessage"
+        "slackMessage": {
+          "$ref": "#/definitions/slackMessage"
         }
       },
       "required": [
         "eventType",
         "thread",
-        "msTeamsMessage"
+        "slackMessage"
+      ],
+      "additionalProperties": true
+    },
+    "threadSlackMessageUpdatedEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.slack_message_updated"
+        },
+        "changeType": {
+          "type": "string",
+          "enum": [
+            "MESSAGE_EDITED",
+            "MESSAGE_DELETED",
+            "REACTIONS_CHANGED",
+            "UNKNOWN_SLACK_MESSAGE_CHANGE_TYPE"
+          ]
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "slackMessage": {
+          "$ref": "#/definitions/slackMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "changeType",
+        "thread",
+        "slackMessage"
+      ],
+      "additionalProperties": true
+    },
+    "threadDiscordMessageReceivedEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.discord_message_received"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "discordMessage": {
+          "$ref": "#/definitions/discordMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "discordMessage"
+      ],
+      "additionalProperties": true
+    },
+    "threadDiscordMessageSentEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.discord_message_sent"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "discordMessage": {
+          "$ref": "#/definitions/discordMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "discordMessage"
+      ],
+      "additionalProperties": true
+    },
+    "threadDiscordMessageUpdatedEventPayload": {
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "type": "string",
+          "const": "thread.discord_message_updated"
+        },
+        "thread": {
+          "$ref": "#/definitions/thread"
+        },
+        "discordMessage": {
+          "$ref": "#/definitions/discordMessage"
+        }
+      },
+      "required": [
+        "eventType",
+        "thread",
+        "discordMessage"
       ],
       "additionalProperties": true
     },
@@ -3507,19 +3817,19 @@
       "properties": {
         "eventType": {
           "type": "string",
-          "const": "thread.slack_message_sent"
+          "const": "thread.ms_teams_message_sent"
         },
         "thread": {
           "$ref": "#/definitions/thread"
         },
-        "slackMessage": {
-          "$ref": "#/definitions/slackMessage"
+        "msTeamsMessage": {
+          "$ref": "#/definitions/msTeamsMessage"
         }
       },
       "required": [
         "eventType",
         "thread",
-        "slackMessage"
+        "msTeamsMessage"
       ],
       "additionalProperties": true
     },
@@ -3538,7 +3848,8 @@
         "eventType",
         "customer"
       ],
-      "additionalProperties": true
+      "additionalProperties": true,
+      "description": "A customer has been created"
     },
     "customerUpdatedPublicEventPayload": {
       "type": "object",
@@ -3559,7 +3870,8 @@
         "customer",
         "previousCustomer"
       ],
-      "additionalProperties": true
+      "additionalProperties": true,
+      "description": "A customer has been updated"
     },
     "customerDeletedPublicEventPayload": {
       "type": "object",
@@ -3576,7 +3888,8 @@
         "eventType",
         "previousCustomer"
       ],
-      "additionalProperties": true
+      "additionalProperties": true,
+      "description": "A customer has been deleted"
     }
   },
   "$schema": "http://json-schema.org/draft-07/schema#"
