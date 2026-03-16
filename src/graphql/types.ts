@@ -866,6 +866,7 @@ export type ComponentInput = {
   componentRow?: InputMaybe<ComponentRowInput>;
   componentSpacer?: InputMaybe<ComponentSpacerInput>;
   componentText?: InputMaybe<ComponentTextInput>;
+  componentWorkflowButton?: InputMaybe<ComponentWorkflowButtonInput>;
 };
 
 export type ComponentLinkButton = {
@@ -887,6 +888,28 @@ export type ComponentLinkButtonInput = {
   linkButtonUrl?: InputMaybe<Scalars['String']>;
   /** @deprecated use linkButtonUrl instead */
   url?: InputMaybe<Scalars['String']>;
+};
+
+export type ComponentWorkflowButton = {
+  __typename?: 'ComponentWorkflowButton';
+  workflowButtonLabel: Scalars['String'];
+  workflowButtonWorkflowIdentifier: ComponentWorkflowButtonWorkflowIdentifier;
+};
+
+export type ComponentWorkflowButtonInput = {
+  /** The label of the button. Maximum 500 characters. */
+  workflowButtonLabel?: InputMaybe<Scalars['String']>;
+  /** The workflow to trigger when the button is clicked. */
+  workflowButtonWorkflowIdentifier?: InputMaybe<ComponentWorkflowButtonWorkflowIdentifierInput>;
+};
+
+export type ComponentWorkflowButtonWorkflowIdentifier = {
+  __typename?: 'ComponentWorkflowButtonWorkflowIdentifier';
+  workflowId: Scalars['ID'];
+};
+
+export type ComponentWorkflowButtonWorkflowIdentifierInput = {
+  workflowId?: InputMaybe<Scalars['ID']>;
 };
 
 export type ComponentPlainText = {
@@ -1899,7 +1922,7 @@ export type CustomerActor = {
   customerId: Scalars['ID'];
 };
 
-export type CustomerCardComponent = ComponentBadge | ComponentContainer | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
+export type CustomerCardComponent = ComponentBadge | ComponentContainer | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText | ComponentWorkflowButton;
 
 /**
  * The configuration of a customer card that defines four important things:

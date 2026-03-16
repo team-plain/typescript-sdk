@@ -7,6 +7,7 @@ import { plainTextComponent } from './plainTextComponent';
 import { rowComponent } from './rowComponent';
 import { spacerComponent } from './spacerComponent';
 import { textComponent } from './textComponent';
+import { workflowButtonComponent } from './workflowButtonComponent';
 
 export const uiComponent = {
   badge: badgeComponent,
@@ -18,4 +19,5 @@ export const uiComponent = {
   row: rowComponent,
   spacer: spacerComponent,
   text: textComponent,
+  workflowButton: workflowButtonComponent,
 };
