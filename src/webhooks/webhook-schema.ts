@@ -57,7 +57,8 @@ export type Component =
   | ComponentBadge
   | ComponentCopyButton
   | ComponentRow
-  | ComponentContainer;
+  | ComponentContainer
+  | ComponentWorkflowButton;
 export type ComponentTextSize = "S" | "M" | "L" | "UNKNOWN_COMPONENT_TEXT_SIZE";
 export type ComponentTextColor = "NORMAL" | "MUTED" | "SUCCESS" | "WARNING" | "ERROR" | "UNKNOWN_COMPONENT_TEXT_COLOR";
 export type ComponentPlainTextSize = "S" | "M" | "L" | "UNKNOWN_COMPONENT_PLAIN_TEXT_SIZE";
@@ -82,7 +83,8 @@ export type ComponentRowContent =
   | ComponentDivider
   | ComponentLinkButton
   | ComponentBadge
-  | ComponentCopyButton;
+  | ComponentCopyButton
+  | ComponentWorkflowButton;
 export type ComponentContainerContent =
   | {
       type: "UNKNOWN";
@@ -95,7 +97,8 @@ export type ComponentContainerContent =
   | ComponentLinkButton
   | ComponentBadge
   | ComponentCopyButton
-  | ComponentRow;
+  | ComponentRow
+  | ComponentWorkflowButton;
 export type CustomerGroupChangedPayload =
   | {
       changeType: "ADDED";
@@ -546,6 +549,15 @@ export interface ComponentLinkButton {
   linkButtonUrl: string;
   linkButtonLabel: string;
   type: "linkButton";
+  [k: string]: unknown;
+}
+export interface ComponentWorkflowButton {
+  workflowButtonLabel: string;
+  workflowButtonWorkflowIdentifier: {
+    workflowId: string;
+    [k: string]: unknown;
+  };
+  type: "workflowButton";
   [k: string]: unknown;
 }
 export interface ComponentBadge {

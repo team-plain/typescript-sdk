@@ -1320,6 +1320,37 @@
       ],
       "additionalProperties": true
     },
+    "componentWorkflowButton": {
+      "type": "object",
+      "properties": {
+        "workflowButtonLabel": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "workflowButtonWorkflowIdentifier": {
+          "type": "object",
+          "properties": {
+            "workflowId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "workflowId"
+          ],
+          "additionalProperties": true
+        },
+        "type": {
+          "type": "string",
+          "const": "workflowButton"
+        }
+      },
+      "required": [
+        "workflowButtonLabel",
+        "workflowButtonWorkflowIdentifier",
+        "type"
+      ],
+      "additionalProperties": true
+    },
     "componentBadge": {
       "type": "object",
       "properties": {
@@ -1414,6 +1445,9 @@
         },
         {
           "$ref": "#/definitions/componentCopyButton"
+        },
+        {
+          "$ref": "#/definitions/componentWorkflowButton"
         }
       ]
     },
@@ -1472,6 +1506,9 @@
         },
         {
           "$ref": "#/definitions/componentRow"
+        },
+        {
+          "$ref": "#/definitions/componentWorkflowButton"
         }
       ]
     },
@@ -1526,6 +1563,9 @@
         },
         {
           "$ref": "#/definitions/componentContainer"
+        },
+        {
+          "$ref": "#/definitions/componentWorkflowButton"
         }
       ]
     },
