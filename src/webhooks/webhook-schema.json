@@ -1323,21 +1323,21 @@
     "componentWorkflowButton": {
       "type": "object",
       "properties": {
-        "workflowButtonLabel": {
-          "type": "string",
-          "maxLength": 500
-        },
         "workflowButtonWorkflowIdentifier": {
           "type": "object",
           "properties": {
             "workflowId": {
               "type": "string"
+            },
+            "workflowKey": {
+              "type": "string"
             }
           },
-          "required": [
-            "workflowId"
-          ],
           "additionalProperties": true
+        },
+        "workflowButtonLabel": {
+          "type": "string",
+          "maxLength": 500
         },
         "type": {
           "type": "string",
@@ -1345,8 +1345,8 @@
         }
       },
       "required": [
-        "workflowButtonLabel",
         "workflowButtonWorkflowIdentifier",
+        "workflowButtonLabel",
         "type"
       ],
       "additionalProperties": true
@@ -1441,13 +1441,13 @@
           "$ref": "#/definitions/componentLinkButton"
         },
         {
+          "$ref": "#/definitions/componentWorkflowButton"
+        },
+        {
           "$ref": "#/definitions/componentBadge"
         },
         {
           "$ref": "#/definitions/componentCopyButton"
-        },
-        {
-          "$ref": "#/definitions/componentWorkflowButton"
         }
       ]
     },
@@ -1499,6 +1499,9 @@
           "$ref": "#/definitions/componentLinkButton"
         },
         {
+          "$ref": "#/definitions/componentWorkflowButton"
+        },
+        {
           "$ref": "#/definitions/componentBadge"
         },
         {
@@ -1506,9 +1509,6 @@
         },
         {
           "$ref": "#/definitions/componentRow"
-        },
-        {
-          "$ref": "#/definitions/componentWorkflowButton"
         }
       ]
     },
@@ -1553,6 +1553,9 @@
           "$ref": "#/definitions/componentLinkButton"
         },
         {
+          "$ref": "#/definitions/componentWorkflowButton"
+        },
+        {
           "$ref": "#/definitions/componentBadge"
         },
         {
@@ -1563,9 +1566,6 @@
         },
         {
           "$ref": "#/definitions/componentContainer"
-        },
-        {
-          "$ref": "#/definitions/componentWorkflowButton"
         }
       ]
     },
@@ -3204,7 +3204,7 @@
         },
         "webhookTargetVersion": {
           "type": "string",
-          "const": "2026-02-27"
+          "const": "2026-03-13"
         },
         "webhookDeliveryAttemptId": {
           "$ref": "#/definitions/id"
@@ -3751,7 +3751,8 @@
             "MESSAGE_DELETED",
             "REACTIONS_CHANGED",
             "UNKNOWN_SLACK_MESSAGE_CHANGE_TYPE"
-          ]
+          ],
+          "default": "UNKNOWN_SLACK_MESSAGE_CHANGE_TYPE"
         },
         "thread": {
           "$ref": "#/definitions/thread"
@@ -3762,7 +3763,6 @@
       },
       "required": [
         "eventType",
-        "changeType",
         "thread",
         "slackMessage"
       ],

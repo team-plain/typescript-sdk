@@ -139,6 +139,101 @@ export type AddWorkspaceAlternateSupportEmailAddressOutput = {
   workspaceEmailDomainSettings: Maybe<WorkspaceEmailDomainSettings>;
 };
 
+export enum AgentStatus {
+  HandedOff = 'HANDED_OFF',
+  Handled = 'HANDLED',
+  InProgress = 'IN_PROGRESS'
+}
+
+export type AgentStatusDetail = AgentStatusDetailHandedOff | AgentStatusDetailHandled | AgentStatusDetailInProgress;
+
+export type AgentStatusDetailHandedOff = {
+  __typename?: 'AgentStatusDetailHandedOff';
+  reason: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+};
+
+export type AgentStatusDetailHandled = {
+  __typename?: 'AgentStatusDetailHandled';
+  type: Scalars['String'];
+};
+
+export type AgentStatusDetailInProgress = {
+  __typename?: 'AgentStatusDetailInProgress';
+  type: Scalars['String'];
+};
+
+export type AgentStatusFilter = {
+  handedOffReason?: InputMaybe<Scalars['String']>;
+  statuses?: InputMaybe<Array<AgentStatus>>;
+  updatedAt?: InputMaybe<DatetimeFilter>;
+};
+
+export type AiAgentFeedbackDetails = {
+  __typename?: 'AiAgentFeedbackDetails';
+  comment: Maybe<Scalars['String']>;
+  reason: Scalars['String'];
+  sentiment: Maybe<AiFeedbackSentiment>;
+  threadId: Scalars['ID'];
+  timelineEntryId: Scalars['ID'];
+};
+
+export type AiAgentFeedbackDetailsInput = {
+  comment?: InputMaybe<Scalars['String']>;
+  reason: Scalars['String'];
+  threadId: Scalars['ID'];
+  timelineEntryId: Scalars['ID'];
+};
+
+export type AiFeatureFeedbackDetails = AiAgentFeedbackDetails | ThreadCatchupFeedbackDetails | ThreadClustersFeedbackDetails | ToneRuleFeedbackDetails;
+
+export type AiFeatureFeedbackOutput = {
+  __typename?: 'AiFeatureFeedbackOutput';
+  details: AiFeatureFeedbackDetails;
+  feature: Scalars['String'];
+  id: Scalars['ID'];
+};
+
+export enum AiFeedbackSentiment {
+  Negative = 'NEGATIVE',
+  Neutral = 'NEUTRAL',
+  Positive = 'POSITIVE'
+}
+
+export type AiToneRule = {
+  __typename?: 'AiToneRule';
+  category: Scalars['String'];
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  description: Scalars['String'];
+  id: Scalars['ID'];
+  isEnabled: Scalars['Boolean'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+};
+
+export type AiToneRuleConnection = {
+  __typename?: 'AiToneRuleConnection';
+  edges: Array<AiToneRuleEdge>;
+  pageInfo: PageInfo;
+};
+
+export type AiToneRuleEdge = {
+  __typename?: 'AiToneRuleEdge';
+  cursor: Scalars['String'];
+  node: AiToneRule;
+};
+
+export type AiToneRuleUpdate = {
+  aiToneRuleId: Scalars['ID'];
+  description?: InputMaybe<Scalars['String']>;
+  isEnabled?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type AiToneRulesFilter = {
+  isEnabled?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type ApiKey = {
   __typename?: 'ApiKey';
   createdAt: DateTime;
@@ -176,6 +271,7 @@ export type ArchiveLabelTypeOutput = {
 };
 
 export type AssignRolesToUserInput = {
+  customRoleId?: InputMaybe<Scalars['ID']>;
   /** @deprecated Use roleKey instead. */
   roleIds?: InputMaybe<Array<Scalars['ID']>>;
   roleKey?: InputMaybe<RoleKey>;
@@ -394,7 +490,10 @@ export type BillingPlanEdge = {
 
 export enum BillingPlanKey {
   Evaluate = 'EVALUATE',
+  Foundation = 'FOUNDATION',
+  Frontier = 'FRONTIER',
   Grow = 'GROW',
+  Horizon = 'HORIZON',
   Launch = 'LAUNCH',
   Legacy = 'LEGACY',
   Scale = 'SCALE'
@@ -418,10 +517,11 @@ export enum BillingSeatType {
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   cancelsAt: Maybe<DateTime>;
+  checkoutSession: Maybe<HyperlineCheckoutSession>;
   endedAt: Maybe<DateTime>;
   entitlements: Array<BillingFeatureEntitlement>;
-  /** @deprecated Field no longer supported */
-  interval: BillingInterval;
+  interval: Maybe<BillingInterval>;
+  planCode: Maybe<Scalars['String']>;
   planKey: BillingPlanKey;
   planName: Scalars['String'];
   status: BillingSubscriptionStatus;
@@ -477,6 +577,57 @@ export type BulkUpsertThreadFieldsOutput = {
   __typename?: 'BulkUpsertThreadFieldsOutput';
   error: Maybe<MutationError>;
   results: Array<BulkUpsertThreadFieldResult>;
+};
+
+/** Input for a single step in the bulk upsert operation. */
+export type BulkUpsertWorkflowStepInput = {
+  /** Optional name for the step. */
+  name?: InputMaybe<Scalars['String']>;
+  /** JSON-encoded payload containing the action or condition configuration. */
+  payload: Scalars['String'];
+  /** X position of this step on the canvas. */
+  positionX?: InputMaybe<Scalars['Float']>;
+  /** Y position of this step on the canvas. */
+  positionY?: InputMaybe<Scalars['Float']>;
+  /** Optional step ID - if provided and exists in this workflow, step will be updated. Otherwise created with new ID. */
+  stepId?: InputMaybe<Scalars['ID']>;
+  /** Transition step IDs. ACTION steps: [nextStepId], CONDITION steps: [trueStepId, falseStepId]. Use null for terminal/no branch. */
+  transitions: Array<InputMaybe<Scalars['ID']>>;
+  /** The type of step: CONDITION or ACTION. */
+  type: WorkflowStepType;
+};
+
+export enum BulkUpsertWorkflowStepResult {
+  Created = 'CREATED',
+  Noop = 'NOOP',
+  Updated = 'UPDATED'
+}
+
+export type BulkUpsertWorkflowStepResultItem = {
+  __typename?: 'BulkUpsertWorkflowStepResultItem';
+  result: BulkUpsertWorkflowStepResult;
+  workflowStep: WorkflowStep;
+};
+
+export type BulkUpsertWorkflowStepsInput = {
+  /** Optional: Set this as the workflow's startStepId. Use null to clear. If not provided, startStepId is unchanged. */
+  startStepId?: InputMaybe<Scalars['ID']>;
+  /** The complete list of steps. Steps with existing IDs are updated, new IDs are created, missing IDs are deleted. */
+  steps: Array<BulkUpsertWorkflowStepInput>;
+  /** Optional: JSON-encoded trigger configuration. If not provided, trigger is unchanged. */
+  trigger?: InputMaybe<StringInput>;
+  workflowId: Scalars['ID'];
+};
+
+export type BulkUpsertWorkflowStepsOutput = {
+  __typename?: 'BulkUpsertWorkflowStepsOutput';
+  /** IDs of steps that were deleted (existed before but not in input). */
+  deletedStepIds: Array<Scalars['ID']>;
+  error: Maybe<MutationError>;
+  /** Results for each step in the input (same order as input). */
+  results: Array<BulkUpsertWorkflowStepResultItem>;
+  /** Updated workflow after operation. */
+  workflow: Maybe<Workflow>;
 };
 
 /**
@@ -555,6 +706,11 @@ export type CalculateRoleChangeCostOutput = {
   roleChangeCost: Maybe<RoleChangeCost>;
 };
 
+export type CancelHyperlineSubscriptionOutput = {
+  __typename?: 'CancelHyperlineSubscriptionOutput';
+  error: Maybe<MutationError>;
+};
+
 export type ChangeBillingPlanInput = {
   intervalUnit?: InputMaybe<BillingIntervalUnit>;
   planKey: BillingPlanKey;
@@ -563,6 +719,17 @@ export type ChangeBillingPlanInput = {
 export type ChangeBillingPlanOutput = {
   __typename?: 'ChangeBillingPlanOutput';
   error: Maybe<MutationError>;
+};
+
+export type ChangeKnowledgeGapStatusInput = {
+  knowledgeGapId: Scalars['ID'];
+  status: KnowledgeGapStatus;
+};
+
+export type ChangeKnowledgeGapStatusOutput = {
+  __typename?: 'ChangeKnowledgeGapStatusOutput';
+  error: Maybe<MutationError>;
+  knowledgeGap: Maybe<KnowledgeGap>;
 };
 
 export type ChangeThreadCustomerInput = {
@@ -671,6 +838,13 @@ export type ChatThreadChannelDetails = {
   customerReadAt: DateTime;
 };
 
+export type ChildThreadDetails = {
+  __typename?: 'ChildThreadDetails';
+  id: Scalars['ID'];
+  ref: Scalars['String'];
+  title: Maybe<Scalars['String']>;
+};
+
 export type CompaniesFilter = {
   companyIds?: InputMaybe<Array<Scalars['ID']>>;
   /**
@@ -678,6 +852,7 @@ export type CompaniesFilter = {
    * Omit to return all companies.
    */
   isDeleted?: InputMaybe<Scalars['Boolean']>;
+  updatedAt?: InputMaybe<DatetimeFilter>;
 };
 
 /** Query to search for companies. */
@@ -804,7 +979,7 @@ export type ComponentContainer = {
   containerContent: Array<ComponentContainerContent>;
 };
 
-export type ComponentContainerContent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
+export type ComponentContainerContent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText | ComponentWorkflowButton;
 
 export type ComponentContainerContentInput = {
   componentBadge?: InputMaybe<ComponentBadgeInput>;
@@ -815,6 +990,7 @@ export type ComponentContainerContentInput = {
   componentRow?: InputMaybe<ComponentRowInput>;
   componentSpacer?: InputMaybe<ComponentSpacerInput>;
   componentText?: InputMaybe<ComponentTextInput>;
+  componentWorkflowButton?: InputMaybe<ComponentWorkflowButtonInput>;
 };
 
 export type ComponentContainerInput = {
@@ -890,28 +1066,6 @@ export type ComponentLinkButtonInput = {
   url?: InputMaybe<Scalars['String']>;
 };
 
-export type ComponentWorkflowButton = {
-  __typename?: 'ComponentWorkflowButton';
-  workflowButtonLabel: Scalars['String'];
-  workflowButtonWorkflowIdentifier: ComponentWorkflowButtonWorkflowIdentifier;
-};
-
-export type ComponentWorkflowButtonInput = {
-  /** The label of the button. Maximum 500 characters. */
-  workflowButtonLabel?: InputMaybe<Scalars['String']>;
-  /** The workflow to trigger when the button is clicked. */
-  workflowButtonWorkflowIdentifier?: InputMaybe<ComponentWorkflowButtonWorkflowIdentifierInput>;
-};
-
-export type ComponentWorkflowButtonWorkflowIdentifier = {
-  __typename?: 'ComponentWorkflowButtonWorkflowIdentifier';
-  workflowId: Scalars['ID'];
-};
-
-export type ComponentWorkflowButtonWorkflowIdentifierInput = {
-  workflowId?: InputMaybe<Scalars['ID']>;
-};
-
 export type ComponentPlainText = {
   __typename?: 'ComponentPlainText';
   plainText: Scalars['String'];
@@ -928,7 +1082,7 @@ export enum ComponentPlainTextColor {
 }
 
 export type ComponentPlainTextInput = {
-  /** The text content, without markdown support. Must be between 1 and 5000 characters. */
+  /** The text content, without markdown support. Must be between 1 and 10000 characters. */
   plainText: Scalars['String'];
   plainTextColor?: InputMaybe<ComponentPlainTextColor>;
   plainTextSize?: InputMaybe<ComponentPlainTextSize>;
@@ -946,7 +1100,7 @@ export type ComponentRow = {
   rowMainContent: Array<ComponentRowContent>;
 };
 
-export type ComponentRowContent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentSpacer | ComponentText;
+export type ComponentRowContent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentSpacer | ComponentText | ComponentWorkflowButton;
 
 export type ComponentRowContentInput = {
   componentBadge?: InputMaybe<ComponentBadgeInput>;
@@ -956,6 +1110,7 @@ export type ComponentRowContentInput = {
   componentPlainText?: InputMaybe<ComponentPlainTextInput>;
   componentSpacer?: InputMaybe<ComponentSpacerInput>;
   componentText?: InputMaybe<ComponentTextInput>;
+  componentWorkflowButton?: InputMaybe<ComponentWorkflowButtonInput>;
 };
 
 export type ComponentRowInput = {
@@ -1010,7 +1165,7 @@ export type ComponentTextInput = {
   color?: InputMaybe<ComponentTextColor>;
   /** @deprecated use textSize instead */
   size?: InputMaybe<ComponentTextSize>;
-  /** The text content, with markdown support. Must be between 1 and 5000 characters. */
+  /** The text content, with markdown support. Must be between 1 and 10000 characters. */
   text: Scalars['String'];
   textColor?: InputMaybe<ComponentTextColor>;
   textSize?: InputMaybe<ComponentTextSize>;
@@ -1021,6 +1176,29 @@ export enum ComponentTextSize {
   M = 'M',
   S = 'S'
 }
+
+export type ComponentWorkflowButton = {
+  __typename?: 'ComponentWorkflowButton';
+  workflowButtonLabel: Scalars['String'];
+  workflowButtonWorkflowIdentifier: ComponentWorkflowButtonWorkflowIdentifier;
+};
+
+export type ComponentWorkflowButtonInput = {
+  /** The label of the button. Maximum 500 characters. */
+  workflowButtonLabel: Scalars['String'];
+  workflowButtonWorkflowIdentifier: ComponentWorkflowButtonWorkflowIdentifierInput;
+};
+
+export type ComponentWorkflowButtonWorkflowIdentifier = {
+  __typename?: 'ComponentWorkflowButtonWorkflowIdentifier';
+  workflowId: Maybe<Scalars['ID']>;
+  workflowKey: Maybe<Scalars['String']>;
+};
+
+export type ComponentWorkflowButtonWorkflowIdentifierInput = {
+  workflowId?: InputMaybe<Scalars['ID']>;
+  workflowKey?: InputMaybe<Scalars['String']>;
+};
 
 export type ConnectedDiscordChannel = {
   __typename?: 'ConnectedDiscordChannel';
@@ -1114,7 +1292,41 @@ export enum ConnectedSlackChannelType {
 export type ConnectedSlackChannelsFilter = {
   channelTypes?: InputMaybe<Array<ConnectedSlackChannelType>>;
   isEnabled?: InputMaybe<BooleanInput>;
+  slackChannelIds?: InputMaybe<Array<Scalars['String']>>;
   slackTeamIds?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type CreateAiFeatureFeedbackInput = {
+  aiAgentFeedback?: InputMaybe<AiAgentFeedbackDetailsInput>;
+  feature: Scalars['String'];
+  threadCatchupFeedback?: InputMaybe<ThreadCatchupFeedbackDetailsInput>;
+};
+
+export type CreateAiFeatureFeedbackOutput = {
+  __typename?: 'CreateAiFeatureFeedbackOutput';
+  aiFeatureFeedback: Maybe<AiFeatureFeedbackOutput>;
+  error: Maybe<MutationError>;
+};
+
+export type CreateAiFeedbackInput = {
+  feedback: Scalars['String'];
+};
+
+export type CreateAiFeedbackOutput = {
+  __typename?: 'CreateAiFeedbackOutput';
+  error: Maybe<MutationError>;
+};
+
+export type CreateAiToneRuleInput = {
+  category: Scalars['String'];
+  description: Scalars['String'];
+  isEnabled?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type CreateAiToneRuleOutput = {
+  __typename?: 'CreateAiToneRuleOutput';
+  aiToneRule: Maybe<AiToneRule>;
+  error: Maybe<MutationError>;
 };
 
 export type CreateApiKeyInput = {
@@ -1210,6 +1422,17 @@ export type CreateCheckoutSessionOutput = {
   __typename?: 'CreateCheckoutSessionOutput';
   error: Maybe<MutationError>;
   sessionClientSecret: Maybe<Scalars['String']>;
+};
+
+export type CreateCustomRoleInput = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type CreateCustomRoleOutput = {
+  __typename?: 'CreateCustomRoleOutput';
+  error: Maybe<MutationError>;
+  role: Maybe<CustomRole>;
 };
 
 /**
@@ -1308,6 +1531,17 @@ export type CreateEscalationPathOutput = {
   escalationPath: Maybe<EscalationPath>;
 };
 
+export type CreateGithubUserAuthIntegrationInput = {
+  nangoConnectionId: Scalars['String'];
+  nangoSessionToken: Scalars['String'];
+};
+
+export type CreateGithubUserAuthIntegrationOutput = {
+  __typename?: 'CreateGithubUserAuthIntegrationOutput';
+  error: Maybe<MutationError>;
+  integration: Maybe<GithubUserAuthIntegration>;
+};
+
 export type CreateHelpCenterArticleGroupInput = {
   helpCenterId: Scalars['ID'];
   name: Scalars['String'];
@@ -1323,6 +1557,7 @@ export type CreateHelpCenterArticleGroupOutput = {
 };
 
 export type CreateHelpCenterInput = {
+  articleCopyOptions?: InputMaybe<HelpCenterArticleCopyOptionsInput>;
   authMechanism?: InputMaybe<HelpCenterAuthMechanismInput>;
   bodyCustomJs?: InputMaybe<Scalars['String']>;
   color?: InputMaybe<Scalars['String']>;
@@ -1331,6 +1566,7 @@ export type CreateHelpCenterInput = {
   headCustomJs?: InputMaybe<Scalars['String']>;
   internalName: Scalars['String'];
   isChatEnabled?: InputMaybe<Scalars['Boolean']>;
+  isCustomerFacingAiEnabled?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<HelpCenterThemedImageInput>;
   publicName: Scalars['String'];
   socialPreviewImage?: InputMaybe<WorkspaceFileInput>;
@@ -1342,6 +1578,29 @@ export type CreateHelpCenterOutput = {
   __typename?: 'CreateHelpCenterOutput';
   error: Maybe<MutationError>;
   helpCenter: Maybe<HelpCenter>;
+};
+
+export type CreateHyperlineBillingPortalSessionOutput = {
+  __typename?: 'CreateHyperlineBillingPortalSessionOutput';
+  billingPortalSessionUrl: Maybe<Scalars['String']>;
+  error: Maybe<MutationError>;
+};
+
+export type CreateHyperlineCheckoutSessionInput = {
+  intervalUnit: BillingIntervalUnit;
+  plan: HyperlineCheckoutPlanKey;
+};
+
+export type CreateHyperlineCheckoutSessionOutput = {
+  __typename?: 'CreateHyperlineCheckoutSessionOutput';
+  checkoutUrl: Maybe<Scalars['String']>;
+  error: Maybe<MutationError>;
+};
+
+export type CreateHyperlineComponentsAuthTokenOutput = {
+  __typename?: 'CreateHyperlineComponentsAuthTokenOutput';
+  error: Maybe<MutationError>;
+  token: Maybe<Scalars['String']>;
 };
 
 export type CreateIndexedDocumentInput = {
@@ -1384,7 +1643,9 @@ export type CreateKnowledgeSourceOutput = {
 export type CreateLabelTypeInput = {
   color?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
+  externalId?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
+  isExcludedFromAi?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
   parentLabelTypeId?: InputMaybe<Scalars['ID']>;
   type?: InputMaybe<LabelTypeType>;
@@ -1471,6 +1732,7 @@ export type CreateNoteOutput = {
 export type CreateSavedThreadsViewInput = {
   color: Scalars['String'];
   icon: Scalars['String'];
+  isHidden?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
   threadsFilter: SavedThreadsViewFilterInput;
 };
@@ -1507,6 +1769,28 @@ export type CreateSnippetOutput = {
 };
 
 /** Only one of the fields can be set. */
+export type CreateTaskAssignedToInput = {
+  machineUserId?: InputMaybe<Scalars['ID']>;
+  userId?: InputMaybe<Scalars['ID']>;
+};
+
+export type CreateTaskInput = {
+  assignedTo?: InputMaybe<CreateTaskAssignedToInput>;
+  companyId?: InputMaybe<Scalars['ID']>;
+  description?: InputMaybe<Scalars['String']>;
+  priority?: InputMaybe<Scalars['Int']>;
+  status?: InputMaybe<TaskStatus>;
+  tenantId?: InputMaybe<Scalars['ID']>;
+  title: Scalars['String'];
+};
+
+export type CreateTaskOutput = {
+  __typename?: 'CreateTaskOutput';
+  error: Maybe<MutationError>;
+  task: Maybe<Task>;
+};
+
+/** Only one of the fields can be set. */
 export type CreateThreadAssignedToInput = {
   machineUserId?: InputMaybe<Scalars['ID']>;
   userId?: InputMaybe<Scalars['ID']>;
@@ -1524,9 +1808,13 @@ export type CreateThreadChannelAssociationOutput = {
 };
 
 export type CreateThreadDiscussionInput = {
-  connectedSlackChannelId: Scalars['ID'];
+  attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
+  cursorDetails?: InputMaybe<ThreadDiscussionCursorDetailsInput>;
+  emailDetails?: InputMaybe<ThreadDiscussionEmailDetailsInput>;
   markdownContent: Scalars['String'];
+  slackDetails?: InputMaybe<ThreadDiscussionSlackDetailsInput>;
   threadId: Scalars['ID'];
+  type: ThreadDiscussionType;
 };
 
 export type CreateThreadDiscussionOutput = {
@@ -1556,19 +1844,24 @@ export type CreateThreadEventOutput = {
 
 export type CreateThreadFieldOnThreadInput = {
   booleanValue?: InputMaybe<Scalars['Boolean']>;
+  dateValue?: InputMaybe<Scalars['String']>;
   key: Scalars['String'];
+  numberValue?: InputMaybe<Scalars['Float']>;
   stringValue?: InputMaybe<Scalars['String']>;
   type: ThreadFieldSchemaType;
 };
 
 export type CreateThreadFieldSchemaInput = {
   defaultBooleanValue?: InputMaybe<Scalars['Boolean']>;
+  defaultDateValue?: InputMaybe<Scalars['String']>;
+  defaultNumberValue?: InputMaybe<Scalars['Float']>;
   defaultStringValue?: InputMaybe<Scalars['String']>;
   dependsOnLabelTypeIds?: InputMaybe<Array<Scalars['ID']>>;
   dependsOnThreadField?: InputMaybe<DependsOnThreadFieldInput>;
   description: Scalars['String'];
   enumValues: Array<Scalars['String']>;
   isAiAutoFillEnabled: Scalars['Boolean'];
+  isClientReadonly?: InputMaybe<Scalars['Boolean']>;
   isRequired: Scalars['Boolean'];
   key: Scalars['String'];
   label: Scalars['String'];
@@ -1623,6 +1916,7 @@ export type CreateThreadInput = {
 export type CreateThreadLinkInput = {
   jiraIssue?: InputMaybe<JiraIssueThreadLinkInput>;
   linearIssue?: InputMaybe<LinearIssueThreadLinkInput>;
+  plainTask?: InputMaybe<PlainTaskThreadLinkInput>;
   plainThread?: InputMaybe<PlainThreadLinkInput>;
   sourceId?: InputMaybe<Scalars['String']>;
   sourceType?: InputMaybe<Scalars['String']>;
@@ -1716,6 +2010,18 @@ export type CreateWebhookTargetOutput = {
   webhookTarget: Maybe<WebhookTarget>;
 };
 
+export type CreateWorkflowInput = {
+  name: Scalars['String'];
+  /** JSON-encoded trigger configuration. */
+  trigger: Scalars['String'];
+};
+
+export type CreateWorkflowOutput = {
+  __typename?: 'CreateWorkflowOutput';
+  error: Maybe<MutationError>;
+  workflow: Maybe<Workflow>;
+};
+
 export type CreateWorkflowRuleInput = {
   name: Scalars['String'];
   /** JSON-encoded payload of the rule definition. */
@@ -1726,6 +2032,38 @@ export type CreateWorkflowRuleOutput = {
   __typename?: 'CreateWorkflowRuleOutput';
   error: Maybe<MutationError>;
   workflowRule: Maybe<WorkflowRule>;
+};
+
+export type CreateWorkflowStepInput = {
+  /** Optional name for the step. */
+  name?: InputMaybe<Scalars['String']>;
+  /** JSON-encoded payload containing the action or condition configuration. */
+  payload: Scalars['String'];
+  /** X position of this step on the canvas. */
+  positionX?: InputMaybe<Scalars['Float']>;
+  /** Y position of this step on the canvas. */
+  positionY?: InputMaybe<Scalars['Float']>;
+  /** Array of next step IDs. For ACTION: 1 element. For CONDITION: 2 elements (true, false). Use null for terminal/no branch. */
+  transitions: Array<InputMaybe<Scalars['ID']>>;
+  /** The type of step: CONDITION or ACTION. */
+  type: WorkflowStepType;
+  workflowId: Scalars['ID'];
+};
+
+export type CreateWorkflowStepOutput = {
+  __typename?: 'CreateWorkflowStepOutput';
+  error: Maybe<MutationError>;
+  workflowStep: Maybe<WorkflowStep>;
+};
+
+export type CreateWorkspaceCursorIntegrationInput = {
+  token: Scalars['String'];
+};
+
+export type CreateWorkspaceCursorIntegrationOutput = {
+  __typename?: 'CreateWorkspaceCursorIntegrationOutput';
+  error: Maybe<MutationError>;
+  integration: Maybe<WorkspaceCursorIntegration>;
 };
 
 export type CreateWorkspaceDiscordChannelIntegrationInput = {
@@ -1830,6 +2168,13 @@ export enum CurrencyCode {
   Usd = 'USD'
 }
 
+export type CursorRepository = {
+  __typename?: 'CursorRepository';
+  name: Scalars['String'];
+  owner: Scalars['String'];
+  repository: Scalars['String'];
+};
+
 export type CustomEntry = {
   __typename?: 'CustomEntry';
   attachments: Array<Attachment>;
@@ -1839,7 +2184,32 @@ export type CustomEntry = {
   type: Maybe<Scalars['String']>;
 };
 
-export type CustomTimelineEntryComponent = ComponentBadge | ComponentContainer | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
+export type CustomRole = {
+  __typename?: 'CustomRole';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  description: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  permissionsPreset: Scalars['String'];
+  scopeDefinitions: Array<RoleScopeDefinition>;
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+};
+
+export type CustomRoleConnection = {
+  __typename?: 'CustomRoleConnection';
+  edges: Array<CustomRoleEdge>;
+  pageInfo: PageInfo;
+};
+
+export type CustomRoleEdge = {
+  __typename?: 'CustomRoleEdge';
+  cursor: Scalars['String'];
+  node: CustomRole;
+};
+
+export type CustomTimelineEntryComponent = ComponentBadge | ComponentContainer | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText | ComponentWorkflowButton;
 
 /**
  * The core customer entity. A customer only exists (ideally) once.
@@ -2012,6 +2382,15 @@ export type CustomerCardInstance = {
   updatedBy: Actor;
 };
 
+/** The card exceeded the maximum allowed size. */
+export type CustomerCardInstanceCardTooBigErrorDetail = {
+  __typename?: 'CustomerCardInstanceCardTooBigErrorDetail';
+  cardKey: Scalars['String'];
+  maxSizeBytes: Scalars['Int'];
+  message: Scalars['String'];
+  sizeBytes: Scalars['Int'];
+};
+
 export type CustomerCardInstanceChange = {
   __typename?: 'CustomerCardInstanceChange';
   changeType: ChangeType;
@@ -2039,7 +2418,7 @@ export type CustomerCardInstanceError = CustomerCardInstance & {
 };
 
 /** Details for the reasons why the customer card failed to load. */
-export type CustomerCardInstanceErrorDetail = CustomerCardInstanceMissingCardErrorDetail | CustomerCardInstanceRequestErrorDetail | CustomerCardInstanceResponseBodyErrorDetail | CustomerCardInstanceStatusCodeErrorDetail | CustomerCardInstanceTimeoutErrorDetail | CustomerCardInstanceUnknownErrorDetail;
+export type CustomerCardInstanceErrorDetail = CustomerCardInstanceCardTooBigErrorDetail | CustomerCardInstanceMissingCardErrorDetail | CustomerCardInstanceRequestErrorDetail | CustomerCardInstanceResponseBodyErrorDetail | CustomerCardInstanceStatusCodeErrorDetail | CustomerCardInstanceTimeoutErrorDetail | CustomerCardInstanceUnknownErrorDetail;
 
 /** A loaded customer card. */
 export type CustomerCardInstanceLoaded = CustomerCardInstance & {
@@ -2101,6 +2480,7 @@ export type CustomerCardInstanceRequestErrorDetail = {
 export type CustomerCardInstanceResponseBodyErrorDetail = {
   __typename?: 'CustomerCardInstanceResponseBodyErrorDetail';
   message: Scalars['String'];
+  /** @deprecated No longer supported, returns dummy data */
   responseBody: Scalars['String'];
 };
 
@@ -2108,6 +2488,7 @@ export type CustomerCardInstanceResponseBodyErrorDetail = {
 export type CustomerCardInstanceStatusCodeErrorDetail = {
   __typename?: 'CustomerCardInstanceStatusCodeErrorDetail';
   message: Scalars['String'];
+  /** @deprecated No longer supported, returns dummy data */
   responseBody: Scalars['String'];
   statusCode: Scalars['Int'];
 };
@@ -2129,10 +2510,6 @@ export type CustomerChange = {
   __typename?: 'CustomerChange';
   changeType: ChangeType;
   customer: Customer;
-};
-
-export type CustomerChangesFilter = {
-  assignedToUser?: InputMaybe<Array<Scalars['ID']>>;
 };
 
 export type CustomerConnection = {
@@ -2356,6 +2733,15 @@ export type CustomerSurveyPrioritiesCondition = {
   priorities: Array<Scalars['Int']>;
 };
 
+export type CustomerSurveyRequestedEntry = {
+  __typename?: 'CustomerSurveyRequestedEntry';
+  customerId: Scalars['ID'];
+  customerSurveyId: Scalars['ID'];
+  surveyResponseId: Scalars['ID'];
+  surveyResponsePublicId: Scalars['String'];
+  threadId: Scalars['ID'];
+};
+
 export type CustomerSurveySupportEmailsCondition = {
   __typename?: 'CustomerSurveySupportEmailsCondition';
   supportEmailAddresses: Array<Scalars['String']>;
@@ -2419,6 +2805,7 @@ export type CustomersFilter = {
    * Can be combined with other company filters.
    */
   tenantIdentifiers?: InputMaybe<Array<TenantIdentifierInput>>;
+  updatedAt?: InputMaybe<DatetimeFilter>;
 };
 
 /**
@@ -2452,10 +2839,27 @@ export type DatetimeFilter = {
   before?: InputMaybe<Scalars['String']>;
 };
 
+export type DatetimeFilterOutput = {
+  __typename?: 'DatetimeFilterOutput';
+  /** Timestamps -greater or equal- than this value. ISO 8601 format (e.g. 2024-10-28T18:30:00Z). */
+  after: Maybe<Scalars['String']>;
+  /** Timestamps -less- than this value. ISO 8601 format (e.g. 2024-10-28T18:30:00Z). */
+  before: Maybe<Scalars['String']>;
+};
+
 export type DefaultServiceIntegration = ServiceIntegration & {
   __typename?: 'DefaultServiceIntegration';
   key: Scalars['String'];
   name: Scalars['String'];
+};
+
+export type DeleteAiToneRulesInput = {
+  aiToneRuleIds: Array<Scalars['ID']>;
+};
+
+export type DeleteAiToneRulesOutput = {
+  __typename?: 'DeleteAiToneRulesOutput';
+  error: Maybe<MutationError>;
 };
 
 export type DeleteApiKeyInput = {
@@ -2511,6 +2915,16 @@ export type DeleteCompanyOutput = {
   error: Maybe<MutationError>;
 };
 
+export type DeleteCustomRoleInput = {
+  customRoleId: Scalars['ID'];
+};
+
+export type DeleteCustomRoleOutput = {
+  __typename?: 'DeleteCustomRoleOutput';
+  deletedCustomRoleId: Maybe<Scalars['ID']>;
+  error: Maybe<MutationError>;
+};
+
 export type DeleteCustomerCardConfigInput = {
   /** The customer card config ID to delete. */
   customerCardConfigId: Scalars['ID'];
@@ -2554,6 +2968,12 @@ export type DeleteEscalationPathInput = {
 
 export type DeleteEscalationPathOutput = {
   __typename?: 'DeleteEscalationPathOutput';
+  error: Maybe<MutationError>;
+};
+
+export type DeleteGithubUserAuthIntegrationOutput = {
+  __typename?: 'DeleteGithubUserAuthIntegrationOutput';
+  deletedIntegrationId: Maybe<Scalars['ID']>;
   error: Maybe<MutationError>;
 };
 
@@ -2685,6 +3105,16 @@ export type DeleteSnippetOutput = {
   snippet: Maybe<Snippet>;
 };
 
+export type DeleteTaskInput = {
+  taskId: Scalars['ID'];
+};
+
+export type DeleteTaskOutput = {
+  __typename?: 'DeleteTaskOutput';
+  error: Maybe<MutationError>;
+  task: Maybe<Task>;
+};
+
 export type DeleteTenantFieldInput = {
   tenantFieldId: Scalars['ID'];
 };
@@ -2747,12 +3177,21 @@ export type DeleteThreadFieldSchemaOutput = {
   error: Maybe<MutationError>;
 };
 
+export type DeleteThreadInput = {
+  threadId: Scalars['ID'];
+};
+
 export type DeleteThreadLinkInput = {
   threadLinkId: Scalars['ID'];
 };
 
 export type DeleteThreadLinkOutput = {
   __typename?: 'DeleteThreadLinkOutput';
+  error: Maybe<MutationError>;
+};
+
+export type DeleteThreadOutput = {
+  __typename?: 'DeleteThreadOutput';
   error: Maybe<MutationError>;
 };
 
@@ -2802,6 +3241,15 @@ export type DeleteWebhookTargetOutput = {
   error: Maybe<MutationError>;
 };
 
+export type DeleteWorkflowInput = {
+  workflowId: Scalars['ID'];
+};
+
+export type DeleteWorkflowOutput = {
+  __typename?: 'DeleteWorkflowOutput';
+  error: Maybe<MutationError>;
+};
+
 export type DeleteWorkflowRuleInput = {
   workflowRuleId: Scalars['ID'];
 };
@@ -2809,6 +3257,21 @@ export type DeleteWorkflowRuleInput = {
 export type DeleteWorkflowRuleOutput = {
   __typename?: 'DeleteWorkflowRuleOutput';
   error: Maybe<MutationError>;
+};
+
+export type DeleteWorkflowStepInput = {
+  stepId: Scalars['ID'];
+};
+
+export type DeleteWorkflowStepOutput = {
+  __typename?: 'DeleteWorkflowStepOutput';
+  error: Maybe<MutationError>;
+};
+
+export type DeleteWorkspaceCursorIntegrationOutput = {
+  __typename?: 'DeleteWorkspaceCursorIntegrationOutput';
+  error: Maybe<MutationError>;
+  id: Maybe<Scalars['ID']>;
 };
 
 export type DeleteWorkspaceDiscordChannelIntegrationInput = {
@@ -2894,6 +3357,32 @@ export type DeletedCustomerEmailActor = {
   customerId: Scalars['ID'];
 };
 
+/** Represents a thread that has been deleted. */
+export type DeletedThread = {
+  __typename?: 'DeletedThread';
+  /** The timestamp when the thread was deleted. */
+  deletedAt: DateTime;
+  /** The ID of the deleted thread. */
+  threadId: Scalars['ID'];
+};
+
+export type DeletedThreadConnection = {
+  __typename?: 'DeletedThreadConnection';
+  edges: Array<DeletedThreadEdge>;
+  pageInfo: PageInfo;
+};
+
+export type DeletedThreadEdge = {
+  __typename?: 'DeletedThreadEdge';
+  cursor: Scalars['String'];
+  node: DeletedThread;
+};
+
+export type DeletedThreadsFilter = {
+  /** Filter deleted threads by deletion timestamp. */
+  deletedAt?: InputMaybe<DatetimeFilter>;
+};
+
 export type DependsOnLabelType = {
   __typename?: 'DependsOnLabelType';
   labelTypeId: Scalars['ID'];
@@ -2947,6 +3436,12 @@ export type DiscordThreadChannelDetails = {
   discordGuildId: Scalars['String'];
 };
 
+export type DiscussionResolvedNotificationDetail = {
+  __typename?: 'DiscussionResolvedNotificationDetail';
+  threadDiscussionId: Scalars['ID'];
+  threadId: Scalars['ID'];
+};
+
 export type DnsRecord = {
   __typename?: 'DnsRecord';
   isVerified: Scalars['Boolean'];
@@ -2981,6 +3476,7 @@ export type Email = {
   subject: Maybe<Scalars['String']>;
   textContent: Maybe<Scalars['String']>;
   thread: Maybe<Thread>;
+  threadDiscussionId: Maybe<Scalars['ID']>;
   to: EmailParticipant;
   updatedAt: DateTime;
   updatedBy: Actor;
@@ -3013,14 +3509,22 @@ export enum EmailAuthenticity {
 export type EmailBounce = {
   __typename?: 'EmailBounce';
   bouncedAt: DateTime;
+  details: Maybe<Scalars['String']>;
   isSendRetriable: Scalars['Boolean'];
   recipient: EmailParticipant;
+};
+
+export type EmailBounceNotificationDetail = {
+  __typename?: 'EmailBounceNotificationDetail';
+  threadId: Scalars['ID'];
 };
 
 export enum EmailCategory {
   CustomerSurvey = 'CUSTOMER_SURVEY',
   Messaging = 'MESSAGING',
-  UnreadChatMessages = 'UNREAD_CHAT_MESSAGES'
+  ThreadDiscussion = 'THREAD_DISCUSSION',
+  UnreadChatMessages = 'UNREAD_CHAT_MESSAGES',
+  UserHidden = 'USER_HIDDEN'
 }
 
 export type EmailCustomerIdentity = {
@@ -3105,7 +3609,7 @@ export type EmailSignature = {
 };
 
 /** A union of all possible entries that can appear in a timeline. */
-export type Entry = ChatEntry | CustomEntry | CustomerEventEntry | DiscordMessageEntry | EmailEntry | HelpCenterAiConversationMessageEntry | LinearIssueThreadLinkStateTransitionedEntry | MsTeamsMessageEntry | NoteEntry | ServiceLevelAgreementStatusTransitionedEntry | SlackMessageEntry | SlackReplyEntry | ThreadAdditionalAssigneesTransitionedEntry | ThreadAssignmentTransitionedEntry | ThreadDiscussionEntry | ThreadDiscussionResolvedEntry | ThreadEventEntry | ThreadLabelsChangedEntry | ThreadLinkUpdatedEntry | ThreadPriorityChangedEntry | ThreadStatusTransitionedEntry;
+export type Entry = ChatEntry | CustomEntry | CustomerEventEntry | CustomerSurveyRequestedEntry | DiscordMessageEntry | EmailEntry | HelpCenterAiConversationMessageEntry | LinearIssueThreadLinkStateTransitionedEntry | MsTeamsMessageEntry | MergedThreadMessageEntry | NoteEntry | ServiceLevelAgreementStatusTransitionedEntry | SlackMessageEntry | SlackReplyEntry | ThreadAdditionalAssigneesTransitionedEntry | ThreadAssignmentTransitionedEntry | ThreadDiscussionEntry | ThreadDiscussionMessageEntry | ThreadDiscussionResolvedEntry | ThreadEventEntry | ThreadLabelsChangedEntry | ThreadLinkCreatedEntry | ThreadLinkDeletedEntry | ThreadLinkTargetCreatedEntry | ThreadLinkTargetDeletedEntry | ThreadLinkUpdatedEntry | ThreadPriorityChangedEntry | ThreadStatusTransitionedEntry;
 
 export type EscalateThreadInput = {
   threadId: Scalars['ID'];
@@ -3166,7 +3670,7 @@ export type EscalationPathStepUser = {
   user: User;
 };
 
-export type EventComponent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText;
+export type EventComponent = ComponentBadge | ComponentCopyButton | ComponentDivider | ComponentLinkButton | ComponentPlainText | ComponentRow | ComponentSpacer | ComponentText | ComponentWorkflowButton;
 
 export type EventComponentInput = {
   componentBadge?: InputMaybe<ComponentBadgeInput>;
@@ -3177,6 +3681,7 @@ export type EventComponentInput = {
   componentRow?: InputMaybe<ComponentRowInput>;
   componentSpacer?: InputMaybe<ComponentSpacerInput>;
   componentText?: InputMaybe<ComponentTextInput>;
+  componentWorkflowButton?: InputMaybe<ComponentWorkflowButtonInput>;
 };
 
 export type FavoritePage = {
@@ -3202,12 +3707,16 @@ export type FavoritePageEdge = {
 };
 
 export enum FeatureKey {
+  AiAgent = 'AI_AGENT',
+  AiAssistant = 'AI_ASSISTANT',
   AiSuggestedResponses = 'AI_SUGGESTED_RESPONSES',
   BillingRotaSeats = 'BILLING_ROTA_SEATS',
   BusinessHours = 'BUSINESS_HOURS',
   ConnectedCustomerSlackChannels = 'CONNECTED_CUSTOMER_SLACK_CHANNELS',
   ConnectedSupportEmailAddresses = 'CONNECTED_SUPPORT_EMAIL_ADDRESSES',
+  CursorAgents = 'CURSOR_AGENTS',
   CustomerSurveys = 'CUSTOMER_SURVEYS',
+  CustomRoles = 'CUSTOM_ROLES',
   DataImporters = 'DATA_IMPORTERS',
   DiscordIntegration = 'DISCORD_INTEGRATION',
   EscalationPaths = 'ESCALATION_PATHS',
@@ -3218,6 +3727,7 @@ export enum FeatureKey {
   MsTeamsIntegration = 'MS_TEAMS_INTEGRATION',
   ServiceLevelAgreements = 'SERVICE_LEVEL_AGREEMENTS',
   SlackDiscussions = 'SLACK_DISCUSSIONS',
+  Sso = 'SSO',
   TeamReporting = 'TEAM_REPORTING',
   WorkflowRules = 'WORKFLOW_RULES'
 }
@@ -3253,6 +3763,16 @@ export type ForkThreadOutput = {
   __typename?: 'ForkThreadOutput';
   error: Maybe<MutationError>;
   thread: Maybe<Thread>;
+};
+
+export type GenerateAiToneRulesFromDescriptionInput = {
+  description: Scalars['String'];
+};
+
+export type GenerateAiToneRulesFromDescriptionOutput = {
+  __typename?: 'GenerateAiToneRulesFromDescriptionOutput';
+  aiToneRules: Array<AiToneRule>;
+  error: Maybe<MutationError>;
 };
 
 export type GenerateHelpCenterArticleInput = {
@@ -3300,6 +3820,7 @@ export type GenericThreadLink = ThreadLink & {
   createdBy: InternalActor;
   description: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  linkType: ThreadLinkLinkType;
   sourceId: Scalars['String'];
   sourceStatus: Maybe<ThreadLinkSourceStatus>;
   sourceType: Scalars['String'];
@@ -3311,8 +3832,19 @@ export type GenericThreadLink = ThreadLink & {
   url: Scalars['String'];
 };
 
+export type GithubUserAuthIntegration = {
+  __typename?: 'GithubUserAuthIntegration';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  githubUsername: Scalars['String'];
+  id: Scalars['ID'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+};
+
 export type HeatmapHour = {
   __typename?: 'HeatmapHour';
+  messageCount: Scalars['Int'];
   percentage: Scalars['Float'];
   threadIds: Array<Scalars['String']>;
   total: Scalars['Int'];
@@ -3323,9 +3855,14 @@ export type HeatmapMetric = {
   days: Array<Array<HeatmapHour>>;
 };
 
+export type HeatmapMetricFilters = {
+  userId?: InputMaybe<Scalars['ID']>;
+};
+
 export type HeatmapMetricOptionsInput = {
   dimensionType?: InputMaybe<MetricDimensionType>;
   dimensionValue?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<HeatmapMetricFilters>;
   from?: InputMaybe<Scalars['String']>;
   subDimension?: InputMaybe<Scalars['String']>;
   to?: InputMaybe<Scalars['String']>;
@@ -3335,6 +3872,7 @@ export type HelpCenter = {
   __typename?: 'HelpCenter';
   access: Maybe<HelpCenterAccessSettings>;
   agentAvatarImage: HelpCenterThemedImage;
+  articleCopyOptions: HelpCenterArticleCopyOptions;
   /** All article groups in the help center. */
   articleGroups: HelpCenterArticleGroupConnection;
   /** All articles in the help center. */
@@ -3353,6 +3891,7 @@ export type HelpCenter = {
   id: Scalars['ID'];
   internalName: Scalars['String'];
   isChatEnabled: Scalars['Boolean'];
+  isCustomerFacingAiEnabled: Scalars['Boolean'];
   isDeleted: Scalars['Boolean'];
   logo: HelpCenterThemedImage;
   portalSettings: HelpCenterPortalSettings;
@@ -3426,6 +3965,34 @@ export type HelpCenterArticleConnection = {
   __typename?: 'HelpCenterArticleConnection';
   edges: Array<HelpCenterArticleEdge>;
   pageInfo: PageInfo;
+};
+
+export type HelpCenterArticleCopyOptionSettings = {
+  __typename?: 'HelpCenterArticleCopyOptionSettings';
+  isChatgptEnabled: Scalars['Boolean'];
+  isClaudeEnabled: Scalars['Boolean'];
+  isCursorEnabled: Scalars['Boolean'];
+  isMarkdownEnabled: Scalars['Boolean'];
+  isPlaintextEnabled: Scalars['Boolean'];
+};
+
+export type HelpCenterArticleCopyOptionSettingsInput = {
+  isChatgptEnabled: Scalars['Boolean'];
+  isClaudeEnabled: Scalars['Boolean'];
+  isCursorEnabled: Scalars['Boolean'];
+  isMarkdownEnabled: Scalars['Boolean'];
+  isPlaintextEnabled: Scalars['Boolean'];
+};
+
+export type HelpCenterArticleCopyOptions = {
+  __typename?: 'HelpCenterArticleCopyOptions';
+  isEnabled: Scalars['Boolean'];
+  options: HelpCenterArticleCopyOptionSettings;
+};
+
+export type HelpCenterArticleCopyOptionsInput = {
+  isEnabled: Scalars['Boolean'];
+  options: HelpCenterArticleCopyOptionSettingsInput;
 };
 
 export type HelpCenterArticleEdge = {
@@ -3629,6 +4196,28 @@ export type HelpCenterPortalSettingsInput = {
   threadVisibility?: InputMaybe<HelpCenterPortalSettingsThreadVisibilityInput>;
 };
 
+export type HelpCenterPortalSettingsOverrideCustomerCompany = {
+  __typename?: 'HelpCenterPortalSettingsOverrideCustomerCompany';
+  companyIds: Array<Scalars['String']>;
+  customerIds: Array<Scalars['String']>;
+};
+
+export type HelpCenterPortalSettingsOverrideCustomerCompanyInput = {
+  companyIds?: InputMaybe<Array<Scalars['String']>>;
+  customerIds?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type HelpCenterPortalSettingsOverrideCustomerTenants = {
+  __typename?: 'HelpCenterPortalSettingsOverrideCustomerTenants';
+  customerIds: Array<Scalars['String']>;
+  tenantIds: Array<Scalars['String']>;
+};
+
+export type HelpCenterPortalSettingsOverrideCustomerTenantsInput = {
+  customerIds?: InputMaybe<Array<Scalars['String']>>;
+  tenantIds?: InputMaybe<Array<Scalars['String']>>;
+};
+
 export type HelpCenterPortalSettingsTextFormField = {
   __typename?: 'HelpCenterPortalSettingsTextFormField';
   id: Scalars['ID'];
@@ -3671,11 +4260,15 @@ export type HelpCenterPortalSettingsThreadVisibility = {
   __typename?: 'HelpCenterPortalSettingsThreadVisibility';
   customerCompany: Scalars['Boolean'];
   customerTenants: Scalars['Boolean'];
+  overrideCustomerCompany: Maybe<HelpCenterPortalSettingsOverrideCustomerCompany>;
+  overrideCustomerTenants: Maybe<HelpCenterPortalSettingsOverrideCustomerTenants>;
 };
 
 export type HelpCenterPortalSettingsThreadVisibilityInput = {
   customerCompany?: InputMaybe<Scalars['Boolean']>;
   customerTenants?: InputMaybe<Scalars['Boolean']>;
+  overrideCustomerCompany?: InputMaybe<HelpCenterPortalSettingsOverrideCustomerCompanyInput>;
+  overrideCustomerTenants?: InputMaybe<HelpCenterPortalSettingsOverrideCustomerTenantsInput>;
 };
 
 export type HelpCenterThemedImage = {
@@ -3698,6 +4291,26 @@ export enum HelpCenterType {
 export type HelpCenterWorkosAuthkitAuthMechanismInput = {
   ignore?: InputMaybe<Scalars['Boolean']>;
 };
+
+export enum HyperlineCheckoutPlanKey {
+  Foundation = 'FOUNDATION',
+  Frontier = 'FRONTIER',
+  Horizon = 'HORIZON'
+}
+
+export type HyperlineCheckoutSession = {
+  __typename?: 'HyperlineCheckoutSession';
+  id: Scalars['ID'];
+  status: HyperlineCheckoutSessionStatus;
+  url: Scalars['String'];
+};
+
+export enum HyperlineCheckoutSessionStatus {
+  Cancelled = 'CANCELLED',
+  Completed = 'COMPLETED',
+  Errored = 'ERRORED',
+  Opened = 'OPENED'
+}
 
 export type ImpersonationInput = {
   asCustomer: CustomerImpersonationInput;
@@ -3750,6 +4363,7 @@ export type IndexedDocumentStatusFailed = {
 export type IndexedDocumentStatusIndexed = {
   __typename?: 'IndexedDocumentStatusIndexed';
   indexedAt: DateTime;
+  indexedBy: Maybe<InternalActor>;
 };
 
 export type IndexedDocumentStatusPending = {
@@ -3772,6 +4386,7 @@ export type IndexingStatusFailed = {
 export type IndexingStatusIndexed = {
   __typename?: 'IndexingStatusIndexed';
   indexedAt: DateTime;
+  indexedBy: Maybe<InternalActor>;
 };
 
 export type IndexingStatusPending = {
@@ -3789,10 +4404,64 @@ export type IntInput = {
 
 export type InternalActor = MachineUserActor | SystemActor | UserActor;
 
+/**
+ * An internal notification displayed to workspace members in the Plain app.
+ * Each notification is for a specific user.
+ */
+export type InternalNotification = {
+  __typename?: 'InternalNotification';
+  /** When the notification was archived by the user. Null means not archived. */
+  archivedAt: Maybe<DateTime>;
+  archivedBy: Maybe<InternalActor>;
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  /** Optional description providing more detail about the notification. */
+  description: Maybe<Scalars['String']>;
+  /** Extra info specific to this notification type. */
+  details: Maybe<InternalNotificationDetail>;
+  /** The unique ID of this notification. */
+  id: Scalars['ID'];
+  /** When the notification was marked as read by the user. Null means unread. */
+  readAt: Maybe<DateTime>;
+  /** The title of the notification. */
+  title: Scalars['String'];
+  /** The notification type (e.g. 'thread_assignment', 'note_mention', 'email_bounce'). */
+  type: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+  /** The user this notification is for. */
+  userId: Scalars['ID'];
+};
+
+export type InternalNotificationChange = {
+  __typename?: 'InternalNotificationChange';
+  changeType: ChangeType;
+  internalNotification: InternalNotification;
+};
+
+export type InternalNotificationConnection = {
+  __typename?: 'InternalNotificationConnection';
+  edges: Array<InternalNotificationEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type InternalNotificationDetail = DiscussionResolvedNotificationDetail | EmailBounceNotificationDetail | NoteMentionNotificationDetail | ThreadAssignmentNotificationDetail;
+
+export type InternalNotificationEdge = {
+  __typename?: 'InternalNotificationEdge';
+  cursor: Scalars['String'];
+  node: InternalNotification;
+};
+
+export type InternalNotificationsFilter = {
+  createdAt?: InputMaybe<DatetimeFilter>;
+  isRead?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type InviteUserToWorkspaceInput = {
+  customRoleId?: InputMaybe<Scalars['ID']>;
   email: Scalars['String'];
-  /** @deprecated Use roleKey instead. */
-  roleIds?: InputMaybe<Array<Scalars['ID']>>;
   roleKey?: InputMaybe<RoleKey>;
   usingBillingRotaSeat?: InputMaybe<BooleanInput>;
 };
@@ -3828,6 +4497,7 @@ export type IssueTrackerFieldOption = {
 };
 
 export enum IssueTrackerFieldType {
+  MultiSelect = 'MULTI_SELECT',
   Select = 'SELECT'
 }
 
@@ -3846,6 +4516,7 @@ export type JiraIssueThreadLink = ThreadLink & {
   jiraIssueId: Scalars['ID'];
   jiraIssueKey: Scalars['String'];
   jiraIssueType: JiraIssueType;
+  linkType: ThreadLinkLinkType;
   sourceId: Scalars['String'];
   sourceType: Scalars['String'];
   status: ThreadLinkStatus;
@@ -3881,6 +4552,95 @@ export type JiraSiteIntegration = ServiceIntegration & {
   site: JiraSite;
 };
 
+export type KnowledgeGap = {
+  __typename?: 'KnowledgeGap';
+  createdAt: DateTime;
+  createdBy: Actor;
+  description: Scalars['String'];
+  firstSeenAt: DateTime;
+  id: Scalars['ID'];
+  lastSeenAt: DateTime;
+  /** Paginated list of signals linked to this knowledge gap. */
+  signals: KnowledgeGapSignalConnection;
+  status: KnowledgeGapStatus;
+  statusChangedAt: DateTime;
+  title: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: Actor;
+};
+
+
+export type KnowledgeGapSignalsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+export type KnowledgeGapConnection = {
+  __typename?: 'KnowledgeGapConnection';
+  edges: Array<KnowledgeGapEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type KnowledgeGapEdge = {
+  __typename?: 'KnowledgeGapEdge';
+  cursor: Scalars['String'];
+  node: KnowledgeGap;
+};
+
+export type KnowledgeGapSignal = {
+  __typename?: 'KnowledgeGapSignal';
+  createdAt: DateTime;
+  createdBy: Actor;
+  id: Scalars['ID'];
+  knowledgeGapId: Maybe<Scalars['ID']>;
+  threadId: Scalars['ID'];
+  type: KnowledgeGapSignalType;
+  updatedAt: DateTime;
+  updatedBy: Actor;
+};
+
+export type KnowledgeGapSignalConnection = {
+  __typename?: 'KnowledgeGapSignalConnection';
+  edges: Array<KnowledgeGapSignalEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type KnowledgeGapSignalEdge = {
+  __typename?: 'KnowledgeGapSignalEdge';
+  cursor: Scalars['String'];
+  node: KnowledgeGapSignal;
+};
+
+export enum KnowledgeGapSignalType {
+  Ari = 'ARI'
+}
+
+export enum KnowledgeGapStatus {
+  Ignored = 'IGNORED',
+  Open = 'OPEN',
+  Resolved = 'RESOLVED'
+}
+
+export type KnowledgeGapsFilter = {
+  statuses?: InputMaybe<Array<KnowledgeGapStatus>>;
+};
+
+export type KnowledgeGapsSort = {
+  direction: SortDirection;
+  field: KnowledgeGapsSortField;
+};
+
+export enum KnowledgeGapsSortField {
+  /** Sort by when the most recent signal was linked. */
+  LastSeenAt = 'LAST_SEEN_AT',
+  /** Sort by number of linked signals (uses correlated subquery COUNT). */
+  SignalCount = 'SIGNAL_COUNT'
+}
+
 export type KnowledgeSource = KnowledgeSourceSitemap | KnowledgeSourceUrl;
 
 export type KnowledgeSourceConnection = {
@@ -3896,6 +4656,11 @@ export type KnowledgeSourceEdge = {
 };
 
 export type KnowledgeSourceSearchResult = HelpCenterArticleSearchResult | IndexedDocumentSearchResult;
+
+export enum KnowledgeSourceSearchResultType {
+  HelpCenterArticle = 'HELP_CENTER_ARTICLE',
+  IndexedDocument = 'INDEXED_DOCUMENT'
+}
 
 export type KnowledgeSourceSitemap = {
   __typename?: 'KnowledgeSourceSitemap';
@@ -3950,9 +4715,11 @@ export type LabelType = {
   createdAt: DateTime;
   createdBy: InternalActor;
   description: Maybe<Scalars['String']>;
+  externalId: Maybe<Scalars['String']>;
   icon: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isArchived: Scalars['Boolean'];
+  isExcludedFromAi: Scalars['Boolean'];
   name: Scalars['String'];
   parentLabelType: Maybe<LabelType>;
   /** The position of the label type. Always relative to its parent. */
@@ -4023,6 +4790,7 @@ export type LinearIssueThreadLink = ThreadLink & {
   linearIssueUpdatedAt: DateTime;
   /** @deprecated Use url instead. */
   linearIssueUrl: Scalars['String'];
+  linkType: ThreadLinkLinkType;
   sourceId: Scalars['String'];
   sourceType: Scalars['String'];
   status: ThreadLinkStatus;
@@ -4045,6 +4813,16 @@ export type LinearIssueThreadLinkStateTransitionedEntry = {
   nextLinearStateId: Scalars['ID'];
   /** Refers to the id of the WorkflowState object in Linear. This can be used to fetch the WorkflowState from the Linear API. */
   previousLinearStateId: Scalars['ID'];
+};
+
+export type LockThreadInput = {
+  threadId: Scalars['ID'];
+};
+
+export type LockThreadOutput = {
+  __typename?: 'LockThreadOutput';
+  error: Maybe<MutationError>;
+  thread: Maybe<Thread>;
 };
 
 export type MsTeamsChannelMember = {
@@ -4224,6 +5002,13 @@ export type MentionInput = {
   userId: Scalars['ID'];
 };
 
+export type MergedThreadMessageEntry = {
+  __typename?: 'MergedThreadMessageEntry';
+  childThreadDetails: ChildThreadDetails;
+  childTimelineEntry: Maybe<TimelineEntry>;
+  threadLinkId: Scalars['ID'];
+};
+
 export enum MessageSource {
   Api = 'API',
   Chat = 'CHAT',
@@ -4300,12 +5085,20 @@ export type Mutation = {
   assignThread: AssignThreadOutput;
   bulkJoinSlackChannels: BulkJoinSlackChannelsOutput;
   bulkUpsertThreadFields: BulkUpsertThreadFieldsOutput;
+  bulkUpsertWorkflowSteps: BulkUpsertWorkflowStepsOutput;
   calculateRoleChangeCost: CalculateRoleChangeCostOutput;
+  cancelHyperlineSubscription: CancelHyperlineSubscriptionOutput;
   changeBillingPlan: ChangeBillingPlanOutput;
+  /** Change the status of a knowledge gap. If the target status matches the current status, returns the gap unchanged. */
+  changeKnowledgeGapStatus: ChangeKnowledgeGapStatusOutput;
   changeThreadCustomer: ChangeThreadCustomerOutput;
   changeThreadPriority: ChangeThreadPriorityOutput;
   changeUserStatus: ChangeUserStatusOutput;
   completeServiceAuthorization: CompleteServiceAuthorizationOutput;
+  /** @deprecated Use createAiFeedback instead */
+  createAiFeatureFeedback: CreateAiFeatureFeedbackOutput;
+  createAiFeedback: CreateAiFeedbackOutput;
+  createAiToneRule: CreateAiToneRuleOutput;
   createApiKey: CreateApiKeyOutput;
   createAttachmentDownloadUrl: CreateAttachmentDownloadUrlOutput;
   createAttachmentUploadUrl: CreateAttachmentUploadUrlOutput;
@@ -4314,6 +5107,7 @@ export type Mutation = {
   createChatApp: CreateChatAppOutput;
   createChatAppSecret: CreateChatAppSecretOutput;
   createCheckoutSession: CreateCheckoutSessionOutput;
+  createCustomRole: CreateCustomRoleOutput;
   /** Creates a customer card config. A maximum of 25 card configs can be created. */
   createCustomerCardConfig: CreateCustomerCardConfigOutput;
   /** Create a new customer event. */
@@ -4323,8 +5117,12 @@ export type Mutation = {
   createCustomerSurvey: CreateCustomerSurveyOutput;
   createEmailPreviewUrl: CreateEmailPreviewUrlOutput;
   createEscalationPath: CreateEscalationPathOutput;
+  createGithubUserAuthIntegration: CreateGithubUserAuthIntegrationOutput;
   createHelpCenter: CreateHelpCenterOutput;
   createHelpCenterArticleGroup: CreateHelpCenterArticleGroupOutput;
+  createHyperlineBillingPortalSession: CreateHyperlineBillingPortalSessionOutput;
+  createHyperlineCheckoutSession: CreateHyperlineCheckoutSessionOutput;
+  createHyperlineComponentsAuthToken: CreateHyperlineComponentsAuthTokenOutput;
   createIndexedDocument: CreateIndexedDocumentOutput;
   createIssueTrackerIssue: CreateIssueTrackerIssueOutput;
   createKnowledgeSource: CreateKnowledgeSourceOutput;
@@ -4338,6 +5136,7 @@ export type Mutation = {
   createSavedThreadsView: CreateSavedThreadsViewOutput;
   createServiceLevelAgreement: CreateServiceLevelAgreementOutput;
   createSnippet: CreateSnippetOutput;
+  createTask: CreateTaskOutput;
   createThread: CreateThreadOutput;
   createThreadChannelAssociation: CreateThreadChannelAssociationOutput;
   createThreadDiscussion: CreateThreadDiscussionOutput;
@@ -4351,8 +5150,11 @@ export type Mutation = {
   createUserAuthSlackIntegration: CreateUserAuthSlackIntegrationOutput;
   /** Creates a webhook target. */
   createWebhookTarget: CreateWebhookTargetOutput;
+  createWorkflow: CreateWorkflowOutput;
   createWorkflowRule: CreateWorkflowRuleOutput;
+  createWorkflowStep: CreateWorkflowStepOutput;
   createWorkspace: CreateWorkspaceOutput;
+  createWorkspaceCursorIntegration: CreateWorkspaceCursorIntegrationOutput;
   createWorkspaceDiscordChannelIntegration: CreateWorkspaceDiscordChannelIntegrationOutput;
   createWorkspaceDiscordIntegration: CreateWorkspaceDiscordIntegrationOutput;
   createWorkspaceEmailDomainSettings: CreateWorkspaceEmailDomainSettingsOutput;
@@ -4360,6 +5162,7 @@ export type Mutation = {
   createWorkspaceMSTeamsIntegration: CreateWorkspaceMsTeamsIntegrationOutput;
   createWorkspaceSlackChannelIntegration: CreateWorkspaceSlackChannelIntegrationOutput;
   createWorkspaceSlackIntegration: CreateWorkspaceSlackIntegrationOutput;
+  deleteAiToneRules: DeleteAiToneRulesOutput;
   deleteApiKey: DeleteApiKeyOutput;
   deleteAutoresponder: DeleteAutoresponderOutput;
   /** @deprecated Use syncBusinessHoursSlots instead. */
@@ -4367,6 +5170,7 @@ export type Mutation = {
   deleteChatApp: DeleteChatAppOutput;
   deleteChatAppSecret: DeleteChatAppSecretOutput;
   deleteCompany: DeleteCompanyOutput;
+  deleteCustomRole: DeleteCustomRoleOutput;
   /** Deletes a customer and all of their data stored on Plain. This action cannot be reversed. */
   deleteCustomer: DeleteCustomerOutput;
   /** Deletes a customer card config. */
@@ -4375,6 +5179,7 @@ export type Mutation = {
   deleteCustomerGroup: DeleteCustomerGroupOutput;
   deleteCustomerSurvey: DeleteCustomerSurveyOutput;
   deleteEscalationPath: DeleteEscalationPathOutput;
+  deleteGithubUserAuthIntegration: DeleteGithubUserAuthIntegrationOutput;
   deleteHelpCenter: DeleteHelpCenterOutput;
   deleteHelpCenterArticle: DeleteHelpCenterArticleOutput;
   deleteHelpCenterArticleGroup: DeleteHelpCenterArticleGroupOutput;
@@ -4392,9 +5197,12 @@ export type Mutation = {
   deleteServiceAuthorization: DeleteServiceAuthorizationOutput;
   deleteServiceLevelAgreement: DeleteServiceLevelAgreementOutput;
   deleteSnippet: DeleteSnippetOutput;
+  deleteTask: DeleteTaskOutput;
   deleteTenant: DeleteTenantOutput;
   deleteTenantField: DeleteTenantFieldOutput;
   deleteTenantFieldSchema: DeleteTenantFieldSchemaOutput;
+  /** Deletes a thread and all of its data stored on Plain. This action cannot be reversed. */
+  deleteThread: DeleteThreadOutput;
   deleteThreadChannelAssociation: DeleteThreadChannelAssociationOutput;
   deleteThreadField: DeleteThreadFieldOutput;
   deleteThreadFieldSchema: DeleteThreadFieldSchemaOutput;
@@ -4405,7 +5213,10 @@ export type Mutation = {
   deleteUserAuthSlackIntegration: DeleteUserAuthSlackIntegrationOutput;
   /** Deletes a webhook target. */
   deleteWebhookTarget: DeleteWebhookTargetOutput;
+  deleteWorkflow: DeleteWorkflowOutput;
   deleteWorkflowRule: DeleteWorkflowRuleOutput;
+  deleteWorkflowStep: DeleteWorkflowStepOutput;
+  deleteWorkspaceCursorIntegration: DeleteWorkspaceCursorIntegrationOutput;
   deleteWorkspaceDiscordChannelIntegration: DeleteWorkspaceDiscordChannelIntegrationOutput;
   deleteWorkspaceDiscordIntegration: DeleteWorkspaceDiscordIntegrationOutput;
   deleteWorkspaceEmailDomainSettings: DeleteWorkspaceEmailDomainSettingsOutput;
@@ -4416,8 +5227,10 @@ export type Mutation = {
   deleteWorkspaceSlackIntegration: DeleteWorkspaceSlackIntegrationOutput;
   escalateThread: EscalateThreadOutput;
   forkThread: ForkThreadOutput;
+  generateAiToneRulesFromDescription: GenerateAiToneRulesFromDescriptionOutput;
   generateHelpCenterArticle: GenerateHelpCenterArticleOutput;
   inviteUserToWorkspace: InviteUserToWorkspaceOutput;
+  lockThread: LockThreadOutput;
   /** Marks a customer as spam. */
   markCustomerAsSpam: MarkCustomerAsSpamOutput;
   markThreadAsDone: MarkThreadAsDoneOutput;
@@ -4428,6 +5241,11 @@ export type Mutation = {
   refreshConnectedDiscordChannels: RefreshConnectedDiscordChannelsOutput;
   refreshWorkspaceSlackChannelIntegration: RefreshWorkspaceSlackChannelIntegrationOutput;
   regenerateWorkspaceHmac: RegenerateWorkspaceHmacOutput;
+  /**
+   * Request re-indexing of a knowledge source for AI if its content has changed.
+   * Note: knowledge sources are automatically re-indexed every week.
+   */
+  reindexKnowledgeSource: ReindexKnowledgeSourceOutput;
   /**
    * Reloads a customer card for a customer.
    *
@@ -4479,20 +5297,26 @@ export type Mutation = {
   snoozeThread: SnoozeThreadOutput;
   startServiceAuthorization: StartServiceAuthorizationOutput;
   syncBusinessHoursSlots: SyncBusinessHoursSlotsOutput;
+  /** Configure a user's working hours for automatic status switching. */
+  syncUserWorkingHours: SyncUserWorkingHoursOutput;
   /** Adds or removes a reaction from a slack message timeline entry. */
   toggleSlackMessageReaction: ToggleSlackMessageReactionOutput;
   toggleWorkflowRulePublished: ToggleWorkflowRulePublishedOutput;
+  triggerWorkflow: TriggerWorkflowOutput;
+  triggerWorkflowRule: TriggerWorkflowRuleOutput;
   unarchiveLabelType: UnarchiveLabelTypeOutput;
   unassignThread: UnassignThreadOutput;
   /** Removes the spam mark from a customer. */
   unmarkCustomerAsSpam: UnmarkCustomerAsSpamOutput;
   updateActiveBillingRota: UpdateActiveBillingRotaOutput;
+  updateAiToneRules: UpdateAiToneRulesOutput;
   updateApiKey: UpdateApiKeyOutput;
   updateAutoresponder: UpdateAutoresponderOutput;
   updateChatApp: UpdateChatAppOutput;
   updateCompanyTier: UpdateCompanyTierOutput;
   updateConnectedDiscordChannel: UpdateConnectedDiscordChannelOutput;
   updateConnectedSlackChannel: UpdateConnectedSlackChannelOutput;
+  updateCustomRole: UpdateCustomRoleOutput;
   /** Partially updates a customer card config. */
   updateCustomerCardConfig: UpdateCustomerCardConfigOutput;
   /** Changes the company of a customer. */
@@ -4506,24 +5330,32 @@ export type Mutation = {
   updateHelpCenterArticleGroup: UpdateHelpCenterArticleGroupOutput;
   updateHelpCenterCustomDomainName: UpdateHelpCenterCustomDomainNameOutput;
   updateHelpCenterIndex: UpdateHelpCenterIndexOutput;
+  updateInternalNotifications: UpdateInternalNotificationsOutput;
   updateLabelType: UpdateLabelTypeOutput;
   updateMachineUser: UpdateMachineUserOutput;
   updateMyUser: UpdateMyUserOutput;
+  updateNote: UpdateNoteOutput;
   updateSavedThreadsView: UpdateSavedThreadsViewOutput;
   updateServiceLevelAgreement: UpdateServiceLevelAgreementOutput;
   /** Updates a setting. */
   updateSetting: UpdateSettingOutput;
   updateSnippet: UpdateSnippetOutput;
+  updateTask: UpdateTaskOutput;
   updateTenantTier: UpdateTenantTierOutput;
+  updateThreadAgentStatus: UpdateThreadAgentStatusOutput;
   updateThreadEscalationPath: UpdateThreadEscalationPathOutput;
   updateThreadFieldSchema: UpdateThreadFieldSchemaOutput;
+  updateThreadSuggestedActionStatus: UpdateThreadSuggestedActionStatusOutput;
   updateThreadTenant: UpdateThreadTenantOutput;
   updateThreadTier: UpdateThreadTierOutput;
   updateThreadTitle: UpdateThreadTitleOutput;
   updateTier: UpdateTierOutput;
+  updateUserDefaultSavedThreadsView: UpdateUserDefaultSavedThreadsViewOutput;
   /** Updates a webhook target. */
   updateWebhookTarget: UpdateWebhookTargetOutput;
+  updateWorkflow: UpdateWorkflowOutput;
   updateWorkflowRule: UpdateWorkflowRuleOutput;
+  updateWorkflowStep: UpdateWorkflowStepOutput;
   updateWorkspace: UpdateWorkspaceOutput;
   updateWorkspaceEmailSettings: UpdateWorkspaceEmailSettingsOutput;
   /** @deprecated Use syncBusinessHoursSlots instead. */
@@ -4535,6 +5367,8 @@ export type Mutation = {
   upsertCustomerGroup: UpsertCustomerGroupOutput;
   upsertHelpCenterArticle: UpsertHelpCenterArticleOutput;
   upsertMyEmailSignature: UpsertMyEmailSignatureOutput;
+  upsertRoleScopes: UpsertRoleScopesOutput;
+  upsertTeamSettings: UpsertTeamSettingsOutput;
   upsertTenant: UpsertTenantOutput;
   upsertTenantField: UpsertTenantFieldOutput;
   upsertTenantFieldSchema: UpsertTenantFieldSchemaOutput;
@@ -4620,6 +5454,11 @@ export type MutationBulkUpsertThreadFieldsArgs = {
 };
 
 
+export type MutationBulkUpsertWorkflowStepsArgs = {
+  input: BulkUpsertWorkflowStepsInput;
+};
+
+
 export type MutationCalculateRoleChangeCostArgs = {
   input: CalculateRoleChangeCostInput;
 };
@@ -4627,6 +5466,11 @@ export type MutationCalculateRoleChangeCostArgs = {
 
 export type MutationChangeBillingPlanArgs = {
   input: ChangeBillingPlanInput;
+};
+
+
+export type MutationChangeKnowledgeGapStatusArgs = {
+  input: ChangeKnowledgeGapStatusInput;
 };
 
 
@@ -4647,6 +5491,21 @@ export type MutationChangeUserStatusArgs = {
 
 export type MutationCompleteServiceAuthorizationArgs = {
   input: CompleteServiceAuthorizationInput;
+};
+
+
+export type MutationCreateAiFeatureFeedbackArgs = {
+  input: CreateAiFeatureFeedbackInput;
+};
+
+
+export type MutationCreateAiFeedbackArgs = {
+  input: CreateAiFeedbackInput;
+};
+
+
+export type MutationCreateAiToneRuleArgs = {
+  input: CreateAiToneRuleInput;
 };
 
 
@@ -4685,6 +5544,11 @@ export type MutationCreateCheckoutSessionArgs = {
 };
 
 
+export type MutationCreateCustomRoleArgs = {
+  input: CreateCustomRoleInput;
+};
+
+
 export type MutationCreateCustomerCardConfigArgs = {
   input: CreateCustomerCardConfigInput;
 };
@@ -4715,6 +5579,11 @@ export type MutationCreateEscalationPathArgs = {
 };
 
 
+export type MutationCreateGithubUserAuthIntegrationArgs = {
+  input: CreateGithubUserAuthIntegrationInput;
+};
+
+
 export type MutationCreateHelpCenterArgs = {
   input: CreateHelpCenterInput;
 };
@@ -4722,6 +5591,11 @@ export type MutationCreateHelpCenterArgs = {
 
 export type MutationCreateHelpCenterArticleGroupArgs = {
   input: CreateHelpCenterArticleGroupInput;
+};
+
+
+export type MutationCreateHyperlineCheckoutSessionArgs = {
+  input: CreateHyperlineCheckoutSessionInput;
 };
 
 
@@ -4790,6 +5664,11 @@ export type MutationCreateSnippetArgs = {
 };
 
 
+export type MutationCreateTaskArgs = {
+  input: CreateTaskInput;
+};
+
+
 export type MutationCreateThreadArgs = {
   input: CreateThreadInput;
 };
@@ -4845,13 +5724,28 @@ export type MutationCreateWebhookTargetArgs = {
 };
 
 
+export type MutationCreateWorkflowArgs = {
+  input: CreateWorkflowInput;
+};
+
+
 export type MutationCreateWorkflowRuleArgs = {
   input: CreateWorkflowRuleInput;
 };
 
 
+export type MutationCreateWorkflowStepArgs = {
+  input: CreateWorkflowStepInput;
+};
+
+
 export type MutationCreateWorkspaceArgs = {
   input: CreateWorkspaceInput;
+};
+
+
+export type MutationCreateWorkspaceCursorIntegrationArgs = {
+  input: CreateWorkspaceCursorIntegrationInput;
 };
 
 
@@ -4890,6 +5784,11 @@ export type MutationCreateWorkspaceSlackIntegrationArgs = {
 };
 
 
+export type MutationDeleteAiToneRulesArgs = {
+  input: DeleteAiToneRulesInput;
+};
+
+
 export type MutationDeleteApiKeyArgs = {
   input: DeleteApiKeyInput;
 };
@@ -4912,6 +5811,11 @@ export type MutationDeleteChatAppSecretArgs = {
 
 export type MutationDeleteCompanyArgs = {
   input: DeleteCompanyInput;
+};
+
+
+export type MutationDeleteCustomRoleArgs = {
+  input: DeleteCustomRoleInput;
 };
 
 
@@ -5000,6 +5904,11 @@ export type MutationDeleteSnippetArgs = {
 };
 
 
+export type MutationDeleteTaskArgs = {
+  input: DeleteTaskInput;
+};
+
+
 export type MutationDeleteTenantArgs = {
   input: DeleteTenantInput;
 };
@@ -5012,6 +5921,11 @@ export type MutationDeleteTenantFieldArgs = {
 
 export type MutationDeleteTenantFieldSchemaArgs = {
   input: DeleteTenantFieldSchemaInput;
+};
+
+
+export type MutationDeleteThreadArgs = {
+  input: DeleteThreadInput;
 };
 
 
@@ -5060,8 +5974,23 @@ export type MutationDeleteWebhookTargetArgs = {
 };
 
 
+export type MutationDeleteWorkflowArgs = {
+  input: DeleteWorkflowInput;
+};
+
+
 export type MutationDeleteWorkflowRuleArgs = {
   input: DeleteWorkflowRuleInput;
+};
+
+
+export type MutationDeleteWorkflowStepArgs = {
+  input: DeleteWorkflowStepInput;
+};
+
+
+export type MutationDeleteWorkspaceCursorIntegrationArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -5110,6 +6039,11 @@ export type MutationForkThreadArgs = {
 };
 
 
+export type MutationGenerateAiToneRulesFromDescriptionArgs = {
+  input: GenerateAiToneRulesFromDescriptionInput;
+};
+
+
 export type MutationGenerateHelpCenterArticleArgs = {
   input: GenerateHelpCenterArticleInput;
 };
@@ -5117,6 +6051,11 @@ export type MutationGenerateHelpCenterArticleArgs = {
 
 export type MutationInviteUserToWorkspaceArgs = {
   input: InviteUserToWorkspaceInput;
+};
+
+
+export type MutationLockThreadArgs = {
+  input: LockThreadInput;
 };
 
 
@@ -5157,6 +6096,11 @@ export type MutationRefreshConnectedDiscordChannelsArgs = {
 
 export type MutationRefreshWorkspaceSlackChannelIntegrationArgs = {
   input: RefreshWorkspaceSlackChannelIntegrationInput;
+};
+
+
+export type MutationReindexKnowledgeSourceArgs = {
+  input: ReindexKnowledgeSourceInput;
 };
 
 
@@ -5320,6 +6264,11 @@ export type MutationSyncBusinessHoursSlotsArgs = {
 };
 
 
+export type MutationSyncUserWorkingHoursArgs = {
+  input: SyncUserWorkingHoursInput;
+};
+
+
 export type MutationToggleSlackMessageReactionArgs = {
   input: ToggleSlackMessageReactionInput;
 };
@@ -5327,6 +6276,16 @@ export type MutationToggleSlackMessageReactionArgs = {
 
 export type MutationToggleWorkflowRulePublishedArgs = {
   input: ToggleWorkflowRulePublishedInput;
+};
+
+
+export type MutationTriggerWorkflowArgs = {
+  input: TriggerWorkflowInput;
+};
+
+
+export type MutationTriggerWorkflowRuleArgs = {
+  input: TriggerWorkflowRuleInput;
 };
 
 
@@ -5347,6 +6306,11 @@ export type MutationUnmarkCustomerAsSpamArgs = {
 
 export type MutationUpdateActiveBillingRotaArgs = {
   input: UpdateActiveBillingRotaInput;
+};
+
+
+export type MutationUpdateAiToneRulesArgs = {
+  input: UpdateAiToneRulesInput;
 };
 
 
@@ -5377,6 +6341,11 @@ export type MutationUpdateConnectedDiscordChannelArgs = {
 
 export type MutationUpdateConnectedSlackChannelArgs = {
   input: UpdateConnectedSlackChannelInput;
+};
+
+
+export type MutationUpdateCustomRoleArgs = {
+  input: UpdateCustomRoleInput;
 };
 
 
@@ -5430,6 +6399,11 @@ export type MutationUpdateHelpCenterIndexArgs = {
 };
 
 
+export type MutationUpdateInternalNotificationsArgs = {
+  input: UpdateInternalNotificationsInput;
+};
+
+
 export type MutationUpdateLabelTypeArgs = {
   input: UpdateLabelTypeInput;
 };
@@ -5442,6 +6416,11 @@ export type MutationUpdateMachineUserArgs = {
 
 export type MutationUpdateMyUserArgs = {
   input: UpdateMyUserInput;
+};
+
+
+export type MutationUpdateNoteArgs = {
+  input: UpdateNoteInput;
 };
 
 
@@ -5465,8 +6444,18 @@ export type MutationUpdateSnippetArgs = {
 };
 
 
+export type MutationUpdateTaskArgs = {
+  input: UpdateTaskInput;
+};
+
+
 export type MutationUpdateTenantTierArgs = {
   input: UpdateTenantTierInput;
+};
+
+
+export type MutationUpdateThreadAgentStatusArgs = {
+  input: UpdateThreadAgentStatusInput;
 };
 
 
@@ -5477,6 +6466,11 @@ export type MutationUpdateThreadEscalationPathArgs = {
 
 export type MutationUpdateThreadFieldSchemaArgs = {
   input: UpdateThreadFieldSchemaInput;
+};
+
+
+export type MutationUpdateThreadSuggestedActionStatusArgs = {
+  input: UpdateThreadSuggestedActionStatusInput;
 };
 
 
@@ -5500,13 +6494,28 @@ export type MutationUpdateTierArgs = {
 };
 
 
+export type MutationUpdateUserDefaultSavedThreadsViewArgs = {
+  input: UpdateUserDefaultSavedThreadsViewInput;
+};
+
+
 export type MutationUpdateWebhookTargetArgs = {
   input: UpdateWebhookTargetInput;
 };
 
 
+export type MutationUpdateWorkflowArgs = {
+  input: UpdateWorkflowInput;
+};
+
+
 export type MutationUpdateWorkflowRuleArgs = {
   input: UpdateWorkflowRuleInput;
+};
+
+
+export type MutationUpdateWorkflowStepArgs = {
+  input: UpdateWorkflowStepInput;
 };
 
 
@@ -5550,6 +6559,16 @@ export type MutationUpsertMyEmailSignatureArgs = {
 };
 
 
+export type MutationUpsertRoleScopesArgs = {
+  input: UpsertRoleScopesInput;
+};
+
+
+export type MutationUpsertTeamSettingsArgs = {
+  input: UpsertTeamSettingsInput;
+};
+
+
 export type MutationUpsertTenantArgs = {
   input: UpsertTenantInput;
 };
@@ -5582,7 +6601,7 @@ export type MutationVerifyWorkspaceEmailForwardingSettingsArgs = {
 /** A type indicating an error has occurred while making a mutation. */
 export type MutationError = {
   __typename?: 'MutationError';
-  /** A fixed error code that can be used to handle this error, see https://www.plain.com/docs/graphql-api/error-codes for a description of each code. */
+  /** A fixed error code that can be used to handle this error, see https://www.plain.com/docs/graphql/error-codes for a description of each code. */
   code: Scalars['String'];
   /** The array of fields that are impacted by this error. */
   fields: Array<MutationFieldError>;
@@ -5646,8 +6665,11 @@ export type Note = {
   customer: Customer;
   deletedAt: Maybe<DateTime>;
   deletedBy: Maybe<InternalActor>;
+  editedAt: Maybe<DateTime>;
+  editedBy: Maybe<InternalActor>;
   id: Scalars['ID'];
   isDeleted: Scalars['Boolean'];
+  isEdited: Scalars['Boolean'];
   markdown: Maybe<Scalars['String']>;
   text: Scalars['String'];
   updatedAt: DateTime;
@@ -5657,9 +6679,19 @@ export type Note = {
 export type NoteEntry = {
   __typename?: 'NoteEntry';
   attachments: Array<Attachment>;
+  editedAt: Maybe<DateTime>;
+  editedBy: Maybe<InternalActor>;
+  isEdited: Scalars['Boolean'];
   markdown: Maybe<Scalars['String']>;
   noteId: Scalars['ID'];
   text: Scalars['String'];
+};
+
+export type NoteMentionNotificationDetail = {
+  __typename?: 'NoteMentionNotificationDetail';
+  mentionedBy: InternalActor;
+  threadId: Scalars['ID'];
+  timelineEntryId: Scalars['ID'];
 };
 
 /** A number setting */
@@ -5677,8 +6709,16 @@ export type OptionalBooleanInput = {
   value?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type OptionalDateTimeInput = {
+  value?: InputMaybe<Scalars['String']>;
+};
+
 export type OptionalDependsOnThreadFieldInput = {
   value?: InputMaybe<DependsOnThreadFieldInput>;
+};
+
+export type OptionalFloatInput = {
+  value?: InputMaybe<Scalars['Float']>;
 };
 
 export type OptionalGeneratedReplyFeedbackInput = {
@@ -5715,7 +6755,30 @@ export type Permissions = {
   permissions: Array<Scalars['String']>;
 };
 
+export type PlainTaskThreadLink = ThreadLink & {
+  __typename?: 'PlainTaskThreadLink';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  description: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  linkType: ThreadLinkLinkType;
+  plainTaskId: Scalars['ID'];
+  sourceId: Scalars['String'];
+  sourceType: Scalars['String'];
+  status: ThreadLinkStatus;
+  threadId: Scalars['ID'];
+  title: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+  url: Scalars['String'];
+};
+
+export type PlainTaskThreadLinkInput = {
+  plainTaskId: Scalars['ID'];
+};
+
 export type PlainThreadLinkInput = {
+  linkType?: InputMaybe<ThreadLinkLinkType>;
   plainThreadId: Scalars['ID'];
 };
 
@@ -5725,6 +6788,7 @@ export type PlainThreadThreadLink = ThreadLink & {
   createdBy: InternalActor;
   description: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  linkType: ThreadLinkLinkType;
   plainThreadId: Scalars['ID'];
   plainThreadStatusDetailType: StatusDetailType;
   sourceId: Scalars['String'];
@@ -5765,6 +6829,7 @@ export type Query = {
   __typename?: 'Query';
   /** This API is in beta and may change without notice. */
   activeThreadCluster: Maybe<ThreadCluster>;
+  aiToneRules: AiToneRuleConnection;
   autoresponder: Maybe<Autoresponder>;
   autoresponders: AutoresponderConnection;
   billingPlans: BillingPlanConnection;
@@ -5785,6 +6850,9 @@ export type Query = {
   connectedSlackChannel: Maybe<ConnectedSlackChannel>;
   /** Gets all slack channels for this workspace, which match the specified filters. */
   connectedSlackChannels: ConnectedSlackChannelConnection;
+  cursorRepositories: Array<CursorRepository>;
+  customRole: Maybe<CustomRole>;
+  customRoles: CustomRoleConnection;
   customer: Maybe<Customer>;
   customerByEmail: Maybe<Customer>;
   /** Get a customer by its external ID. A customer's external ID is unique within a workspace. */
@@ -5808,11 +6876,15 @@ export type Query = {
   customerSurvey: Maybe<CustomerSurvey>;
   customerSurveys: CustomerSurveyConnection;
   customers: CustomerConnection;
+  /** Get a paginated list of deleted threads. Only returns threads that were deleted after the deletion log was enabled. */
+  deletedThreads: DeletedThreadConnection;
+  enabledAiToneRulesText: Maybe<Scalars['String']>;
   escalationPath: Maybe<EscalationPath>;
   escalationPaths: EscalationPathConnection;
   /** This API is in beta and may change without notice. */
   generatedReplies: Maybe<Array<GeneratedReply>>;
   getMSTeamsMembersForChannel: MsTeamsChannelMembers;
+  githubUserAuthIntegration: Maybe<GithubUserAuthIntegration>;
   heatmapMetric: Maybe<HeatmapMetric>;
   helpCenter: Maybe<HelpCenter>;
   helpCenterArticle: Maybe<HelpCenterArticle>;
@@ -5825,9 +6897,15 @@ export type Query = {
   helpCenters: HelpCenterConnection;
   indexedDocuments: IndexedDocumentConnection;
   issueTrackerFields: Array<IssueTrackerField>;
+  /** Get a single knowledge gap by ID. Returns null if not found. */
+  knowledgeGap: Maybe<KnowledgeGap>;
+  /** Paginated list of knowledge gaps for the workspace. */
+  knowledgeGaps: KnowledgeGapConnection;
   knowledgeSource: Maybe<KnowledgeSource>;
   knowledgeSources: KnowledgeSourceConnection;
   labelType: Maybe<LabelType>;
+  /** Get a label type by its external ID. A label type's external ID is unique within a workspace. */
+  labelTypeByExternalId: Maybe<LabelType>;
   labelTypes: LabelTypeConnection;
   machineUser: Maybe<MachineUser>;
   machineUsers: MachineUserConnection;
@@ -5835,6 +6913,8 @@ export type Query = {
   myBillingSubscription: Maybe<BillingSubscription>;
   myEmailSignature: Maybe<EmailSignature>;
   myFavoritePages: FavoritePageConnection;
+  /** Get notifications for the current user. */
+  myInternalNotifications: InternalNotificationConnection;
   myJiraIntegrationToken: Maybe<JiraIntegrationToken>;
   myLinearInstallationInfo: UserLinearInstallationInfo;
   myLinearIntegration: Maybe<UserLinearIntegration>;
@@ -5887,6 +6967,10 @@ export type Query = {
   snippets: SnippetConnection;
   /** List all the events types you can subscribe to. */
   subscriptionEventTypes: Array<SubscriptionEventType>;
+  task: Maybe<Task>;
+  taskByRef: Maybe<Task>;
+  tasks: TaskConnection;
+  teamSettings: Maybe<TeamSettings>;
   tenant: Maybe<Tenant>;
   tenantFieldSchemas: TenantFieldSchemaConnection;
   tenants: TenantConnection;
@@ -5939,12 +7023,28 @@ export type Query = {
   webhookTargets: WebhookTargetConnection;
   /** List webhook versions. */
   webhookVersions: WebhookVersionConnection;
+  /**
+   * Returns configuration for WorkOS features including admin portal URLs for SSO, directory sync, and domain verification.
+   * Only available on the Frontier plan.
+   */
+  workOSConfiguration: Maybe<WorkOsConfiguration>;
+  /** Get a workflow by id. */
+  workflow: Maybe<Workflow>;
+  /** Get a workflow execution by id. */
+  workflowExecution: Maybe<WorkflowExecution>;
+  /** List workflow executions for a workflow. */
+  workflowExecutions: WorkflowExecutionConnection;
+  /** List workflow executions by entity. */
+  workflowExecutionsByEntity: WorkflowExecutionConnection;
   /** Get a workflow rule by id. */
   workflowRule: Maybe<WorkflowRule>;
   /** List workflow rules. */
   workflowRules: WorkflowRuleConnection;
+  /** List workflows. */
+  workflows: WorkflowConnection;
   workspace: Maybe<Workspace>;
   workspaceChatSettings: WorkspaceChatSettings;
+  workspaceCursorIntegration: Maybe<WorkspaceCursorIntegration>;
   workspaceDiscordChannelInstallationInfo: WorkspaceDiscordChannelInstallationInfo;
   workspaceDiscordChannelIntegration: Maybe<WorkspaceDiscordChannelIntegration>;
   workspaceDiscordChannelIntegrations: WorkspaceDiscordChannelIntegrationConnection;
@@ -5966,6 +7066,15 @@ export type Query = {
 
 export type QueryActiveThreadClusterArgs = {
   threadId: Scalars['ID'];
+};
+
+
+export type QueryAiToneRulesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<AiToneRulesFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -6053,6 +7162,24 @@ export type QueryConnectedSlackChannelsArgs = {
 };
 
 
+export type QueryCursorRepositoriesArgs = {
+  integrationId: Scalars['ID'];
+};
+
+
+export type QueryCustomRoleArgs = {
+  customRoleId: Scalars['ID'];
+};
+
+
+export type QueryCustomRolesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryCustomerArgs = {
   customerId: Scalars['ID'];
 };
@@ -6113,6 +7240,15 @@ export type QueryCustomersArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   sortBy?: InputMaybe<CustomersSort>;
+};
+
+
+export type QueryDeletedThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<DeletedThreadsFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -6202,6 +7338,21 @@ export type QueryIssueTrackerFieldsArgs = {
 };
 
 
+export type QueryKnowledgeGapArgs = {
+  knowledgeGapId: Scalars['ID'];
+};
+
+
+export type QueryKnowledgeGapsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<KnowledgeGapsFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<KnowledgeGapsSort>;
+};
+
+
 export type QueryKnowledgeSourceArgs = {
   knowledgeSourceId: Scalars['ID'];
 };
@@ -6218,6 +7369,11 @@ export type QueryKnowledgeSourcesArgs = {
 
 export type QueryLabelTypeArgs = {
   labelTypeId: Scalars['ID'];
+};
+
+
+export type QueryLabelTypeByExternalIdArgs = {
+  externalId: Scalars['ID'];
 };
 
 
@@ -6247,6 +7403,15 @@ export type QueryMachineUsersArgs = {
 export type QueryMyFavoritePagesArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryMyInternalNotificationsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<InternalNotificationsFilter>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -6291,6 +7456,7 @@ export type QueryRelatedThreadsArgs = {
 export type QueryRolesArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<RoleFilter>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -6329,6 +7495,7 @@ export type QuerySearchCustomersArgs = {
 
 
 export type QuerySearchKnowledgeSourcesArgs = {
+  options?: InputMaybe<SearchKnowledgeSourcesOptions>;
   pageSize?: InputMaybe<Scalars['Int']>;
   searchQuery: Scalars['String'];
 };
@@ -6430,6 +7597,31 @@ export type QuerySnippetsArgs = {
 };
 
 
+export type QueryTaskArgs = {
+  taskId: Scalars['ID'];
+};
+
+
+export type QueryTaskByRefArgs = {
+  ref: Scalars['String'];
+};
+
+
+export type QueryTasksArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<TasksFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<TasksSort>;
+};
+
+
+export type QueryTeamSettingsArgs = {
+  labelTypeId: Scalars['ID'];
+};
+
+
 export type QueryTenantArgs = {
   tenantId: Scalars['ID'];
 };
@@ -6447,6 +7639,7 @@ export type QueryTenantFieldSchemasArgs = {
 export type QueryTenantsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<TenantsFilter>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -6643,12 +7836,48 @@ export type QueryWebhookVersionsArgs = {
 };
 
 
+export type QueryWorkflowArgs = {
+  workflowId: Scalars['ID'];
+};
+
+
+export type QueryWorkflowExecutionArgs = {
+  workflowExecutionId: Scalars['ID'];
+};
+
+
+export type QueryWorkflowExecutionsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  workflowId: Scalars['ID'];
+};
+
+
+export type QueryWorkflowExecutionsByEntityArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filters: WorkflowExecutionByEntityFilter;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryWorkflowRuleArgs = {
   workflowRuleId: Scalars['ID'];
 };
 
 
 export type QueryWorkflowRulesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryWorkflowsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
@@ -6773,6 +8002,16 @@ export type RegenerateWorkspaceHmacOutput = {
   workspaceHmac: Maybe<WorkspaceHmac>;
 };
 
+export type ReindexKnowledgeSourceInput = {
+  knowledgeSourceId: Scalars['ID'];
+};
+
+export type ReindexKnowledgeSourceOutput = {
+  __typename?: 'ReindexKnowledgeSourceOutput';
+  error: Maybe<MutationError>;
+  knowledgeSource: Maybe<KnowledgeSource>;
+};
+
 export type ReloadCustomerCardInstanceInput = {
   customerCardConfigId: Scalars['ID'];
   customerId: Scalars['ID'];
@@ -6856,7 +8095,6 @@ export type RemoveTenantFieldSchemaMappingInput = {
 
 export type RemoveTenantFieldSchemaMappingOutput = {
   __typename?: 'RemoveTenantFieldSchemaMappingOutput';
-  deletedTiers: Array<Tier>;
   error: Maybe<MutationError>;
   tenantFieldSchema: Maybe<TenantFieldSchema>;
 };
@@ -6935,6 +8173,8 @@ export type ReplyToEmailInput = {
   fromAlternateSupportEmail?: InputMaybe<EmailParticipantInput>;
   hiddenRecipients?: InputMaybe<Array<EmailParticipantInput>>;
   inReplyToEmailId: Scalars['ID'];
+  /** If true, the email will be categorized as USER_HIDDEN, meaning it will not be visible to the user in the UI. */
+  isHiddenFromUser?: InputMaybe<Scalars['Boolean']>;
   markdownContent?: InputMaybe<Scalars['String']>;
   subject?: InputMaybe<Scalars['String']>;
   textContent: Scalars['String'];
@@ -6995,6 +8235,9 @@ export type Role = {
   __typename?: 'Role';
   /** @deprecated Don't use. Will be removed soon. */
   assignableBillingSeats: Array<BillingSeatType>;
+  customRole: Maybe<CustomRole>;
+  /** If this role is a custom role, this field contains the custom role ID. */
+  customRoleId: Maybe<Scalars['ID']>;
   description: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   /** @deprecated Use isAssignableToThread instead */
@@ -7046,12 +8289,43 @@ export type RoleEdge = {
   node: Role;
 };
 
+export type RoleFilter = {
+  version?: InputMaybe<Scalars['Int']>;
+};
+
 export enum RoleKey {
   Admin = 'ADMIN',
   None = 'NONE',
   Owner = 'OWNER',
   Support = 'SUPPORT',
   Viewer = 'VIEWER'
+}
+
+export type RoleScope = {
+  __typename?: 'RoleScope';
+  accessMode: RoleScopeAccessMode;
+  primitiveType: ThreadScopePrimitiveType;
+  /** IDs of the values included/excluded (empty for VIEW_ANY). */
+  values: Array<Scalars['ID']>;
+};
+
+export enum RoleScopeAccessMode {
+  /** See all resources except those with these values */
+  ViewAllExcept = 'VIEW_ALL_EXCEPT',
+  /** See all resources regardless of this primitive (default) */
+  ViewAny = 'VIEW_ANY',
+  /** See only resources with these specific values */
+  ViewOnly = 'VIEW_ONLY'
+}
+
+export type RoleScopeDefinition = {
+  __typename?: 'RoleScopeDefinition';
+  resource: RoleScopeResourceType;
+  scopes: Array<RoleScope>;
+};
+
+export enum RoleScopeResourceType {
+  Thread = 'THREAD'
 }
 
 export type SavedThreadsView = {
@@ -7061,6 +8335,7 @@ export type SavedThreadsView = {
   createdBy: InternalActor;
   icon: Scalars['String'];
   id: Scalars['ID'];
+  isHidden: Scalars['Boolean'];
   name: Scalars['String'];
   threadsFilter: SavedThreadsViewFilter;
   updatedAt: DateTime;
@@ -7081,14 +8356,18 @@ export type SavedThreadsViewEdge = {
 
 export type SavedThreadsViewFilter = {
   __typename?: 'SavedThreadsViewFilter';
+  and: Maybe<Array<SavedThreadsViewNestedFilter>>;
   assignedToUser: Array<Scalars['ID']>;
   companies: Array<Scalars['ID']>;
+  createdAtFilter: Maybe<DatetimeFilterOutput>;
   customerGroups: Array<Scalars['ID']>;
   displayOptions: ThreadsDisplayOptions;
   groupBy: ThreadsGroupBy;
   labelTypeIds: Array<Scalars['ID']>;
   layout: ThreadsLayout;
   messageSource: Array<MessageSource>;
+  not: Maybe<SavedThreadsViewNestedFilter>;
+  or: Maybe<Array<SavedThreadsViewNestedFilter>>;
   participants: Array<Scalars['ID']>;
   priorities: Array<Scalars['Int']>;
   slaStatuses: Array<Scalars['String']>;
@@ -7097,6 +8376,8 @@ export type SavedThreadsViewFilter = {
   statusDetails: Array<StatusDetailType>;
   statuses: Array<ThreadStatus>;
   supportEmailAddresses: Array<Scalars['String']>;
+  surveyResponse: Maybe<SurveyResponseFilterOutput>;
+  tenantFields: Array<SavedThreadsViewFilterTenantField>;
   tenants: Array<Scalars['ID']>;
   threadFields: Array<SavedThreadsViewFilterThreadField>;
   threadLinkGroupIds: Array<Scalars['ID']>;
@@ -7104,14 +8385,18 @@ export type SavedThreadsViewFilter = {
 };
 
 export type SavedThreadsViewFilterInput = {
+  and?: InputMaybe<Array<SavedThreadsViewFilterInput>>;
   assignedToUser: Array<Scalars['ID']>;
   companies: Array<Scalars['ID']>;
+  createdAtFilter?: InputMaybe<DatetimeFilter>;
   customerGroups: Array<Scalars['ID']>;
   displayOptions: ThreadsDisplayOptionsInput;
   groupBy: ThreadsGroupBy;
   labelTypeIds: Array<Scalars['ID']>;
   layout: ThreadsLayout;
   messageSource: Array<MessageSource>;
+  not?: InputMaybe<SavedThreadsViewFilterInput>;
+  or?: InputMaybe<Array<SavedThreadsViewFilterInput>>;
   participants: Array<Scalars['ID']>;
   priorities: Array<Scalars['Int']>;
   slaStatuses: Array<Scalars['String']>;
@@ -7120,23 +8405,96 @@ export type SavedThreadsViewFilterInput = {
   statusDetails: Array<StatusDetailType>;
   statuses: Array<ThreadStatus>;
   supportEmailAddresses: Array<Scalars['String']>;
+  surveyResponse?: InputMaybe<SurveyResponseFilter>;
+  tenantFields: Array<TenantFieldFilter>;
   tenants: Array<Scalars['ID']>;
   threadFields: Array<ThreadFieldFilter>;
   threadLinkGroupIds: Array<Scalars['ID']>;
   tiers: Array<Scalars['ID']>;
 };
 
+export type SavedThreadsViewFilterTenantField = {
+  __typename?: 'SavedThreadsViewFilterTenantField';
+  booleanValue: Maybe<Scalars['Boolean']>;
+  dateValue: Maybe<DateTime>;
+  externalFieldId: Scalars['ID'];
+  numberValue: Maybe<Scalars['Float']>;
+  stringArrayValue: Array<Scalars['String']>;
+  stringValue: Maybe<Scalars['String']>;
+};
+
 export type SavedThreadsViewFilterThreadField = {
   __typename?: 'SavedThreadsViewFilterThreadField';
   booleanValue: Maybe<Scalars['Boolean']>;
+  date: Maybe<SavedThreadsViewFilterThreadFieldDate>;
   key: Scalars['String'];
+  number: Maybe<SavedThreadsViewFilterThreadFieldNumber>;
   stringValue: Maybe<Scalars['String']>;
+};
+
+export type SavedThreadsViewFilterThreadFieldDate = {
+  __typename?: 'SavedThreadsViewFilterThreadFieldDate';
+  after: Maybe<DateTime>;
+  before: Maybe<DateTime>;
+};
+
+export type SavedThreadsViewFilterThreadFieldNumber = {
+  __typename?: 'SavedThreadsViewFilterThreadFieldNumber';
+  gte: Maybe<Scalars['Float']>;
+  lte: Maybe<Scalars['Float']>;
+  value: Maybe<Scalars['Float']>;
+};
+
+/**
+ * Filter fields for nested and/or/not expressions in SavedThreadsViewFilter.
+ * This is separate from SavedThreadsViewFilter because nested filters should only contain
+ * filter criteria, not top-level display configuration (sort, displayOptions, groupBy, layout).
+ * Unlike ThreadsFilter which is self-referential (pure filtering at every level), SavedThreadsViewFilter
+ * has display config that only makes sense at the top level.
+ */
+export type SavedThreadsViewNestedFilter = {
+  __typename?: 'SavedThreadsViewNestedFilter';
+  and: Maybe<Array<SavedThreadsViewNestedFilter>>;
+  assignedToUser: Array<Scalars['ID']>;
+  companies: Array<Scalars['ID']>;
+  createdAtFilter: Maybe<DatetimeFilterOutput>;
+  customerGroups: Array<Scalars['ID']>;
+  labelTypeIds: Array<Scalars['ID']>;
+  messageSource: Array<MessageSource>;
+  not: Maybe<SavedThreadsViewNestedFilter>;
+  or: Maybe<Array<SavedThreadsViewNestedFilter>>;
+  participants: Array<Scalars['ID']>;
+  priorities: Array<Scalars['Int']>;
+  slaStatuses: Array<Scalars['String']>;
+  slaTypes: Array<Scalars['String']>;
+  statusDetails: Array<StatusDetailType>;
+  statuses: Array<ThreadStatus>;
+  supportEmailAddresses: Array<Scalars['String']>;
+  surveyResponse: Maybe<SurveyResponseFilterOutput>;
+  tenantFields: Array<SavedThreadsViewFilterTenantField>;
+  tenants: Array<Scalars['ID']>;
+  threadFields: Array<SavedThreadsViewFilterThreadField>;
+  threadLinkGroupIds: Array<Scalars['ID']>;
+  tiers: Array<Scalars['ID']>;
 };
 
 export type SavedThreadsViewSort = {
   __typename?: 'SavedThreadsViewSort';
   direction: Maybe<SortDirection>;
   field: Maybe<ThreadsSortField>;
+  threadFieldKey: Maybe<Scalars['String']>;
+};
+
+export type ScopeConditionInput = {
+  accessMode: RoleScopeAccessMode;
+  primitiveType: ThreadScopePrimitiveType;
+  /** IDs of the values to include/exclude (required for VIEW_ONLY and VIEW_ALL_EXCEPT) */
+  values?: InputMaybe<Array<Scalars['ID']>>;
+};
+
+export type SearchKnowledgeSourcesOptions = {
+  labelTypeIds?: InputMaybe<Array<Scalars['ID']>>;
+  types?: InputMaybe<Array<KnowledgeSourceSearchResultType>>;
 };
 
 export type SelectedIssueTrackerField = {
@@ -7220,6 +8578,8 @@ export type SendNewEmailInput = {
    */
   fromAlternateSupportEmail?: InputMaybe<EmailParticipantInput>;
   hiddenRecipients?: InputMaybe<Array<EmailParticipantInput>>;
+  /** If true, the email will be categorized as USER_HIDDEN, meaning it will not be visible to the user in the UI. */
+  isHiddenFromUser?: InputMaybe<Scalars['Boolean']>;
   markdownContent?: InputMaybe<Scalars['String']>;
   subject: Scalars['String'];
   textContent: Scalars['String'];
@@ -7235,9 +8595,8 @@ export type SendNewEmailOutput = {
 
 export type SendSlackMessageInput = {
   attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
-  markdownContent?: InputMaybe<Scalars['String']>;
-  /** @deprecated Use markdownContent instead */
-  textContent?: InputMaybe<Scalars['String']>;
+  markdownContent: Scalars['String'];
+  replyBroadcast?: InputMaybe<Scalars['Boolean']>;
   threadId: Scalars['ID'];
   unfurlLinks?: InputMaybe<Scalars['Boolean']>;
 };
@@ -7288,7 +8647,7 @@ export type ServiceAuthorizationConnectionDetails = {
   __typename?: 'ServiceAuthorizationConnectionDetails';
   hmacDigest: Scalars['String'];
   serviceAuthorizationId: Scalars['ID'];
-  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira, shortcut, rootly, incidentio, github-app-oauth. */
+  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira, shortcut, rootly, incidentio, github-app-oauth, attio. */
   serviceIntegrationKey: Scalars['String'];
 };
 
@@ -7326,7 +8685,7 @@ export enum ServiceAuthorizationStatus {
 }
 
 export type ServiceAuthorizationsFilter = {
-  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira, shortcut, rootly, incidentio, github-app-oauth. */
+  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira, shortcut, rootly, incidentio, github-app-oauth, attio. */
   serviceIntegrationKey?: InputMaybe<Scalars['String']>;
 };
 
@@ -7548,7 +8907,6 @@ export type SetupTenantFieldSchemaMappingInput = {
 
 export type SetupTenantFieldSchemaMappingOutput = {
   __typename?: 'SetupTenantFieldSchemaMappingOutput';
-  createdTiers: Array<Tier>;
   error: Maybe<MutationError>;
   tenantFieldSchema: Maybe<TenantFieldSchema>;
 };
@@ -7608,7 +8966,7 @@ export type SlackMessageEntry = {
   lastEditedOnSlackAt: Maybe<DateTime>;
   reactions: Array<SlackReaction>;
   relatedThread: Maybe<SlackMessageEntryRelatedThread>;
-  slackMessageLink: Scalars['String'];
+  slackMessageLink: Maybe<Scalars['String']>;
   slackWebMessageLink: Scalars['String'];
   text: Scalars['String'];
 };
@@ -7632,7 +8990,7 @@ export type SlackReplyEntry = {
   deletedOnSlackAt: Maybe<DateTime>;
   lastEditedOnSlackAt: Maybe<DateTime>;
   reactions: Array<SlackReaction>;
-  slackMessageLink: Scalars['String'];
+  slackMessageLink: Maybe<Scalars['String']>;
   slackWebMessageLink: Scalars['String'];
   text: Scalars['String'];
 };
@@ -7744,7 +9102,7 @@ export enum SortDirection {
 }
 
 export type StartServiceAuthorizationInput = {
-  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira, shortcut, rootly, incidentio, github-app-oauth. */
+  /** One of: zendesk, salesforce, freshdesk, helpscout-mailbox, hubspot, jira, shortcut, rootly, incidentio, github-app-oauth, attio. */
   serviceIntegrationKey: Scalars['String'];
 };
 
@@ -7808,6 +9166,7 @@ export type Subscription = {
   __typename?: 'Subscription';
   customerCardInstanceChanges: CustomerCardInstanceChangesResult;
   customerChanges: CustomerChange;
+  internalNotificationChanges: InternalNotificationChange;
   threadChanges: ThreadChange;
   threadFieldSchemaChanges: ThreadFieldSchemaChange;
   threadTimelineChanges: TimelineEntryChange;
@@ -7821,8 +9180,8 @@ export type SubscriptionCustomerCardInstanceChangesArgs = {
 };
 
 
-export type SubscriptionCustomerChangesArgs = {
-  filters?: InputMaybe<CustomerChangesFilter>;
+export type SubscriptionThreadChangesArgs = {
+  filters?: InputMaybe<ThreadChangesFilter>;
 };
 
 
@@ -7874,6 +9233,16 @@ export type SurveyResponseFilter = {
   surveyId?: InputMaybe<Scalars['ID']>;
 };
 
+export type SurveyResponseFilterOutput = {
+  __typename?: 'SurveyResponseFilterOutput';
+  /** Filter for threads with any survey response, regardless of the specific values. */
+  hasResponse: Scalars['Boolean'];
+  rating: Maybe<Scalars['Int']>;
+  responseAt: Maybe<DatetimeFilterOutput>;
+  sentiment: Maybe<SentimentType>;
+  surveyId: Maybe<Scalars['ID']>;
+};
+
 export type SyncBusinessHoursSlotsInput = {
   slots: Array<BusinessHoursSlotInput>;
 };
@@ -7884,6 +9253,23 @@ export type SyncBusinessHoursSlotsOutput = {
   slots: Array<BusinessHoursSlot>;
 };
 
+export type SyncUserWorkingHoursInput = {
+  /** Whether automatic status switching should be enabled. */
+  isEnabled: Scalars['Boolean'];
+  /** The time slots that define when the user is available. */
+  slots: Array<UserWorkingHoursSlotInput>;
+  /** The timezone for the working hours slots. */
+  timezone: Scalars['String'];
+  /** The user to configure working hours for. Required for admins setting other users' hours. */
+  userId?: InputMaybe<Scalars['ID']>;
+};
+
+export type SyncUserWorkingHoursOutput = {
+  __typename?: 'SyncUserWorkingHoursOutput';
+  error: Maybe<MutationError>;
+  userWorkingHours: Maybe<UserWorkingHours>;
+};
+
 export type System = {
   __typename?: 'System';
   id: Scalars['ID'];
@@ -7892,6 +9278,96 @@ export type System = {
 export type SystemActor = {
   __typename?: 'SystemActor';
   systemId: Scalars['ID'];
+  /** The workflow that created this action, if applicable. */
+  workflow: Maybe<WorkflowSummary>;
+  /** The workflow execution ID that created this action, if applicable. */
+  workflowExecutionId: Maybe<Scalars['ID']>;
+};
+
+export type Task = {
+  __typename?: 'Task';
+  assignedAt: Maybe<DateTime>;
+  assignedTo: Maybe<TaskAssignee>;
+  company: Maybe<Company>;
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  deletedAt: Maybe<DateTime>;
+  deletedBy: Maybe<InternalActor>;
+  description: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  isDeleted: Scalars['Boolean'];
+  priority: Scalars['Int'];
+  ref: Scalars['String'];
+  status: TaskStatus;
+  tenant: Maybe<Tenant>;
+  threadLinks: ThreadLinkConnection;
+  title: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+};
+
+
+export type TaskThreadLinksArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+export type TaskAssignee = MachineUser | System | User;
+
+export type TaskConnection = {
+  __typename?: 'TaskConnection';
+  edges: Array<TaskEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type TaskEdge = {
+  __typename?: 'TaskEdge';
+  cursor: Scalars['String'];
+  node: Task;
+};
+
+export enum TaskStatus {
+  Done = 'DONE',
+  InProgress = 'IN_PROGRESS',
+  Todo = 'TODO'
+}
+
+export type TasksFilter = {
+  and?: InputMaybe<Array<TasksFilter>>;
+  assignedToUser?: InputMaybe<Array<Scalars['ID']>>;
+  companyIds?: InputMaybe<Array<Scalars['ID']>>;
+  isAssigned?: InputMaybe<Scalars['Boolean']>;
+  not?: InputMaybe<TasksFilter>;
+  or?: InputMaybe<Array<TasksFilter>>;
+  statuses?: InputMaybe<Array<TaskStatus>>;
+  tenantIds?: InputMaybe<Array<Scalars['ID']>>;
+};
+
+export type TasksSort = {
+  direction: SortDirection;
+  field: TasksSortField;
+};
+
+export enum TasksSortField {
+  CreatedAt = 'CREATED_AT',
+  Priority = 'PRIORITY',
+  Status = 'STATUS',
+  UpdatedAt = 'UPDATED_AT'
+}
+
+export type TeamSettings = {
+  __typename?: 'TeamSettings';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  id: Scalars['ID'];
+  isRoundRobinEnabled: Scalars['Boolean'];
+  labelTypeId: Scalars['ID'];
+  roundRobinMaxCapacity: Scalars['Int'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
 };
 
 export type Tenant = {
@@ -8068,6 +9544,16 @@ export type TenantTierMembership = {
   updatedBy: InternalActor;
 };
 
+export type TenantsFilter = {
+  /**
+   * True to only return tenants that have been deleted. False to only return tenants that have not been deleted.
+   * Omit to return all tenants.
+   */
+  isDeleted?: InputMaybe<Scalars['Boolean']>;
+  tenantIds?: InputMaybe<Array<Scalars['ID']>>;
+  updatedAt?: InputMaybe<DatetimeFilter>;
+};
+
 /** Query to search for tenants. */
 export type TenantsSearchQuery = {
   /**
@@ -8083,10 +9569,20 @@ export type Thread = {
   __typename?: 'Thread';
   /** Additional assignees for this thread. */
   additionalAssignees: Array<ThreadAssignee>;
+  /** The agent status of this thread. */
+  agentStatus: Maybe<AgentStatus>;
+  /** Additional details about the current agent status. */
+  agentStatusDetail: Maybe<AgentStatusDetail>;
+  /** The datetime when the agent status of this thread was last changed. */
+  agentStatusUpdatedAt: Maybe<DateTime>;
+  /** The actor who last changed the agent status of this thread. */
+  agentStatusUpdatedBy: Maybe<Actor>;
   /** The datetime when this thread was last assigned to someone or something. */
   assignedAt: Maybe<DateTime>;
   /** Who or what this thread is assigned to. */
   assignedTo: Maybe<ThreadAssignee>;
+  /** The catchup detail for this thread. */
+  catchupDetail: Maybe<ThreadCatchupDetail>;
   /** The channel this thread belongs to. */
   channel: ThreadChannel;
   /** Details about the channel this thread is on. */
@@ -8117,6 +9613,10 @@ export type Thread = {
   lastOutboundMessageInfo: Maybe<ThreadMessageInfo>;
   /** The links attached to this thread. */
   links: ThreadLinkConnection;
+  /** When the thread was locked. Null if the thread is not locked. */
+  lockedAt: Maybe<DateTime>;
+  /** The actor who locked the thread. Null if the thread is not locked. */
+  lockedBy: Maybe<InternalActor>;
   /** The participants in this thread. */
   participants: ActorConnection;
   /** The preview text of the thread reflects the current state of the thread. As such, it might be updated when new activity happens in the thread. */
@@ -8202,16 +9702,89 @@ export type ThreadAssigneeInput = {
   userId?: InputMaybe<Scalars['ID']>;
 };
 
+export type ThreadAssignmentNotificationDetail = {
+  __typename?: 'ThreadAssignmentNotificationDetail';
+  assignedBy: InternalActor;
+  threadId: Scalars['ID'];
+};
+
 export type ThreadAssignmentTransitionedEntry = {
   __typename?: 'ThreadAssignmentTransitionedEntry';
   nextAssignee: Maybe<ThreadAssignee>;
   previousAssignee: Maybe<ThreadAssignee>;
 };
 
+export type ThreadCatchupCustomerEvent = {
+  __typename?: 'ThreadCatchupCustomerEvent';
+  content: Scalars['String'];
+  customerId: Scalars['ID'];
+};
+
+export type ThreadCatchupDetail = {
+  __typename?: 'ThreadCatchupDetail';
+  completedActions: Array<Maybe<ThreadCatchupUserEvent>>;
+  customerEvents: Array<Maybe<ThreadCatchupCustomerEvent>>;
+  generatedAt: Maybe<DateTime>;
+  suggestedActions: Array<ThreadCatchupSuggestedAction>;
+  summary: Maybe<Scalars['String']>;
+};
+
+export type ThreadCatchupFeedbackDetails = {
+  __typename?: 'ThreadCatchupFeedbackDetails';
+  comment: Maybe<Scalars['String']>;
+  reason: Scalars['String'];
+  sentiment: Maybe<AiFeedbackSentiment>;
+  threadId: Scalars['ID'];
+};
+
+export type ThreadCatchupFeedbackDetailsInput = {
+  catchupDetailGeneratedAt?: InputMaybe<Scalars['String']>;
+  comment?: InputMaybe<Scalars['String']>;
+  reason: Scalars['String'];
+  threadId: Scalars['ID'];
+};
+
+export type ThreadCatchupSuggestedAction = ThreadCatchupSuggestedCustomerAction | ThreadCatchupSuggestedInternalAction;
+
+export enum ThreadCatchupSuggestedActionStatus {
+  Accepted = 'ACCEPTED',
+  Rejected = 'REJECTED',
+  Suggested = 'SUGGESTED'
+}
+
+export type ThreadCatchupSuggestedCustomerAction = {
+  __typename?: 'ThreadCatchupSuggestedCustomerAction';
+  content: Scalars['String'];
+  customerId: Scalars['ID'];
+  id: Scalars['ID'];
+  status: ThreadCatchupSuggestedActionStatus;
+};
+
+export type ThreadCatchupSuggestedInternalAction = {
+  __typename?: 'ThreadCatchupSuggestedInternalAction';
+  content: Scalars['String'];
+  id: Scalars['ID'];
+  status: ThreadCatchupSuggestedActionStatus;
+  threadLinkType: Scalars['String'];
+  userId: Maybe<Scalars['ID']>;
+};
+
+export type ThreadCatchupUserEvent = {
+  __typename?: 'ThreadCatchupUserEvent';
+  content: Scalars['String'];
+  userId: Scalars['ID'];
+};
+
 export type ThreadChange = {
   __typename?: 'ThreadChange';
   changeType: ChangeType;
   thread: Thread;
+};
+
+export type ThreadChangesFilter = {
+  not?: InputMaybe<ThreadChangesFilter>;
+  statusChangedAt?: InputMaybe<DatetimeFilter>;
+  statuses?: InputMaybe<Array<ThreadStatus>>;
 };
 
 export enum ThreadChannel {
@@ -8268,7 +9841,17 @@ export type ThreadClusterEdge = {
   node: ThreadCluster;
 };
 
+export type ThreadClustersFeedbackDetails = {
+  __typename?: 'ThreadClustersFeedbackDetails';
+  clusterId: Scalars['ID'];
+  comment: Maybe<Scalars['String']>;
+  reason: Scalars['String'];
+  sentiment: Maybe<AiFeedbackSentiment>;
+};
+
 export type ThreadClustersFilter = {
+  companyIds?: InputMaybe<Array<Scalars['ID']>>;
+  tenantIds?: InputMaybe<Array<Scalars['ID']>>;
   variant?: InputMaybe<Scalars['String']>;
 };
 
@@ -8281,17 +9864,26 @@ export type ThreadConnection = {
 
 export type ThreadDiscussion = {
   __typename?: 'ThreadDiscussion';
+  channelDetails: Maybe<ThreadDiscussionChannelDetails>;
   createdAt: DateTime;
   createdBy: Actor;
+  /** @deprecated Use channelDetails.emailRecipients instead */
+  emailRecipients: Array<Scalars['String']>;
   id: Scalars['ID'];
   messages: ThreadDiscussionMessageConnection;
   resolvedAt: Maybe<DateTime>;
-  slackChannelId: Scalars['String'];
-  slackChannelName: Scalars['String'];
-  slackMessageLink: Scalars['String'];
-  slackTeamId: Scalars['String'];
+  /** @deprecated Use channelDetails.slackChannelId instead */
+  slackChannelId: Maybe<Scalars['String']>;
+  /** @deprecated Use channelDetails.slackChannelName instead */
+  slackChannelName: Maybe<Scalars['String']>;
+  /** @deprecated Use channelDetails.slackMessageLink instead */
+  slackMessageLink: Maybe<Scalars['String']>;
+  /** @deprecated Use channelDetails.slackTeamId instead */
+  slackTeamId: Maybe<Scalars['String']>;
   threadId: Scalars['ID'];
   title: Scalars['String'];
+  /** @deprecated Use channelDetails instead */
+  type: ThreadDiscussionType;
   updatedAt: DateTime;
   updatedBy: Actor;
 };
@@ -8304,11 +9896,36 @@ export type ThreadDiscussionMessagesArgs = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
+export type ThreadDiscussionChannelDetails = ThreadDiscussionCursorWorkspaceBackgroundAgentChannelDetails | ThreadDiscussionEmailChannelDetails | ThreadDiscussionSlackChannelDetails;
+
+export type ThreadDiscussionCursorDetailsInput = {
+  repositoryUrl?: InputMaybe<Scalars['String']>;
+  type: Scalars['String'];
+};
+
+export type ThreadDiscussionCursorWorkspaceBackgroundAgentChannelDetails = {
+  __typename?: 'ThreadDiscussionCursorWorkspaceBackgroundAgentChannelDetails';
+  cursorWorkspaceIntegrationId: Scalars['ID'];
+  repositoryUrl: Maybe<Scalars['String']>;
+};
+
+export type ThreadDiscussionEmailChannelDetails = {
+  __typename?: 'ThreadDiscussionEmailChannelDetails';
+  emailRecipients: Array<Scalars['String']>;
+};
+
+export type ThreadDiscussionEmailDetailsInput = {
+  ccAddresses?: InputMaybe<Array<Scalars['String']>>;
+  toAddresses: Array<Scalars['String']>;
+};
+
 export type ThreadDiscussionEntry = {
   __typename?: 'ThreadDiscussionEntry';
   customerId: Scalars['ID'];
-  slackChannelName: Scalars['String'];
-  slackMessageLink: Scalars['String'];
+  discussionType: ThreadDiscussionType;
+  emailRecipients: Array<Scalars['String']>;
+  slackChannelName: Maybe<Scalars['String']>;
+  slackMessageLink: Maybe<Scalars['String']>;
   threadDiscussionId: Scalars['ID'];
 };
 
@@ -8321,7 +9938,7 @@ export type ThreadDiscussionMessage = {
   id: Scalars['ID'];
   lastEditedOnSlackAt: Maybe<DateTime>;
   reactions: Array<ThreadDiscussionMessageReaction>;
-  slackMessageLink: Scalars['String'];
+  slackMessageLink: Maybe<Scalars['String']>;
   text: Scalars['String'];
   threadDiscussionId: Scalars['ID'];
   updatedAt: DateTime;
@@ -8340,6 +9957,24 @@ export type ThreadDiscussionMessageEdge = {
   node: ThreadDiscussionMessage;
 };
 
+export type ThreadDiscussionMessageEntry = {
+  __typename?: 'ThreadDiscussionMessageEntry';
+  attachments: Array<Attachment>;
+  customerId: Scalars['ID'];
+  deletedOnSlackAt: Maybe<DateTime>;
+  discussionType: ThreadDiscussionType;
+  hasUnprocessedAttachments: Scalars['Boolean'];
+  lastEditedOnSlackAt: Maybe<DateTime>;
+  reactions: Array<ThreadDiscussionMessageReaction>;
+  resolvedText: Scalars['String'];
+  slackMessageLink: Maybe<Scalars['String']>;
+  slackMessageTimestamp: Maybe<Scalars['String']>;
+  text: Scalars['String'];
+  threadDiscussionId: Scalars['ID'];
+  threadDiscussionMessageId: Scalars['ID'];
+  type: ThreadDiscussionMessageType;
+};
+
 export type ThreadDiscussionMessageReaction = {
   __typename?: 'ThreadDiscussionMessageReaction';
   actors: Array<Actor>;
@@ -8347,14 +9982,39 @@ export type ThreadDiscussionMessageReaction = {
   name: Scalars['String'];
 };
 
+export enum ThreadDiscussionMessageType {
+  Inbound = 'INBOUND',
+  Outbound = 'OUTBOUND'
+}
+
 export type ThreadDiscussionResolvedEntry = {
   __typename?: 'ThreadDiscussionResolvedEntry';
   customerId: Scalars['ID'];
+  discussionType: ThreadDiscussionType;
+  emailRecipients: Array<Scalars['String']>;
   resolvedAt: DateTime;
-  slackChannelName: Scalars['String'];
-  slackMessageLink: Scalars['String'];
+  slackChannelName: Maybe<Scalars['String']>;
+  slackMessageLink: Maybe<Scalars['String']>;
   threadDiscussionId: Scalars['ID'];
 };
+
+export type ThreadDiscussionSlackChannelDetails = {
+  __typename?: 'ThreadDiscussionSlackChannelDetails';
+  slackChannelId: Scalars['ID'];
+  slackChannelName: Scalars['String'];
+  slackMessageLink: Maybe<Scalars['String']>;
+  slackTeamId: Scalars['ID'];
+};
+
+export type ThreadDiscussionSlackDetailsInput = {
+  connectedSlackChannelId: Scalars['ID'];
+};
+
+export enum ThreadDiscussionType {
+  CursorWorkspaceBackgroundAgent = 'CURSOR_WORKSPACE_BACKGROUND_AGENT',
+  Email = 'EMAIL',
+  Slack = 'SLACK'
+}
 
 export type ThreadEdge = {
   __typename?: 'ThreadEdge';
@@ -8406,9 +10066,11 @@ export type ThreadField = {
   booleanValue: Maybe<Scalars['Boolean']>;
   createdAt: DateTime;
   createdBy: Actor;
+  dateValue: Maybe<DateTime>;
   id: Scalars['ID'];
   isAiGenerated: Scalars['Boolean'];
   key: Scalars['String'];
+  numberValue: Maybe<Scalars['Float']>;
   stringValue: Maybe<Scalars['String']>;
   threadId: Scalars['ID'];
   type: ThreadFieldSchemaType;
@@ -8416,10 +10078,25 @@ export type ThreadField = {
   updatedBy: Actor;
 };
 
+export type ThreadFieldDateFilter = {
+  /** Timestamps -greater or equal- than this value. ISO 8601 format (e.g. 2024-10-28T18:30:00Z). */
+  after?: InputMaybe<Scalars['String']>;
+  /** Timestamps -less- than this value. ISO 8601 format (e.g. 2024-10-28T18:30:00Z). */
+  before?: InputMaybe<Scalars['String']>;
+};
+
 export type ThreadFieldFilter = {
   booleanValue?: InputMaybe<Scalars['Boolean']>;
+  date?: InputMaybe<ThreadFieldDateFilter>;
   key: Scalars['String'];
+  number?: InputMaybe<ThreadFieldNumberFilter>;
   stringValue?: InputMaybe<Scalars['String']>;
+};
+
+export type ThreadFieldNumberFilter = {
+  gte?: InputMaybe<Scalars['Float']>;
+  lte?: InputMaybe<Scalars['Float']>;
+  value?: InputMaybe<Scalars['Float']>;
 };
 
 export type ThreadFieldSchema = {
@@ -8427,6 +10104,8 @@ export type ThreadFieldSchema = {
   createdAt: DateTime;
   createdBy: InternalActor;
   defaultBooleanValue: Maybe<Scalars['Boolean']>;
+  defaultDateValue: Maybe<DateTime>;
+  defaultNumberValue: Maybe<Scalars['Float']>;
   defaultStringValue: Maybe<Scalars['String']>;
   dependsOnLabels: Array<DependsOnLabelType>;
   dependsOnThreadField: Maybe<DependsOnThreadFieldType>;
@@ -8434,6 +10113,7 @@ export type ThreadFieldSchema = {
   enumValues: Array<Scalars['String']>;
   id: Scalars['ID'];
   isAiAutoFillEnabled: Scalars['Boolean'];
+  isClientReadonly: Scalars['Boolean'];
   isRequired: Scalars['Boolean'];
   key: Scalars['String'];
   label: Scalars['String'];
@@ -8468,7 +10148,10 @@ export type ThreadFieldSchemaOrderInput = {
 
 export enum ThreadFieldSchemaType {
   Bool = 'BOOL',
+  Currency = 'CURRENCY',
+  Date = 'DATE',
   Enum = 'ENUM',
+  Number = 'NUMBER',
   String = 'STRING'
 }
 
@@ -8483,6 +10166,7 @@ export type ThreadLink = {
   createdBy: InternalActor;
   description: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  linkType: ThreadLinkLinkType;
   sourceId: Scalars['String'];
   sourceType: Scalars['String'];
   status: ThreadLinkStatus;
@@ -8524,7 +10208,17 @@ export type ThreadLinkConnection = {
   __typename?: 'ThreadLinkConnection';
   edges: Array<ThreadLinkEdge>;
   pageInfo: PageInfo;
-  totalCount: Maybe<Scalars['Int']>;
+  totalCount: Scalars['Int'];
+};
+
+export type ThreadLinkCreatedEntry = {
+  __typename?: 'ThreadLinkCreatedEntry';
+  threadLink: ThreadLink;
+};
+
+export type ThreadLinkDeletedEntry = {
+  __typename?: 'ThreadLinkDeletedEntry';
+  threadLink: ThreadLink;
 };
 
 export type ThreadLinkEdge = {
@@ -8619,6 +10313,12 @@ export type ThreadLinkGroupTierMetrics = {
   noTier: ThreadLinkGroupAggregateMetrics;
 };
 
+export enum ThreadLinkLinkType {
+  MergedInto = 'MERGED_INTO',
+  RelatedTo = 'RELATED_TO',
+  SucceededBy = 'SUCCEEDED_BY'
+}
+
 export type ThreadLinkSourceStatus = {
   __typename?: 'ThreadLinkSourceStatus';
   color: Maybe<Scalars['String']>;
@@ -8651,6 +10351,18 @@ export enum ThreadLinkStatus {
   Unknown = 'UNKNOWN'
 }
 
+export type ThreadLinkTargetCreatedEntry = {
+  __typename?: 'ThreadLinkTargetCreatedEntry';
+  sourceThread: ChildThreadDetails;
+  threadLink: ThreadLink;
+};
+
+export type ThreadLinkTargetDeletedEntry = {
+  __typename?: 'ThreadLinkTargetDeletedEntry';
+  sourceThread: ChildThreadDetails;
+  threadLink: ThreadLink;
+};
+
 export type ThreadLinkUpdatedEntry = {
   __typename?: 'ThreadLinkUpdatedEntry';
   previousThreadLink: ThreadLink;
@@ -8670,6 +10382,14 @@ export type ThreadPriorityChangedEntry = {
   nextPriority: Scalars['Int'];
   previousPriority: Scalars['Int'];
 };
+
+export enum ThreadScopePrimitiveType {
+  Channel = 'CHANNEL',
+  Company = 'COMPANY',
+  Label = 'LABEL',
+  Tenant = 'TENANT',
+  Tier = 'TIER'
+}
 
 export type ThreadSearchResult = {
   __typename?: 'ThreadSearchResult';
@@ -8800,6 +10520,8 @@ export type ThreadStatusTransitionedEntry = {
 };
 
 export type ThreadTimelineEntriesFilter = {
+  /** Only return timeline entries of the specified types. If provided, this takes precedence over isMessage. */
+  entryTypes?: InputMaybe<Array<TimelineEntryType>>;
   /** Only return message timeline entries. */
   isMessage?: InputMaybe<Scalars['Boolean']>;
 };
@@ -8826,8 +10548,11 @@ export type ThreadsDisplayOptions = {
   hasLinearIssues: Scalars['Boolean'];
   hasLinkedThreads: Scalars['Boolean'];
   hasPreviewText: Scalars['Boolean'];
+  hasRef: Scalars['Boolean'];
   hasServiceLevelAgreements: Scalars['Boolean'];
   hasStatus: Scalars['Boolean'];
+  hasTasks: Scalars['Boolean'];
+  hasThreadFieldKeys: Array<Scalars['String']>;
   hasTier: Scalars['Boolean'];
 };
 
@@ -8846,12 +10571,17 @@ export type ThreadsDisplayOptionsInput = {
   hasLinearIssues?: InputMaybe<Scalars['Boolean']>;
   hasLinkedThreads: Scalars['Boolean'];
   hasPreviewText: Scalars['Boolean'];
+  hasRef: Scalars['Boolean'];
   hasServiceLevelAgreements: Scalars['Boolean'];
   hasStatus: Scalars['Boolean'];
+  hasTasks?: InputMaybe<Scalars['Boolean']>;
+  hasThreadFieldKeys?: InputMaybe<Array<Scalars['String']>>;
   hasTier: Scalars['Boolean'];
 };
 
 export type ThreadsFilter = {
+  agentStatus?: InputMaybe<AgentStatusFilter>;
+  and?: InputMaybe<Array<ThreadsFilter>>;
   assignedToUser?: InputMaybe<Array<Scalars['ID']>>;
   companyIdentifiers?: InputMaybe<Array<CompanyIdentifierInput>>;
   createdAt?: InputMaybe<DatetimeFilter>;
@@ -8861,6 +10591,8 @@ export type ThreadsFilter = {
   isMarkedAsSpam?: InputMaybe<Scalars['Boolean']>;
   labelTypeIds?: InputMaybe<Array<Scalars['ID']>>;
   messageSource?: InputMaybe<Array<MessageSource>>;
+  not?: InputMaybe<ThreadsFilter>;
+  or?: InputMaybe<Array<ThreadsFilter>>;
   participantIds?: InputMaybe<Array<Scalars['ID']>>;
   priorities?: InputMaybe<Array<Scalars['Int']>>;
   refs?: InputMaybe<Array<Scalars['String']>>;
@@ -8912,6 +10644,7 @@ export type ThreadsSearchQuery = {
 export type ThreadsSort = {
   direction: SortDirection;
   field: ThreadsSortField;
+  threadFieldKey?: InputMaybe<Scalars['String']>;
 };
 
 export enum ThreadsSortField {
@@ -8919,7 +10652,8 @@ export enum ThreadsSortField {
   CreatedAt = 'CREATED_AT',
   LastInboundMessageAt = 'LAST_INBOUND_MESSAGE_AT',
   Priority = 'PRIORITY',
-  StatusChangedAt = 'STATUS_CHANGED_AT'
+  StatusChangedAt = 'STATUS_CHANGED_AT',
+  ThreadField = 'THREAD_FIELD'
 }
 
 export type Tier = {
@@ -9098,6 +10832,37 @@ export type TimelineEntryEdge = {
   node: TimelineEntry;
 };
 
+export enum TimelineEntryType {
+  Chat = 'CHAT',
+  Custom = 'CUSTOM',
+  CustomerEvent = 'CUSTOMER_EVENT',
+  CustomerSurveyRequested = 'CUSTOMER_SURVEY_REQUESTED',
+  DiscordMessage = 'DISCORD_MESSAGE',
+  Email = 'EMAIL',
+  HelpCenterAiConversationMessage = 'HELP_CENTER_AI_CONVERSATION_MESSAGE',
+  LinearIssueThreadLinkStateTransitioned = 'LINEAR_ISSUE_THREAD_LINK_STATE_TRANSITIONED',
+  MergedThreadMessage = 'MERGED_THREAD_MESSAGE',
+  MsTeamsMessage = 'MS_TEAMS_MESSAGE',
+  Note = 'NOTE',
+  ServiceLevelAgreementStatusTransitioned = 'SERVICE_LEVEL_AGREEMENT_STATUS_TRANSITIONED',
+  SlackMessage = 'SLACK_MESSAGE',
+  SlackReply = 'SLACK_REPLY',
+  ThreadAdditionalAssigneesTransitioned = 'THREAD_ADDITIONAL_ASSIGNEES_TRANSITIONED',
+  ThreadAssignmentTransitioned = 'THREAD_ASSIGNMENT_TRANSITIONED',
+  ThreadDiscussion = 'THREAD_DISCUSSION',
+  ThreadDiscussionMessage = 'THREAD_DISCUSSION_MESSAGE',
+  ThreadDiscussionResolved = 'THREAD_DISCUSSION_RESOLVED',
+  ThreadEvent = 'THREAD_EVENT',
+  ThreadLabelsChanged = 'THREAD_LABELS_CHANGED',
+  ThreadLinkCreated = 'THREAD_LINK_CREATED',
+  ThreadLinkDeleted = 'THREAD_LINK_DELETED',
+  ThreadLinkTargetCreated = 'THREAD_LINK_TARGET_CREATED',
+  ThreadLinkTargetDeleted = 'THREAD_LINK_TARGET_DELETED',
+  ThreadLinkUpdated = 'THREAD_LINK_UPDATED',
+  ThreadPriorityChanged = 'THREAD_PRIORITY_CHANGED',
+  ThreadStatusTransitioned = 'THREAD_STATUS_TRANSITIONED'
+}
+
 export type TimelineEventEntry = {
   components: Array<EventComponent>;
   customerId: Scalars['ID'];
@@ -9146,6 +10911,36 @@ export type ToggleWorkflowRulePublishedOutput = {
   workflowRule: Maybe<WorkflowRule>;
 };
 
+export type ToneRuleFeedbackDetails = {
+  __typename?: 'ToneRuleFeedbackDetails';
+  comment: Maybe<Scalars['String']>;
+  reason: Scalars['String'];
+  sentiment: Maybe<AiFeedbackSentiment>;
+  toneRuleDescription: Scalars['String'];
+  toneRuleId: Scalars['ID'];
+  toneRuleInput: Scalars['String'];
+};
+
+export type TriggerWorkflowInput = {
+  threadId: Scalars['ID'];
+  workflowId: Scalars['ID'];
+};
+
+export type TriggerWorkflowOutput = {
+  __typename?: 'TriggerWorkflowOutput';
+  error: Maybe<MutationError>;
+};
+
+export type TriggerWorkflowRuleInput = {
+  threadId: Scalars['ID'];
+  workflowRuleId: Scalars['ID'];
+};
+
+export type TriggerWorkflowRuleOutput = {
+  __typename?: 'TriggerWorkflowRuleOutput';
+  error: Maybe<MutationError>;
+};
+
 export type UnarchiveLabelTypeInput = {
   labelTypeId: Scalars['ID'];
 };
@@ -9184,6 +10979,16 @@ export type UpdateActiveBillingRotaInput = {
 export type UpdateActiveBillingRotaOutput = {
   __typename?: 'UpdateActiveBillingRotaOutput';
   billingRota: Maybe<BillingRota>;
+  error: Maybe<MutationError>;
+};
+
+export type UpdateAiToneRulesInput = {
+  updates: Array<AiToneRuleUpdate>;
+};
+
+export type UpdateAiToneRulesOutput = {
+  __typename?: 'UpdateAiToneRulesOutput';
+  aiToneRules: Array<AiToneRule>;
   error: Maybe<MutationError>;
 };
 
@@ -9261,6 +11066,18 @@ export type UpdateConnectedSlackChannelOutput = {
   __typename?: 'UpdateConnectedSlackChannelOutput';
   connectedSlackChannel: Maybe<ConnectedSlackChannel>;
   error: Maybe<MutationError>;
+};
+
+export type UpdateCustomRoleInput = {
+  customRoleId: Scalars['ID'];
+  description?: InputMaybe<OptionalStringInput>;
+  name?: InputMaybe<OptionalStringInput>;
+};
+
+export type UpdateCustomRoleOutput = {
+  __typename?: 'UpdateCustomRoleOutput';
+  error: Maybe<MutationError>;
+  role: Maybe<CustomRole>;
 };
 
 /** For constraints and details on the fields see the `CustomerCardConfig` type. */
@@ -9358,6 +11175,19 @@ export type UpdateGeneratedReplyOutput = {
   generatedReply: Maybe<GeneratedReply>;
 };
 
+export type UpdateHelpCenterArticleCopyOptionSettingsInput = {
+  isChatgptEnabled?: InputMaybe<Scalars['Boolean']>;
+  isClaudeEnabled?: InputMaybe<Scalars['Boolean']>;
+  isCursorEnabled?: InputMaybe<Scalars['Boolean']>;
+  isMarkdownEnabled?: InputMaybe<Scalars['Boolean']>;
+  isPlaintextEnabled?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type UpdateHelpCenterArticleCopyOptionsInput = {
+  isEnabled?: InputMaybe<Scalars['Boolean']>;
+  options?: InputMaybe<UpdateHelpCenterArticleCopyOptionSettingsInput>;
+};
+
 export type UpdateHelpCenterArticleGroupInput = {
   helpCenterArticleGroupId: Scalars['ID'];
   name?: InputMaybe<Scalars['String']>;
@@ -9395,6 +11225,7 @@ export type UpdateHelpCenterIndexOutput = {
 export type UpdateHelpCenterInput = {
   access?: InputMaybe<HelpCenterAccessSettingsInput>;
   agentAvatarImage?: InputMaybe<HelpCenterThemedImageInput>;
+  articleCopyOptions?: InputMaybe<UpdateHelpCenterArticleCopyOptionsInput>;
   authMechanism?: InputMaybe<HelpCenterAuthMechanismInput>;
   bodyCustomJs?: InputMaybe<StringInput>;
   color?: InputMaybe<StringInput>;
@@ -9404,6 +11235,7 @@ export type UpdateHelpCenterInput = {
   helpCenterId: Scalars['ID'];
   internalName?: InputMaybe<Scalars['String']>;
   isChatEnabled?: InputMaybe<Scalars['Boolean']>;
+  isCustomerFacingAiEnabled?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<HelpCenterThemedImageInput>;
   portalSettings?: InputMaybe<HelpCenterPortalSettingsInput>;
   publicName?: InputMaybe<Scalars['String']>;
@@ -9418,10 +11250,24 @@ export type UpdateHelpCenterOutput = {
   helpCenter: Maybe<HelpCenter>;
 };
 
+export type UpdateInternalNotificationsInput = {
+  archivedAt?: InputMaybe<StringInput>;
+  notificationIds: Array<Scalars['ID']>;
+  readAt?: InputMaybe<OptionalStringInput>;
+};
+
+export type UpdateInternalNotificationsOutput = {
+  __typename?: 'UpdateInternalNotificationsOutput';
+  error: Maybe<MutationError>;
+  internalNotifications: Array<InternalNotification>;
+};
+
 export type UpdateLabelTypeInput = {
   color?: InputMaybe<OptionalStringInput>;
   description?: InputMaybe<OptionalStringInput>;
+  externalId?: InputMaybe<OptionalStringInput>;
   icon?: InputMaybe<OptionalStringInput>;
+  isExcludedFromAi?: InputMaybe<OptionalBooleanInput>;
   labelTypeId: Scalars['ID'];
   name?: InputMaybe<StringInput>;
 };
@@ -9449,6 +11295,7 @@ export type UpdateMachineUserOutput = {
 };
 
 export type UpdateMyUserInput = {
+  avatar?: InputMaybe<WorkspaceFileInput>;
   fullName?: InputMaybe<OptionalStringInput>;
   publicName?: InputMaybe<OptionalStringInput>;
 };
@@ -9459,9 +11306,23 @@ export type UpdateMyUserOutput = {
   user: Maybe<User>;
 };
 
+export type UpdateNoteInput = {
+  attachmentIds?: InputMaybe<Array<Scalars['ID']>>;
+  markdown?: InputMaybe<Scalars['String']>;
+  noteId: Scalars['ID'];
+  text: Scalars['String'];
+};
+
+export type UpdateNoteOutput = {
+  __typename?: 'UpdateNoteOutput';
+  error: Maybe<MutationError>;
+  note: Maybe<Note>;
+};
+
 export type UpdateSavedThreadsViewInput = {
   color?: InputMaybe<StringInput>;
   icon?: InputMaybe<StringInput>;
+  isHidden?: InputMaybe<BooleanInput>;
   name?: InputMaybe<StringInput>;
   savedThreadsViewId: Scalars['ID'];
   threadsFilter?: InputMaybe<SavedThreadsViewFilterInput>;
@@ -9532,6 +11393,31 @@ export type UpdateSnippetOutput = {
   snippet: Maybe<Snippet>;
 };
 
+/** Only one of the fields can be set. */
+export type UpdateTaskAssignedToInput = {
+  machineUserId?: InputMaybe<Scalars['ID']>;
+  userId?: InputMaybe<Scalars['ID']>;
+};
+
+export type UpdateTaskInput = {
+  assignedTo?: InputMaybe<UpdateTaskAssignedToInput>;
+  /** Only one of companyId or tenantId can be set. Cannot specify both. Setting companyId will unset tenantId if it already exists. */
+  companyId?: InputMaybe<Scalars['ID']>;
+  description?: InputMaybe<Scalars['String']>;
+  priority?: InputMaybe<Scalars['Int']>;
+  status?: InputMaybe<TaskStatus>;
+  taskId: Scalars['ID'];
+  /** Only one of companyId or tenantId can be set. Cannot specify both. Setting tenantId will unset companyId if it already exists. */
+  tenantId?: InputMaybe<Scalars['ID']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateTaskOutput = {
+  __typename?: 'UpdateTaskOutput';
+  error: Maybe<MutationError>;
+  task: Maybe<Task>;
+};
+
 export type UpdateTenantTierInput = {
   tenantIdentifier: TenantIdentifierInput;
   tierIdentifier?: InputMaybe<TierIdentifierInput>;
@@ -9541,6 +11427,17 @@ export type UpdateTenantTierOutput = {
   __typename?: 'UpdateTenantTierOutput';
   error: Maybe<MutationError>;
   tenantTierMembership: Maybe<TenantTierMembership>;
+};
+
+export type UpdateThreadAgentStatusInput = {
+  agentStatus?: InputMaybe<AgentStatus>;
+  threadId: Scalars['ID'];
+};
+
+export type UpdateThreadAgentStatusOutput = {
+  __typename?: 'UpdateThreadAgentStatusOutput';
+  error: Maybe<MutationError>;
+  thread: Maybe<Thread>;
 };
 
 export type UpdateThreadEscalationPathInput = {
@@ -9556,12 +11453,15 @@ export type UpdateThreadEscalationPathOutput = {
 
 export type UpdateThreadFieldSchemaInput = {
   defaultBooleanValue?: InputMaybe<OptionalBooleanInput>;
+  defaultDateValue?: InputMaybe<OptionalDateTimeInput>;
+  defaultNumberValue?: InputMaybe<OptionalFloatInput>;
   defaultStringValue?: InputMaybe<OptionalStringInput>;
   dependsOnLabelTypeIds?: InputMaybe<Array<Scalars['ID']>>;
   dependsOnThreadField?: InputMaybe<OptionalDependsOnThreadFieldInput>;
   description?: InputMaybe<StringInput>;
   enumValues?: InputMaybe<Array<Scalars['String']>>;
   isAiAutoFillEnabled?: InputMaybe<Scalars['Boolean']>;
+  isClientReadonly?: InputMaybe<Scalars['Boolean']>;
   isRequired?: InputMaybe<Scalars['Boolean']>;
   label?: InputMaybe<StringInput>;
   order?: InputMaybe<Scalars['Int']>;
@@ -9572,6 +11472,18 @@ export type UpdateThreadFieldSchemaOutput = {
   __typename?: 'UpdateThreadFieldSchemaOutput';
   error: Maybe<MutationError>;
   threadFieldSchema: Maybe<ThreadFieldSchema>;
+};
+
+export type UpdateThreadSuggestedActionStatusInput = {
+  status: ThreadCatchupSuggestedActionStatus;
+  suggestedActionId: Scalars['ID'];
+  threadId: Scalars['ID'];
+};
+
+export type UpdateThreadSuggestedActionStatusOutput = {
+  __typename?: 'UpdateThreadSuggestedActionStatusOutput';
+  error: Maybe<MutationError>;
+  thread: Maybe<Thread>;
 };
 
 export type UpdateThreadTenantInput = {
@@ -9622,6 +11534,17 @@ export type UpdateTierOutput = {
   tier: Maybe<Tier>;
 };
 
+export type UpdateUserDefaultSavedThreadsViewInput = {
+  savedViewId?: InputMaybe<Scalars['ID']>;
+  userId: Scalars['ID'];
+};
+
+export type UpdateUserDefaultSavedThreadsViewOutput = {
+  __typename?: 'UpdateUserDefaultSavedThreadsViewOutput';
+  error: Maybe<MutationError>;
+  user: Maybe<User>;
+};
+
 export type UpdateWebhookTargetInput = {
   description?: InputMaybe<StringInput>;
   eventSubscriptions?: InputMaybe<Array<WebhookTargetEventSubscriptionInput>>;
@@ -9637,8 +11560,25 @@ export type UpdateWebhookTargetOutput = {
   webhookTarget: Maybe<WebhookTarget>;
 };
 
+export type UpdateWorkflowInput = {
+  isPublished?: InputMaybe<BooleanInput>;
+  name?: InputMaybe<StringInput>;
+  order?: InputMaybe<IntInput>;
+  startStepId?: InputMaybe<StringInput>;
+  /** JSON-encoded trigger configuration. */
+  trigger?: InputMaybe<StringInput>;
+  workflowId: Scalars['ID'];
+};
+
+export type UpdateWorkflowOutput = {
+  __typename?: 'UpdateWorkflowOutput';
+  error: Maybe<MutationError>;
+  workflow: Maybe<Workflow>;
+};
+
 export type UpdateWorkflowRuleInput = {
   name?: InputMaybe<StringInput>;
+  order?: InputMaybe<IntInput>;
   /** JSON-encoded payload of the rule definition. */
   payload?: InputMaybe<StringInput>;
   workflowRuleId: Scalars['ID'];
@@ -9650,8 +11590,29 @@ export type UpdateWorkflowRuleOutput = {
   workflowRule: Maybe<WorkflowRule>;
 };
 
+export type UpdateWorkflowStepInput = {
+  /** Optional name for the step. */
+  name?: InputMaybe<StringInput>;
+  /** JSON-encoded payload containing the action or condition configuration. */
+  payload?: InputMaybe<StringInput>;
+  /** X position of this step on the canvas. */
+  positionX?: InputMaybe<Scalars['Float']>;
+  /** Y position of this step on the canvas. */
+  positionY?: InputMaybe<Scalars['Float']>;
+  stepId: Scalars['ID'];
+  /** Array of next step IDs. For ACTION: 1 element. For CONDITION: 2 elements (true, false). Use null for terminal/no branch. Full array replacement. */
+  transitions?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+};
+
+export type UpdateWorkflowStepOutput = {
+  __typename?: 'UpdateWorkflowStepOutput';
+  error: Maybe<MutationError>;
+  workflowStep: Maybe<WorkflowStep>;
+};
+
 export type UpdateWorkspaceEmailSettingsInput = {
-  isEnabled: Scalars['Boolean'];
+  bccEmailAddresses?: InputMaybe<Array<Scalars['String']>>;
+  isEnabled?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateWorkspaceEmailSettingsOutput = {
@@ -9790,6 +11751,31 @@ export enum UpsertResult {
   Updated = 'UPDATED'
 }
 
+export type UpsertRoleScopesInput = {
+  customRoleId: Scalars['ID'];
+  resource: RoleScopeResourceType;
+  /** For THREAD resource: array of scope conditions - one per primitive type */
+  scopes: Array<ScopeConditionInput>;
+};
+
+export type UpsertRoleScopesOutput = {
+  __typename?: 'UpsertRoleScopesOutput';
+  error: Maybe<MutationError>;
+  role: Maybe<CustomRole>;
+};
+
+export type UpsertTeamSettingsInput = {
+  isRoundRobinEnabled?: InputMaybe<Scalars['Boolean']>;
+  labelTypeId: Scalars['ID'];
+  roundRobinMaxCapacity?: InputMaybe<Scalars['Int']>;
+};
+
+export type UpsertTeamSettingsOutput = {
+  __typename?: 'UpsertTeamSettingsOutput';
+  error: Maybe<MutationError>;
+  teamSettings: Maybe<TeamSettings>;
+};
+
 export type UpsertTenantFieldInput = {
   arrayValue?: InputMaybe<Array<Scalars['String']>>;
   booleanValue?: InputMaybe<Scalars['Boolean']>;
@@ -9839,7 +11825,9 @@ export type UpsertThreadFieldIdentifier = {
 
 export type UpsertThreadFieldInput = {
   booleanValue?: InputMaybe<Scalars['Boolean']>;
+  dateValue?: InputMaybe<Scalars['String']>;
   identifier: UpsertThreadFieldIdentifier;
+  numberValue?: InputMaybe<Scalars['Float']>;
   stringValue?: InputMaybe<Scalars['String']>;
   type: ThreadFieldSchemaType;
 };
@@ -9853,12 +11841,14 @@ export type UpsertThreadFieldOutput = {
 
 export type User = {
   __typename?: 'User';
-  /** Additional legacy roles that the user has in the workspace. */
-  additionalLegacyRoles: Array<Role>;
+  /** The uploaded avatar for the user. */
+  avatar: Maybe<WorkspaceFile>;
   /** The avatar URL of the user. */
   avatarUrl: Maybe<Scalars['String']>;
   createdAt: DateTime;
   createdBy: InternalActor;
+  /** The default saved threads view for this user. */
+  defaultSavedThreadsView: Maybe<SavedThreadsView>;
   deletedAt: Maybe<DateTime>;
   deletedBy: Maybe<Actor>;
   /** The email associated with this user. Email is unique per user. */
@@ -9873,7 +11863,7 @@ export type User = {
   publicName: Scalars['String'];
   /** The role of the user in the workspace. */
   role: Maybe<Role>;
-  /** (Legacy) Retrieve roles for a specific workspace + user. */
+  /** Retrieve roles for a specific workspace + user. */
   roles: Array<Role>;
   /** Connected slack users to this Plain account. */
   slackIdentities: Array<SlackUserIdentity>;
@@ -9881,6 +11871,8 @@ export type User = {
   statusChangedAt: DateTime;
   updatedAt: DateTime;
   updatedBy: InternalActor;
+  /** The user's configured working hours for automatic status switching. */
+  workingHours: Maybe<UserWorkingHours>;
 };
 
 export type UserAccount = {
@@ -10022,10 +12014,54 @@ export type UserSlackIntegration = {
 };
 
 export enum UserStatus {
+  Away = 'AWAY',
+  /** @deprecated Unused in new work hours tracking */
   Break = 'BREAK',
   Offline = 'OFFLINE',
   Online = 'ONLINE'
 }
+
+/** Configuration for automatic status switching based on a user's working hours. */
+export type UserWorkingHours = {
+  __typename?: 'UserWorkingHours';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  id: Scalars['ID'];
+  /** Whether automatic status switching is enabled. */
+  isEnabled: Scalars['Boolean'];
+  /** The next scheduled status transition time. */
+  nextStatusTransitionAt: Maybe<DateTime>;
+  /** The status the user will transition to at the next scheduled time. */
+  nextStatusTransitionTo: Maybe<UserStatus>;
+  /** The time slots that define when the user is available. */
+  slots: Array<UserWorkingHoursSlot>;
+  /** The timezone in which the working hours slots are defined. */
+  timezone: Timezone;
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+  userId: Scalars['ID'];
+};
+
+/** A time slot representing when a user is available during a specific day. */
+export type UserWorkingHoursSlot = {
+  __typename?: 'UserWorkingHoursSlot';
+  /** The time the slot ends at this time (HH:mm format in the user's timezone). */
+  endsAt: Scalars['String'];
+  /** The time the slot is for this day of the week. */
+  id: Scalars['ID'];
+  /** The time the slot starts at this time (HH:mm format in the user's timezone). */
+  startsAt: Scalars['String'];
+  weekday: WeekDay;
+};
+
+export type UserWorkingHoursSlotInput = {
+  /** The time the slot ends at this time (HH:mm format). */
+  endsAt: Scalars['String'];
+  /** The time the slot starts at this time (HH:mm format). */
+  startsAt: Scalars['String'];
+  /** The time the slot is for this day of the week. */
+  weekday: WeekDay;
+};
 
 export type UsersFilter = {
   /** @deprecated Use isAssignableToThread instead */
@@ -10123,12 +12159,106 @@ export enum WeekDay {
   Wednesday = 'WEDNESDAY'
 }
 
+/** Configuration for WorkOS features including admin portal URLs for SSO and directory sync. */
+export type WorkOsConfiguration = {
+  __typename?: 'WorkOSConfiguration';
+  /** URL to configure directory sync settings in the WorkOS admin portal. */
+  directorySyncUrl: Scalars['String'];
+  /** URL to configure domain verification settings in the WorkOS admin portal. */
+  domainVerificationUrl: Scalars['String'];
+  /** URL to configure SSO settings in the WorkOS admin portal. */
+  ssoUrl: Scalars['String'];
+  /** Token for embedding WorkOS widgets in the UI. Expires after one hour. */
+  widgetToken: Scalars['String'];
+};
+
+export type Workflow = {
+  __typename?: 'Workflow';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  order: Scalars['Int'];
+  publishedAt: Maybe<DateTime>;
+  /** The ID of the first step to execute, or null if workflow has no steps. */
+  startStepId: Maybe<Scalars['ID']>;
+  /** The steps in this workflow. */
+  steps: Array<WorkflowStep>;
+  /** JSON-encoded trigger configuration. */
+  trigger: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+};
+
+export type WorkflowConnection = {
+  __typename?: 'WorkflowConnection';
+  edges: Array<WorkflowEdge>;
+  pageInfo: PageInfo;
+};
+
+export type WorkflowEdge = {
+  __typename?: 'WorkflowEdge';
+  cursor: Scalars['String'];
+  node: Workflow;
+};
+
+export type WorkflowExecution = {
+  __typename?: 'WorkflowExecution';
+  completedAt: Maybe<DateTime>;
+  /** The ID of the entity this execution was triggered for. */
+  entityId: Maybe<Scalars['ID']>;
+  /** The type of entity this execution was triggered for. */
+  entityType: Maybe<WorkflowExecutionEntityType>;
+  errorMessage: Maybe<Scalars['String']>;
+  executionDurationMs: Maybe<Scalars['Int']>;
+  executionStatus: WorkflowExecutionStatus;
+  id: Scalars['ID'];
+  startedAt: Maybe<DateTime>;
+  /** The step executions for this workflow execution. */
+  stepExecutions: Array<WorkflowStepExecution>;
+  /** The event type that triggered this execution (e.g., thread.thread_created). */
+  triggeredBy: Scalars['String'];
+  workflowId: Scalars['ID'];
+};
+
+export type WorkflowExecutionByEntityFilter = {
+  entityId: Scalars['ID'];
+  entityType: WorkflowExecutionEntityType;
+  executionStatus?: InputMaybe<WorkflowExecutionStatus>;
+  workflowId?: InputMaybe<Scalars['ID']>;
+};
+
+export type WorkflowExecutionConnection = {
+  __typename?: 'WorkflowExecutionConnection';
+  edges: Array<WorkflowExecutionEdge>;
+  pageInfo: PageInfo;
+};
+
+export type WorkflowExecutionEdge = {
+  __typename?: 'WorkflowExecutionEdge';
+  cursor: Scalars['String'];
+  node: WorkflowExecution;
+};
+
+export enum WorkflowExecutionEntityType {
+  Thread = 'THREAD'
+}
+
+export enum WorkflowExecutionStatus {
+  Cancelled = 'CANCELLED',
+  Failed = 'FAILED',
+  Running = 'RUNNING',
+  Success = 'SUCCESS',
+  Waiting = 'WAITING'
+}
+
 export type WorkflowRule = {
   __typename?: 'WorkflowRule';
   createdAt: DateTime;
   createdBy: InternalActor;
   id: Scalars['ID'];
   name: Scalars['String'];
+  order: Scalars['Int'];
   /** JSON-encoded payload of the rule definition. */
   payload: Scalars['String'];
   publishedAt: Maybe<DateTime>;
@@ -10146,6 +12276,59 @@ export type WorkflowRuleEdge = {
   __typename?: 'WorkflowRuleEdge';
   cursor: Scalars['String'];
   node: WorkflowRule;
+};
+
+export type WorkflowStep = {
+  __typename?: 'WorkflowStep';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  id: Scalars['ID'];
+  /** Optional name for the step. */
+  name: Maybe<Scalars['String']>;
+  /** JSON-encoded payload containing the action or condition configuration. */
+  payload: Scalars['String'];
+  /** X position of this step on the canvas. */
+  positionX: Scalars['Float'];
+  /** Y position of this step on the canvas. */
+  positionY: Scalars['Float'];
+  /** Array of next step IDs. For ACTION: 1 element (next step). For CONDITION: 2 elements (true branch, false branch). Null means terminal/no branch. */
+  transitions: Array<Maybe<Scalars['ID']>>;
+  /** The type of step: CONDITION or ACTION. */
+  type: WorkflowStepType;
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
+  workflowId: Scalars['ID'];
+};
+
+export type WorkflowStepExecution = {
+  __typename?: 'WorkflowStepExecution';
+  completedAt: Maybe<DateTime>;
+  id: Scalars['ID'];
+  /** JSON-encoded output containing the step execution result. */
+  output: Maybe<Scalars['String']>;
+  startedAt: Maybe<DateTime>;
+  status: WorkflowStepExecutionStatus;
+  workflowStepId: Scalars['ID'];
+  workflowStepVersion: Scalars['Int'];
+};
+
+export enum WorkflowStepExecutionStatus {
+  Failed = 'FAILED',
+  Running = 'RUNNING',
+  Success = 'SUCCESS'
+}
+
+export enum WorkflowStepType {
+  Action = 'ACTION',
+  Condition = 'CONDITION',
+  Wait = 'WAIT'
+}
+
+/** A summary of a workflow with only id and name fields. */
+export type WorkflowSummary = {
+  __typename?: 'WorkflowSummary';
+  id: Scalars['ID'];
+  name: Scalars['String'];
 };
 
 export type WorkosConnectAuthMechanismInput = {
@@ -10168,6 +12351,7 @@ export type Workspace = {
   publicName: Scalars['String'];
   updatedAt: DateTime;
   updatedBy: InternalActor;
+  workOSOrganizationId: Maybe<Scalars['String']>;
   workspaceChatSettings: WorkspaceChatSettings;
   workspaceEmailSettings: WorkspaceEmailSettings;
 };
@@ -10181,6 +12365,16 @@ export type WorkspaceConnection = {
   __typename?: 'WorkspaceConnection';
   edges: Array<WorkspaceEdge>;
   pageInfo: PageInfo;
+};
+
+export type WorkspaceCursorIntegration = {
+  __typename?: 'WorkspaceCursorIntegration';
+  createdAt: DateTime;
+  createdBy: InternalActor;
+  id: Scalars['ID'];
+  token: Scalars['String'];
+  updatedAt: DateTime;
+  updatedBy: InternalActor;
 };
 
 export type WorkspaceDiscordChannelInstallationInfo = {
@@ -10260,7 +12454,7 @@ export type WorkspaceEmailDomainSettings = {
 
 export type WorkspaceEmailSettings = {
   __typename?: 'WorkspaceEmailSettings';
-  bccEmail: Maybe<Scalars['String']>;
+  bccEmailAddresses: Array<Scalars['String']>;
   isEnabled: Scalars['Boolean'];
   workspaceEmailDomainSettings: Maybe<WorkspaceEmailDomainSettings>;
 };
@@ -10320,6 +12514,8 @@ export type WorkspaceInvite = {
   createdAt: DateTime;
   /** Who sent this invite. */
   createdBy: InternalActor;
+  /** The custom role that the invite will assign on workspace joining, if specified. */
+  customRole: Maybe<CustomRole>;
   /** The email that is being invited. */
   email: Scalars['String'];
   id: Scalars['ID'];
@@ -10409,6 +12605,7 @@ export type WorkspaceSlackIntegration = {
   integrationId: Scalars['ID'];
   isReinstallRequired: Scalars['Boolean'];
   slackChannelName: Scalars['String'];
+  slackTeamId: Scalars['String'];
   slackTeamImageUrl68px: Maybe<Scalars['String']>;
   slackTeamName: Scalars['String'];
   updatedAt: DateTime;
