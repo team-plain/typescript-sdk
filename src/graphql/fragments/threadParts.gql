@@ -36,6 +36,10 @@ fragment ThreadParts on Thread {
     ...ThreadAssigneeParts
   }
 
+  lockedAt {
+    ...DateTimeParts
+  }
+
   createdAt {
     ...DateTimeParts
   }
