@@ -54,11 +54,11 @@ export type Component =
   | ComponentSpacer
   | ComponentDivider
   | ComponentLinkButton
-  | ComponentWorkflowButton
   | ComponentBadge
   | ComponentCopyButton
   | ComponentRow
-  | ComponentContainer;
+  | ComponentContainer
+  | ComponentWorkflowButton;
 export type ComponentTextSize = "S" | "M" | "L" | "UNKNOWN_COMPONENT_TEXT_SIZE";
 export type ComponentTextColor = "NORMAL" | "MUTED" | "SUCCESS" | "WARNING" | "ERROR" | "UNKNOWN_COMPONENT_TEXT_COLOR";
 export type ComponentPlainTextSize = "S" | "M" | "L" | "UNKNOWN_COMPONENT_PLAIN_TEXT_SIZE";
@@ -82,9 +82,9 @@ export type ComponentRowContent =
   | ComponentSpacer
   | ComponentDivider
   | ComponentLinkButton
-  | ComponentWorkflowButton
   | ComponentBadge
-  | ComponentCopyButton;
+  | ComponentCopyButton
+  | ComponentWorkflowButton;
 export type ComponentContainerContent =
   | {
       type: "UNKNOWN";
@@ -95,10 +95,10 @@ export type ComponentContainerContent =
   | ComponentSpacer
   | ComponentDivider
   | ComponentLinkButton
-  | ComponentWorkflowButton
   | ComponentBadge
   | ComponentCopyButton
-  | ComponentRow;
+  | ComponentRow
+  | ComponentWorkflowButton;
 export type CustomerGroupChangedPayload =
   | {
       changeType: "ADDED";
@@ -552,12 +552,11 @@ export interface ComponentLinkButton {
   [k: string]: unknown;
 }
 export interface ComponentWorkflowButton {
+  workflowButtonLabel: string;
   workflowButtonWorkflowIdentifier: {
-    workflowId?: string;
-    workflowKey?: string;
+    workflowId: string;
     [k: string]: unknown;
   };
-  workflowButtonLabel: string;
   type: "workflowButton";
   [k: string]: unknown;
 }
@@ -948,7 +947,7 @@ export interface ThreadChatReceivedPublicEventPayload {
 }
 export interface ThreadSlackMessageUpdatedEventPayload {
   eventType: "thread.slack_message_updated";
-  changeType?: "MESSAGE_EDITED" | "MESSAGE_DELETED" | "REACTIONS_CHANGED" | "UNKNOWN_SLACK_MESSAGE_CHANGE_TYPE";
+  changeType: "MESSAGE_EDITED" | "MESSAGE_DELETED" | "REACTIONS_CHANGED" | "UNKNOWN_SLACK_MESSAGE_CHANGE_TYPE";
   thread: Thread;
   slackMessage: SlackMessage;
   [k: string]: unknown;
@@ -991,7 +990,7 @@ export interface ThreadDiscordMessageUpdatedEventPayload {
 }
 export interface WebhookMetadata {
   webhookTargetId: Id;
-  webhookTargetVersion: "2026-03-13";
+  webhookTargetVersion: "2026-02-27";
   webhookDeliveryAttemptId: Id;
   webhookDeliveryAttemptNumber: number;
   webhookDeliveryAttemptTimestamp: Datetime;
