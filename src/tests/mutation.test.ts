@@ -25,6 +25,7 @@ describe('mutation test - create an issue', () => {
       title: threadTitle,
       assignedAt: null,
       assignedTo: null,
+      lockedAt: null,
       createdBy: { __typename: 'UserActor', userId: 'u_01FN4BEVKY3EQQ5BFC24M8JTJH' },
       createdAt: {
         __typename: 'DateTime',
