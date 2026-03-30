@@ -1,5 +1,11 @@
 # @team-plain/typescript-sdk
 
+## 5.12.1
+
+### Patch Changes
+
+- 067dbfc: add lockedAt to thread parts fragment
+
 ## 5.12.0
 
 ### Minor Changes
