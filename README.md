@@ -1,3 +1,10 @@
+> [!CAUTION]
+> This SDK has been deprecated and is now replaced by:
+> - [@team-plain/graphql](https://www.npmjs.com/package/@team-plain/graphql) which offers complete, unlimited coverage of our GraphQL API.
+> - [@team-plain/webhooks](https://www.npmjs.com/package/@team-plain/webhooks)
+> - [@team-plain/ui-components](https://www.npmjs.com/package/@team-plain/ui-components)
+
+
 # @team-plain/typescript-sdk
 
 [Changelog](./CHANGELOG.md)
