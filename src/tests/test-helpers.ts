@@ -1,8 +1,7 @@
 import { type Mock, expect, vitest } from 'vitest';
 import * as packageJson from '../../package.json';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function makeExpectFn(spy: Mock<any, any>) {
+function makeExpectFn(spy: Mock) {
   return ({
     apiKey,
     responseBody,
