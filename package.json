@@ -41,7 +41,7 @@
     "typedoc": "^0.25.12",
     "typedoc-plugin-missing-exports": "^2.2.0",
     "typescript": "^5.1.6",
-    "vitest": "^0.31.0"
+    "vitest": "^3.2.6"
   },
   "dependencies": {
     "@graphql-typed-document-node/core": "^3.2.0",
