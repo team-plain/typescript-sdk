@@ -53,6 +53,7 @@
   },
   "pnpm": {
     "overrides": {
+      "immutable": "3.8.3",
       "ws": "8.21.0"
     }
   }
